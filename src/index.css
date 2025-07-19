@@ -1,0 +1,289 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-serif: var(--font-serif);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --shadow-2xs: var(--shadow-2xs);
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+
+  --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
+  --tracking-tight: calc(var(--tracking-normal) - 0.025em);
+  --tracking-normal: var(--tracking-normal);
+  --tracking-wide: calc(var(--tracking-normal) + 0.025em);
+  --tracking-wider: calc(var(--tracking-normal) + 0.05em);
+  --tracking-widest: calc(var(--tracking-normal) + 0.1em);
+}
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.1895 0.0528 265.1503);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.1895 0.0528 265.1503);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.1895 0.0528 265.1503);
+  --primary: oklch(0.5518 0.1793 263.2037);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.9687 0.0051 247.877);
+  --secondary-foreground: oklch(0.2107 0.0336 265.5801);
+  --muted: oklch(0.9687 0.0051 247.877);
+  --muted-foreground: oklch(0.5581 0.0321 256.5428);
+  --accent: oklch(0.9709 0.0125 255.5046);
+  --accent-foreground: oklch(0.4941 0.182 265.3492);
+  --destructive: oklch(0.6308 0.1764 23.6414);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.9292 0.0109 256.6969);
+  --input: oklch(0.9292 0.0109 256.6969);
+  --ring: oklch(0.714 0.0289 255.1348);
+  --chart-1: oklch(0.6269 0.1561 259.7665);
+  --chart-2: oklch(0.637 0.1959 305.2825);
+  --chart-3: oklch(0.6635 0.1108 183.3412);
+  --chart-4: oklch(0.6837 0.1605 50.7877);
+  --chart-5: oklch(0.6308 0.1764 23.6414);
+  --sidebar: oklch(0.9842 0.0034 247.8575);
+  --sidebar-foreground: oklch(0.1895 0.0528 265.1503);
+  --sidebar-primary: oklch(0.5518 0.1793 263.2037);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.9687 0.0051 247.877);
+  --sidebar-accent-foreground: oklch(0.2107 0.0336 265.5801);
+  --sidebar-border: oklch(0.9292 0.0109 256.6969);
+  --sidebar-ring: oklch(0.714 0.0289 255.1348);
+  --font-sans: Montserrat, sans-serif;
+  --font-serif: var(--font-source-serif-4);
+  --font-mono: var(--font-geist-mono);
+  --radius: 1.05rem;
+  --shadow-2xs: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.06);
+  --shadow-xs: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.06);
+  --shadow-sm: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.11),
+    0px 1px 2px -1px hsl(0 0% 0% / 0.11);
+  --shadow: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.11),
+    0px 1px 2px -1px hsl(0 0% 0% / 0.11);
+  --shadow-md: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.11),
+    0px 2px 4px -1px hsl(0 0% 0% / 0.11);
+  --shadow-lg: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.11),
+    0px 4px 6px -1px hsl(0 0% 0% / 0.11);
+  --shadow-xl: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.11),
+    0px 8px 10px -1px hsl(0 0% 0% / 0.11);
+  --shadow-2xl: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.28);
+  --tracking-normal: 0rem;
+  --spacing: 0.25rem;
+}
+
+.dark {
+  --background: oklch(0.1815 0.0576 269.1814);
+  --foreground: oklch(0.9842 0.0034 247.8575);
+  --card: oklch(0.2107 0.0336 265.5801);
+  --card-foreground: oklch(0.9842 0.0034 247.8575);
+  --popover: oklch(0.2107 0.0336 265.5801);
+  --popover-foreground: oklch(0.9842 0.0034 247.8575);
+  --primary: oklch(0.6269 0.1561 259.7665);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.2829 0.0289 259.0981);
+  --secondary-foreground: oklch(0.9842 0.0034 247.8575);
+  --muted: oklch(0.2829 0.0289 259.0981);
+  --muted-foreground: oklch(0.714 0.0289 255.1348);
+  --accent: oklch(0.4323 0.1511 266.9104);
+  --accent-foreground: oklch(0.9331 0.0264 257.0273);
+  --destructive: oklch(0.391 0.1124 23.9089);
+  --destructive-foreground: oklch(0.9842 0.0034 247.8575);
+  --border: oklch(0.2829 0.0289 259.0981);
+  --input: oklch(0.2829 0.0289 259.0981);
+  --ring: oklch(0.6269 0.1561 259.7665);
+  --chart-1: oklch(0.6269 0.1561 259.7665);
+  --chart-2: oklch(0.637 0.1959 305.2825);
+  --chart-3: oklch(0.6635 0.1108 183.3412);
+  --chart-4: oklch(0.6837 0.1605 50.7877);
+  --chart-5: oklch(0.6308 0.1764 23.6414);
+  --sidebar: oklch(0.1815 0.0576 269.1814);
+  --sidebar-foreground: oklch(0.9842 0.0034 247.8575);
+  --sidebar-primary: oklch(0.6269 0.1561 259.7665);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.2829 0.0289 259.0981);
+  --sidebar-accent-foreground: oklch(0.9842 0.0034 247.8575);
+  --sidebar-border: oklch(0.2829 0.0289 259.0981);
+  --sidebar-ring: oklch(0.6269 0.1561 259.7665);
+  --font-sans: Montserrat, sans-serif;
+  --font-serif: var(--font-source-serif-4);
+  --font-mono: var(--font-geist-mono);
+  --radius: 1.05rem;
+  --shadow-2xs: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.06);
+  --shadow-xs: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.06);
+  --shadow-sm: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.11),
+    0px 1px 2px -1px hsl(0 0% 0% / 0.11);
+  --shadow: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.11),
+    0px 1px 2px -1px hsl(0 0% 0% / 0.11);
+  --shadow-md: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.11),
+    0px 2px 4px -1px hsl(0 0% 0% / 0.11);
+  --shadow-lg: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.11),
+    0px 4px 6px -1px hsl(0 0% 0% / 0.11);
+  --shadow-xl: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.11),
+    0px 8px 10px -1px hsl(0 0% 0% / 0.11);
+  --shadow-2xl: 0px 2px 12.5px 0px hsl(0 0% 0% / 0.28);
+}
+/* tailwind */
+
+@theme {
+  /* Font Configuration */
+  --font-Minecraftia: 'Minecraftia', 'sans-serif';
+
+  /* Core Brand Colors */
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+
+  /* Card & Surface Colors */
+  --color-card: #ffffff;
+  --color-card-foreground: #0f172a;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0f172a;
+
+  /* Primary Colors (Main brand color) */
+  --color-primary: #0f172a;
+  --color-primary-foreground: #f8fafc;
+
+  /* Secondary Colors (Subtle accent) */
+  --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #0f172a;
+
+  /* Muted Colors (Backgrounds, disabled states) */
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+
+  /* Accent Colors (Hover states, highlights) */
+  --color-accent: #f1f5f9;
+  --color-accent-foreground: #0f172a;
+  /* Destructive Colors (Errors, warnings) */
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #f8fafc;
+
+  /* Border & Outline Colors */
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #0f172a;
+
+  /* Custom Game Colors (PixelMeet specific) */
+  --color-game-bg: #1a1a2e;
+  --color-game-surface: #16213e;
+  --color-game-accent: #0f3460;
+  --color-game-primary: #533483;
+  --color-game-secondary: #7209b7;
+
+  /* Avatar & Player Colors */
+  --color-player-1: #ef4444;
+  --color-player-2: #3b82f6;
+  --color-player-3: #10b981;
+  --color-player-4: #f59e0b;
+  --color-player-5: #8b5cf6;
+  --color-player-6: #ec4899;
+
+  /* Status Colors */
+  --color-online: #10b981;
+  --color-away: #f59e0b;
+  --color-busy: #ef4444;
+  --color-offline: #6b7280;
+
+  /* Chat Colors */
+  --color-chat-bg: #f8fafc;
+  --color-chat-message: #ffffff;
+  --color-chat-system: #f1f5f9;
+  --color-chat-highlight: #fef3c7;
+
+  /* Video Call Colors */
+  --color-video-bg: #000000;
+  --color-video-surface: #1f2937;
+  --color-video-accent: #374151;
+
+  /* Admin Panel Colors */
+  --color-admin-bg: #0f172a;
+  --color-admin-surface: #1e293b;
+  --color-admin-accent: #334155;
+  --color-admin-success: #059669;
+  --color-admin-warning: #d97706;
+  --color-admin-danger: #dc2626;
+
+  /* Interactive Elements */
+  --color-hover: #f8fafc;
+  --color-active: #e2e8f0;
+  --color-focus: #0f172a;
+  --color-disabled: #f1f5f9;
+
+  /* Custom Semantic Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+
+  /* Dark Mode Variants (Optional) */
+  --color-dark-background: #0f172a;
+  --color-dark-foreground: #f8fafc;
+  --color-dark-card: #1e293b;
+  --color-dark-card-foreground: #f8fafc;
+  --color-dark-primary: #f8fafc;
+  --color-dark-primary-foreground: #0f172a;
+  --color-dark-muted: #1e293b;
+  --color-dark-muted-foreground: #94a3b8;
+  --color-dark-border: #334155;
+  --color-dark-input: #334155;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@font-face {
+  font-family: 'Minecraftia';
+  src: url('../assets/fonts/Minecraftia-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
