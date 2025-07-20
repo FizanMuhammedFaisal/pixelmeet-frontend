@@ -1,13 +1,13 @@
-import { LoginForm } from '@/components/layout/auth/LoginForm'
+import { SignUpForm } from '@/components/layout/auth/SignupForm'
 
-function LoginPage() {
+function SignUpPage() {
   return (
     <div className='flex min-h-svh w-full items-center justify-center p-6 md:p-10'>
       <div className='w-full max-w-sm'>
-        <LoginForm />
+        <SignUpForm />
       </div>
     </div>
   )
 }
 
-export default LoginPage
+export default SignUpPage

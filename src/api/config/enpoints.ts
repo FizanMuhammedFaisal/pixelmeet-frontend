@@ -1,5 +1,5 @@
 const baseAuth = '/api/user'
-export const API_ENPOINTS = {
+export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: `${baseAuth}/auth/login`,
     REGISTER: `${baseAuth}/auth/register`,

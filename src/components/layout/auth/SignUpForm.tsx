@@ -6,39 +6,55 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { loginSchema, type LoginCredentials } from '@/schema/auth'
+import {
+  signUpSchema,
+  type SignUpCredentials,
+  type ZodErrorResponse
+} from '@/schema'
 import { authService } from '@/api/services'
+import type { AxiosError } from 'axios'
+import { toast } from 'sonner'
+import { Link } from 'react-router'
 
-type FormFields = LoginCredentials
-export function LoginForm({
+type FormFields = SignUpCredentials
+export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    setError,
+    reset,
+    formState: { errors, isSubmitting }
   } = useForm<FormFields>({
-    resolver: zodResolver(loginSchema)
+    resolver: zodResolver(signUpSchema)
   })
-  const onSubmit: SubmitHandler<FormFields> = async data => {
+  const submit: SubmitHandler<FormFields> = async data => {
     mutation.mutate(data)
+    reset()
   }
 
   const mutation = useMutation({
-    mutationFn: authService.login,
+    mutationFn: authService.signUp,
     onSuccess: data => {
-      console.log('Logged in!', data)
-      // navigate to dashboard or save token, etc.
+      toast.success('Signed Up')
     },
     onError: error => {
-      console.error('Login error:', error)
-      // Optional: show toast or set form errors manually
+      console.log(error)
+      const axiosError = error as AxiosError<ZodErrorResponse>
+      const firstDetail = axiosError.response?.data?.details?.[0]?.message
+      const fallback =
+        axiosError.response?.data?.message || 'Something went wrong'
+
+      setError('root', {
+        message: firstDetail || fallback
+      })
     }
   })
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(submit)}>
         <div className='flex flex-col gap-6'>
           <div className='flex flex-col items-center gap-2'>
             <a
@@ -52,13 +68,33 @@ export function LoginForm({
             </a>
             <h1 className='text-xl font-bold'>Welcome to Pixel Meet.</h1>
             <div className='text-center text-sm'>
-              Don&apos;t have an account?{' '}
-              <a href='#' className='underline underline-offset-4'>
-                Sign up
-              </a>
+              already have an account?{' '}
+              <Link to={'/login'} className='underline underline-offset-4'>
+                Login
+              </Link>
             </div>
           </div>
           <div className='flex flex-col gap-4'>
+            {errors.root && (
+              <div className='text-red-500 text-sm'>{errors.root.message}</div>
+            )}
+
+            <div className='grid gap-2'>
+              <Label htmlFor='name'>Name</Label>
+              <Input
+                {...register('username', {
+                  required: 'Name is required'
+                })}
+                id='username'
+                type='text'
+                placeholder='me'
+              />
+              {errors.username && (
+                <div className='text-red-500 text-sm'>
+                  {errors.username.message}
+                </div>
+              )}
+            </div>
             <div className='grid gap-2'>
               <Label htmlFor='email'>Email</Label>
               <Input
@@ -89,8 +125,12 @@ export function LoginForm({
                 </div>
               )}
             </div>
-            <Button type='submit' className='w-full'>
-              Login
+            <Button
+              type='submit'
+              disabled={isSubmitting}
+              className='w-full cursor-pointer'
+            >
+              Sign Up
             </Button>
           </div>
           <div className='after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t'>
