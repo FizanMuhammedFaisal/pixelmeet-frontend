@@ -40,10 +40,12 @@ export function NavMain({
       <SidebarMenu>
         {items.map(item => {
           const isActive = item.url === pathname
-          const classnamebutton = isActive
-            ? 'hover:bg-primary/10  hover:dark:bg-primary/70   '
-            : ''
+          const classnamebutton = `hover:bg-primary/10 hover:dark:bg-primary/70 ${
+            isActive ? 'bg-primary/10 dark:bg-primary/70' : ''
+          }`
+
           return (
+            //if ther are list thent his
             <div key={item.title}>
               {item.items ? (
                 <Collapsible
@@ -55,7 +57,7 @@ export function NavMain({
                     {isActive && (
                       <motion.div
                         layoutId='nav-background'
-                        className='absolute inset-0 bg-primary/50 dark:bg-primary/70 text-zinc-100 rounded-md'
+                        className='absolute inset-0 bg-primary/40 dark:bg-primary/70 text-zinc-100  rounded-md'
                         transition={{
                           type: 'spring',
                           stiffness: 400,
@@ -65,7 +67,7 @@ export function NavMain({
                     )}
                     <CollapsibleTrigger asChild>
                       <MotionSidebarMenuButton
-                        className={` ${classnamebutton}cursor-pointer relative z-10`}
+                        className={` ${classnamebutton} cursor-pointer relative z-10`}
                         tooltip={item.title}
                       >
                         {item.icon && <item.icon />}
@@ -85,7 +87,7 @@ export function NavMain({
                               {isSubActive && (
                                 <motion.div
                                   layoutId='nav-background'
-                                  className='absolute inset-0 bg-primary/50 dark:bg-primary/70 text-zinc-100  rounded-md'
+                                  className='absolute inset-0 bg-primary/40 dark:bg-primary/70 text-zinc-100  rounded-md'
                                   transition={{
                                     type: 'spring',
                                     stiffness: 400,
@@ -94,7 +96,7 @@ export function NavMain({
                                 />
                               )}
                               <MotionSidebarMenuButton
-                                className={` ${classnamebutton}cursor-pointer relative z-10`}
+                                className={`cursor-pointer  relative z-10 ${classnamebutton}`}
                                 asChild
                               >
                                 <Link to={subItem.url}>
@@ -113,7 +115,7 @@ export function NavMain({
                   {isActive && (
                     <motion.div
                       layoutId='nav-background'
-                      className='absolute inset-0 bg-primary/50 dark:bg-primary/70 text-zinc-100  rounded-md'
+                      className='absolute inset-0 bg-primary/40 dark:bg-primary/70 text-zinc-100  rounded-md'
                       transition={{
                         type: 'spring',
                         stiffness: 400,

@@ -1,26 +1,11 @@
-import {
-  Folder,
-  Forward,
-  MoreHorizontal,
-  Trash2,
-  type LucideIcon
-} from 'lucide-react'
+import { MoreHorizontal, type LucideIcon } from 'lucide-react'
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar
+  SidebarMenuItem
 } from '@/components/ui/sidebar'
 import { Link, useLocation } from 'react-router'
 import { motion } from 'motion/react'
@@ -34,71 +19,47 @@ export function NavDesigning({
     icon: LucideIcon
   }[]
 }) {
-  const { isMobile } = useSidebar()
   const pathname = useLocation().pathname
   const MotionSidebarMenuButton = motion(SidebarMenuButton)
+
   return (
     <SidebarGroup className='group-data-[collapsible=icon]:hidden'>
       <SidebarGroupLabel>Designing</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map(item => {
           const isActive = item.url === pathname
-          const classnamebutton = isActive
+          const classnamebutton = `hover:bg-primary/10 hover:dark:bg-primary/70 ${
+            isActive ? 'bg-primary/10 dark:bg-primary/70' : ''
+          }`
+
           return (
-            <SidebarMenuItem key={item.name}>
-              <SidebarMenuButton asChild>
-                <Link to={item.url}>
-                  <MotionSidebarMenuButton
-                    className={`cursor-pointer  relative z-10 ${classnamebutton}`}
-                  >
-                    {item.icon && <item.icon />}
-                    <span>{item.name}</span>
-                  </MotionSidebarMenuButton>
-                  {isActive && (
-                    <motion.div
-                      layoutId='nav-background'
-                      className='absolute inset-0 bg-primary/50 dark:bg-primary/70 text-zinc-100  rounded-md'
-                      transition={{
-                        type: 'spring',
-                        stiffness: 400,
-                        damping: 30
-                      }}
-                    />
-                  )}
-                </Link>
-              </SidebarMenuButton>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuAction showOnHover>
-                    <MoreHorizontal />
-                    <span className='sr-only'>More</span>
-                  </SidebarMenuAction>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className='w-48 rounded-lg'
-                  side={isMobile ? 'bottom' : 'right'}
-                  align={isMobile ? 'end' : 'start'}
+            <SidebarMenuItem key={item.name} className='relative'>
+              {isActive && (
+                <motion.div
+                  layoutId='nav-background'
+                  className='absolute inset-0 bg-primary/40 dark:bg-primary/70 rounded-md'
+                  transition={{
+                    type: 'spring',
+                    stiffness: 400,
+                    damping: 30
+                  }}
+                />
+              )}
+              <Link to={item.url}>
+                <MotionSidebarMenuButton
+                  className={`relative z-10 flex items-center gap-2 px-2 py-1.5 w-full rounded-md ${classnamebutton}`}
+                  tooltip={item.name}
                 >
-                  <DropdownMenuItem>
-                    <Folder className='text-muted-foreground' />
-                    <span>View Project</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Forward className='text-muted-foreground' />
-                    <span>Share Project</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Trash2 className='text-muted-foreground' />
-                    <span>Delete Project</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  <item.icon className='w-4 h-4 shrink-0' />
+                  <span>{item.name}</span>
+                </MotionSidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
           )
         })}
+
         <SidebarMenuItem>
-          <SidebarMenuButton className='text-sidebar-foreground/70'>
+          <SidebarMenuButton className='text-sidebar-foreground/70 hover:bg-primary/10 hover:dark:bg-primary/70'>
             <MoreHorizontal className='text-sidebar-foreground/70' />
             <span>More</span>
           </SidebarMenuButton>

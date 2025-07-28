@@ -1,5 +1,5 @@
 import { AppSidebar } from '@/components/app-sidebar'
-import { DashboardBreadcrumb } from '@/components/layout/common/Breadcrumb'
+import { DashboardBreadcrumb } from '@/shared/layout/common/Breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import {
   SidebarInset,

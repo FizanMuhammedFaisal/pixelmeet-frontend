@@ -1,7 +1,7 @@
-import { Navigation } from '@/components/layout/home/Navigation'
-import { Hero } from '@/components/layout/home/Hero'
-import { Features } from '@/components/layout/home/Features'
-import { Footer } from '@/components/layout/home/Footer'
+import { Navigation } from '@/shared/layout/home/Navigation'
+import { Hero } from '@/shared/layout/home/Hero'
+import { Features } from '@/shared/layout/home/Features'
+import { Footer } from '@/shared/layout/home/Footer'
 
 const HomePage = () => {
   return (

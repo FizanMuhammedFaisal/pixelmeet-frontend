@@ -334,11 +334,24 @@
 
 @font-face {
   font-family: 'Minecraftia';
-  src: url('../assets/fonts/Minecraftia-Regular.ttf') format('truetype');
+  src: url('/fonts/Minecraftia-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
 @theme inline {
   --font-Minecraftia: 'Minecraftia', 'sans-serif';
+}
+.hero {
+  background-image: url('/background1.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+.pixel-text-outline {
+  color: black;
+  text-shadow: -4px -4px 0 white, 4px -4px 0 white, -4px 4px 0 white,
+    4px 4px 0 white;
 }
