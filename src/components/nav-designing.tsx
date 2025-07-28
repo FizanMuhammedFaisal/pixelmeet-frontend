@@ -20,7 +20,7 @@ export function NavDesigning({
   }[]
 }) {
   const pathname = useLocation().pathname
-  const MotionSidebarMenuButton = motion(SidebarMenuButton)
+  const MotionSidebarMenuButton = motion.create(SidebarMenuButton)
 
   return (
     <SidebarGroup className='group-data-[collapsible=icon]:hidden'>

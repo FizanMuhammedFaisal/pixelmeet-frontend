@@ -32,11 +32,10 @@ export function NavMain({
   }[]
 }) {
   const pathname = useLocation().pathname
-  const MotionSidebarMenuButton = motion(SidebarMenuButton)
+  const MotionSidebarMenuButton = motion.create(SidebarMenuButton)
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Organisation name</SidebarGroupLabel>
       <SidebarMenu>
         {items.map(item => {
           const isActive = item.url === pathname

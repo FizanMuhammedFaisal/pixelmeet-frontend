@@ -1,19 +1,13 @@
 import * as React from 'react'
 import {
   AudioWaveform,
-  BookOpen,
-  Bot,
   Command,
   FolderArchive,
   Frame,
   GalleryVerticalEnd,
   HomeIcon,
-  Map,
   MapIcon,
-  PieChart,
   Settings,
-  Settings2,
-  SquareTerminal,
   Users,
   Users2
 } from 'lucide-react'
@@ -31,7 +25,7 @@ import {
 import { NavMain } from '@/components/nav-main'
 import { NavDesigning } from '@/components/nav-designing'
 import { NavUser } from '@/components/nav-user'
-import { TeamSwitcher } from '@/components/team-switcher'
+
 import {
   Sidebar,
   SidebarContent,
@@ -39,6 +33,8 @@ import {
   SidebarHeader,
   SidebarRail
 } from '@/components/ui/sidebar'
+import SidebarNavbar from './team-switcher'
+import { motion } from 'motion/react'
 
 // This is sample data.
 const data = {
@@ -131,12 +127,12 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible='icon' {...props}>
-      <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
-      </SidebarHeader>
+      <SidebarNavbar />
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavDesigning projects={data.projects} />
+        <motion.div>
+          <NavMain items={data.navMain} />
+          <NavDesigning projects={data.projects} />
+        </motion.div>
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
