@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/sidebar'
 import { Outlet } from 'react-router'
 import { ThemeToggleButton } from './ThemeButton'
+import { OfflineIndicator } from './OfflineIndicator'
 
 export default function DashboardLayout() {
   return (
@@ -22,6 +23,9 @@ export default function DashboardLayout() {
               className='mr-2 data-[orientation=vertical]:h-4'
             />
             <DashboardBreadcrumb />
+            <div className='ml-10'>
+              <OfflineIndicator />
+            </div>
           </div>
           <div className='px-4'>
             <ThemeToggleButton />

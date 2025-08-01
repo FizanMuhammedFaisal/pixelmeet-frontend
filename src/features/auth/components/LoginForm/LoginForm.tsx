@@ -1,10 +1,10 @@
 import { GalleryVerticalEnd } from 'lucide-react'
 import { useForm, type FieldErrors, type SubmitHandler } from 'react-hook-form'
-import { cn } from '@/shared/lib/utils'
+import { cn, GlobalMutationError } from '@/shared/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { type ZodErrorResponse } from '@/shared/schema'
-import type { AxiosError } from 'axios'
+import type { Axios, AxiosError } from 'axios'
 import { toast } from 'sonner'
 import { Link } from 'react-router'
 import GoogleLoginButton from '../GoogleLoginButton/GoogleLoginButton'
@@ -17,6 +17,7 @@ import useGoogle from '../../hooks/useGoogle'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import type { ErrorResponse } from '../../../../shared/types'
 
 type FormFields = LoginCredentials
 type LoginFormFormProps = {
@@ -56,13 +57,13 @@ export function LoginForm({
       toast('Logged In')
       reset()
     },
-    onError: error => {
+    onError: (error, variables, context) => {
       console.log(error)
       const axiosError = error as AxiosError<ZodErrorResponse>
       const firstDetail = axiosError.response?.data?.details?.[0]?.message
       const fallback =
         axiosError.response?.data?.message || 'Something went wrong'
-
+      GlobalMutationError(axiosError)
       setError('root', {
         message: firstDetail || fallback
       })
@@ -81,8 +82,8 @@ export function LoginForm({
       toast.success('Logged In')
     } catch (error) {
       console.log(error)
-      const axiosError = error as AxiosError<ZodErrorResponse>
-      const firstDetail = axiosError.response?.data?.details?.[0]?.message
+      const axiosError = error as AxiosError<ErrorResponse>
+      const firstDetail = axiosError.response?.data?.issues?.[0]?.message
       const fallback =
         axiosError.response?.data?.message || 'Something went wrong Try Again'
 

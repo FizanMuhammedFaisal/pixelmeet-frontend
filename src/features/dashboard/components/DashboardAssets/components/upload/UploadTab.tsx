@@ -1,0 +1,199 @@
+import { useState, useCallback, useMemo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { toast } from 'sonner'
+import { DragAndDropArea } from './AssetUploadZone'
+import { FileUploadCard, type FileType } from './FileUploadCard'
+import { useUploadTabStore } from '../../../../../../app/store/uploadTab.store'
+import {
+  hasValidMetadata,
+  type AudioMetadata,
+  type ImageMetadata,
+  type SpriteSheetMetadata,
+  type UploadFile
+} from '../../../../types/uploadTab'
+import { useGetPresignedURL } from '../../../../hooks/useGetPresignedURL'
+import { useUploadAsset } from '../../../../hooks/useUploadAsset'
+import { useCreateAsset } from '../../../../hooks'
+
+export default function UploadTab() {
+  const getPresignedURLMutation = useGetPresignedURL()
+  const uploadAssetMutation = useUploadAsset()
+  const createAssetMutation = useCreateAsset()
+
+  const { files, addFile, updateFile, removeFile } = useUploadTabStore()
+  const [isUploadingAll, setIsUploadingAll] = useState(false)
+
+  const handleFilesAdded = useCallback(
+    (newFiles: File[]) => {
+      newFiles.forEach(file => {
+        addFile(file)
+      })
+    },
+    [addFile]
+  )
+  console.log(files)
+  const handleUpload = useCallback(
+    async (fileToUpload: UploadFile) => {
+      if (
+        fileToUpload.uploadStatus === 'uploading' ||
+        fileToUpload.uploadStatus === 'uploaded'
+      ) {
+        return //prevent reuplaoding
+      }
+
+      updateFile(fileToUpload.id, {
+        uploadStatus: 'uploading',
+        error: undefined
+      })
+
+      try {
+        const res = await getPresignedURLMutation.mutateAsync({
+          fileName: fileToUpload.name,
+          type: fileToUpload.type
+        })
+        if (!res.data) {
+          return toast.error(
+            `Upload for ${fileToUpload.name} failed, Try again`
+          )
+        }
+        updateFile(fileToUpload.id, { urlKey: res.data.assetKey })
+        const assetRes = await uploadAssetMutation.mutateAsync({
+          contentType: res.data.mimeType,
+          file: fileToUpload.file,
+          url: res.data.url
+        })
+        if (assetRes.status === 200) {
+          toast.success(`Asset ${fileToUpload.name} uploaded `)
+        } else {
+          return toast.error(
+            `Upload for ${fileToUpload.name} failed, Try again`
+          )
+        }
+        if (hasValidMetadata(fileToUpload)) {
+          let metadata: any
+
+          if (fileToUpload.type === 'image') {
+            metadata = fileToUpload.metadata as ImageMetadata
+          } else if (fileToUpload.type === 'audio') {
+            metadata = fileToUpload.metadata as AudioMetadata
+          } else if (fileToUpload.type === 'spritesheet') {
+            metadata = fileToUpload.metadata as SpriteSheetMetadata
+          }
+
+          await createAssetMutation.mutate(
+            {
+              urlKey: fileToUpload.urlKey as string,
+              name: fileToUpload.name,
+              type: fileToUpload.type as FileType,
+              metadata,
+              size: fileToUpload.size
+            },
+            {
+              onSuccess: () => {
+                toast.success(`Asset ${fileToUpload.name} uploaded `)
+                removeFile(fileToUpload.id)
+              }
+            }
+          )
+        }
+      } catch (error: any) {
+        console.error('Upload failed:', error)
+        updateFile(fileToUpload.id, {
+          uploadStatus: 'failed',
+          error: error.message || 'Upload failed'
+        })
+        toast.error(
+          `Failed to upload "${fileToUpload.file.name}": ${
+            error.message || 'Unknown error'
+          }`
+        )
+      }
+    },
+    [updateFile]
+  )
+
+  const handleUploadAll = useCallback(async () => {
+    setIsUploadingAll(true)
+    for (const file of files) {
+      // Only upload pending or failed files
+      if (file.uploadStatus === 'pending' || file.uploadStatus === 'failed') {
+        await handleUpload(file)
+      }
+    }
+    setIsUploadingAll(false)
+  }, [files, handleUpload])
+
+  const canUploadAll = useMemo(() => {
+    return (
+      files.length > 0 &&
+      files.every((file: UploadFile) => {
+        // Basic validation: check if type is selected and metadata is not empty for required fields
+        if (!file.type) return false
+        if (
+          file.type === 'aseprite' &&
+          (!file.metadata.textureURL || !file.metadata.textureURL)
+        )
+          return false
+        if (file.type === 'audio' && !file.metadata.url) return false
+        return file.uploadStatus === 'pending' || file.uploadStatus === 'failed'
+      })
+    )
+  }, [files])
+
+  return (
+    <div className='container mx-auto p-4 max-w-4xl'>
+      <Card className='mb-6'>
+        <CardHeader>
+          <CardTitle>Upload Game Assets</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DragAndDropArea onFilesAdded={handleFilesAdded} />
+          <div className='mt-6 flex justify-end gap-2'>
+            <Button
+              onClick={handleUploadAll}
+              disabled={!canUploadAll || isUploadingAll}
+            >
+              {isUploadingAll ? 'Uploading All...' : 'Upload All'}
+            </Button>
+            {/* <Button
+              variant='outline'
+              onClick={clearAllFiles}
+              disabled={files.length === 0 || isUploadingAll}
+            >
+              Clear All
+            </Button> */}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className='space-y-4 max-h-[60vh] overflow-y-auto pr-2'>
+        <AnimatePresence initial={false}>
+          {files.map(file => (
+            <motion.div
+              key={file.id}
+              layout
+              initial={{ opacity: 0, y: 50, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, x: -100, transition: { duration: 0.2 } }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            >
+              <FileUploadCard
+                file={file}
+                onRemove={() => removeFile(file.id)}
+                onUpload={() => handleUpload(file)}
+                onUpdate={updatedFields => updateFile(file.id, updatedFields)}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+        {files.length === 0 && (
+          <p className='text-center text-muted-foreground py-8'>
+            No files added yet. Drag and drop or click to add files.
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}

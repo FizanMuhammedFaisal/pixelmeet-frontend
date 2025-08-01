@@ -33,7 +33,7 @@ import {
   SidebarHeader,
   SidebarRail
 } from '@/components/ui/sidebar'
-import SidebarNavbar from './team-switcher'
+import SidebarNavbar from './dashboard-logo'
 import { motion } from 'motion/react'
 
 // This is sample data.

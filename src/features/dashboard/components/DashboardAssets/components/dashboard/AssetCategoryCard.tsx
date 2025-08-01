@@ -7,6 +7,14 @@ import {
 import { Badge } from '@/components/ui/badge'
 
 import { Grid3X3, User, UserCircle, ImageIcon, Volume2 } from 'lucide-react'
+
+const iconMap = {
+  Grid3X3: Grid3X3,
+  User: User,
+  UserCircle: UserCircle,
+  Image: ImageIcon, // Alias ImageIcon to Image to avoid conflict with Next.js Image
+  Volume2: Volume2
+}
 export interface AssetCategory {
   id: string
   name: string
@@ -15,33 +23,21 @@ export interface AssetCategory {
   count: number
 }
 
-const iconMap = {
-  Grid3X3: Grid3X3,
-  User: User,
-  UserCircle: UserCircle,
-  Image: ImageIcon,
-  Volume2: Volume2
-}
-
 interface AssetCategoryCardProps {
   category: AssetCategory
-  isSelected: boolean
   onClick: () => void
 }
 
 export function AssetCategoryCard({
   category,
-  isSelected,
   onClick
 }: AssetCategoryCardProps) {
   const IconComponent =
-    iconMap[category.icon as keyof typeof iconMap] || Grid3X3
+    iconMap[category.icon as keyof typeof iconMap] || Grid3X3 // Fallback to Grid3X3
 
   return (
     <Card
-      className={`cursor-pointer transition-all hover:shadow-md ${
-        isSelected ? 'ring-2 ring-primary' : ''
-      }`}
+      className='min-w-[200px] cursor-pointer transition-all hover:shadow-md'
       onClick={onClick}
     >
       <CardHeader className='pb-3'>

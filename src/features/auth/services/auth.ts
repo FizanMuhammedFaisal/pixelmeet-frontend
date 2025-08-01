@@ -10,7 +10,7 @@ import type {
 } from '../schema'
 
 import useAuthStore from '@/app/store/auth.store'
-import '@/api/config/interceptors'
+
 import { apiClient, apiClientPublic } from '@/api/config/axios'
 import { API_ENDPOINTS } from '@/api/config/enpoints'
 

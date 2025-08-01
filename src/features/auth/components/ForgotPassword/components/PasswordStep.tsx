@@ -2,17 +2,18 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authService } from '@/features/auth/services'
-import { ResetPasswordSchema } from '@/features/dashboard'
+
 import type { ZodErrorResponse } from '@/shared/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
-import { ArrowLeft, Eye, EyeOff, Lock, RefreshCw } from 'lucide-react'
+import { Eye, EyeOff, Lock, RefreshCw } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import type z from 'zod'
 import type { ForgotPasswordComponentSteps } from '../ResetPasswordForm'
+import { ResetPasswordSchema } from '../../../schema'
 type props = {
   resetToken: string
   setError: (error: string) => void

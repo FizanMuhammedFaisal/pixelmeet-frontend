@@ -16,6 +16,7 @@ export function SidebarNavbar() {
       >
         <motion.div
           className={`flex items-center py-2 px-4  bg-background`}
+          initial={{ paddingLeft: '1rem', paddingRight: '1rem' }}
           animate={{
             paddingLeft: isCollapsed ? '0.2rem' : '1rem',
             paddingRight: isCollapsed ? '0.2rem' : '1rem'
@@ -35,6 +36,7 @@ export function SidebarNavbar() {
 
           <motion.div
             className='ml-3 overflow-hidden'
+            initial={{ marginLeft: '0.75rem', width: 0 }}
             animate={{
               width: isCollapsed ? 0 : 'auto',
               marginLeft: isCollapsed ? 0 : '0.75rem'
@@ -58,10 +60,10 @@ export function SidebarNavbar() {
 
         {/* Search Section */}
         <motion.div
-          className='border-t overflow-hidden'
+          className='border-t overflow-hidden '
           initial={{ opacity: 0 }}
           animate={{
-            height: isCollapsed ? 0 : '50px',
+            height: isCollapsed ? 0 : '52px',
             paddingTop: isCollapsed ? 0 : '0.75rem',
             paddingBottom: isCollapsed ? 0 : '0.75rem',
             opacity: 1

@@ -1,4 +1,5 @@
 const baseAuth = '/api/user'
+const baseAsset = '/api/asset/v1'
 export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: `${baseAuth}/auth/login`,
@@ -11,5 +12,9 @@ export const API_ENDPOINTS = {
     PASSWORD_RESET_TOKEN_SEND: `${baseAuth}/auth/forgot-password`,
     VERIFY_RESET_TOKEN: `${baseAuth}/auth/verify-token`,
     RESET_PASSWORD: `${baseAuth}/auth/reset-password`
+  },
+  ASSET: {
+    GET_PRESINGED_URL: `${baseAsset}/assets/upload-url`,
+    CREATE_ASSET: `${baseAsset}/assets/`
   }
 }

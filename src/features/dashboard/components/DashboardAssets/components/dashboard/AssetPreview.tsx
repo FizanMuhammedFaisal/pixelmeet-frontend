@@ -1,7 +1,17 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Heart, Download, Edit, Copy, Play, Volume2 } from 'lucide-react'
+import {
+  Heart,
+  Download,
+  Edit,
+  Copy,
+  Play,
+  Volume2,
+  Trash2,
+  Undo2
+} from 'lucide-react'
+
 export interface Asset {
   id: string
   name: string
@@ -27,9 +37,16 @@ export interface AssetCategory {
 interface AssetPreviewProps {
   asset: Asset
   onToggleFavorite: (id: string) => void
+  onDelete: (id: string) => void
+  onRestore: (id: string) => void
 }
 
-export function AssetPreview({ asset, onToggleFavorite }: AssetPreviewProps) {
+export function AssetPreview({
+  asset,
+  onToggleFavorite,
+  onDelete,
+  onRestore
+}: AssetPreviewProps) {
   const renderPreview = () => {
     switch (asset.type) {
       case 'sound':
@@ -52,7 +69,7 @@ export function AssetPreview({ asset, onToggleFavorite }: AssetPreviewProps) {
   }
 
   return (
-    <Card className='group hover:shadow-md transition-all'>
+    <Card className='group relative hover:shadow-md transition-all overflow-hidden'>
       <CardContent className='p-4'>
         {renderPreview()}
 
@@ -61,18 +78,20 @@ export function AssetPreview({ asset, onToggleFavorite }: AssetPreviewProps) {
             <h3 className='font-medium text-sm truncate flex-1'>
               {asset.name}
             </h3>
-            <Button
-              variant='ghost'
-              size='sm'
-              className='h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity'
-              onClick={() => onToggleFavorite(asset.id)}
-            >
-              <Heart
-                className={`h-3 w-3 ${
-                  asset.isFavorite ? 'fill-red-500 text-red-500' : ''
-                }`}
-              />
-            </Button>
+            {asset.status === 'active' && (
+              <Button
+                variant='ghost'
+                size='sm'
+                className='h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity'
+                onClick={() => onToggleFavorite(asset.id)}
+              >
+                <Heart
+                  className={`h-3 w-3 ${
+                    asset.isFavorite ? 'fill-red-500 text-red-500' : ''
+                  }`}
+                />
+              </Button>
+            )}
           </div>
 
           <div className='flex items-center justify-between text-xs text-muted-foreground'>
@@ -94,15 +113,37 @@ export function AssetPreview({ asset, onToggleFavorite }: AssetPreviewProps) {
                 <Play className='h-3 w-3' />
               </Button>
             )}
-            <Button variant='ghost' size='sm' className='h-6 px-2'>
-              <Edit className='h-3 w-3' />
-            </Button>
-            <Button variant='ghost' size='sm' className='h-6 px-2'>
-              <Download className='h-3 w-3' />
-            </Button>
-            <Button variant='ghost' size='sm' className='h-6 px-2'>
-              <Copy className='h-3 w-3' />
-            </Button>
+            {asset.status === 'active' ? (
+              <>
+                <Button variant='ghost' size='sm' className='h-6 px-2'>
+                  <Edit className='h-3 w-3' />
+                </Button>
+                <Button variant='ghost' size='sm' className='h-6 px-2'>
+                  <Download className='h-3 w-3' />
+                </Button>
+                <Button variant='ghost' size='sm' className='h-6 px-2'>
+                  <Copy className='h-3 w-3' />
+                </Button>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  className='h-6 px-2 text-red-500'
+                  onClick={() => onDelete(asset.id)}
+                >
+                  <Trash2 className='h-3 w-3' />
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant='ghost'
+                size='sm'
+                className='h-6 px-2 text-green-500'
+                onClick={() => onRestore(asset.id)}
+              >
+                <Undo2 className='h-3 w-3' />
+                <span className='sr-only'>Restore</span>
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>

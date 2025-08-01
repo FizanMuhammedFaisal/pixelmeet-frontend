@@ -27,7 +27,9 @@ interface AssetStatsProps {
 }
 
 export function AssetStats({ assets }: AssetStatsProps) {
-  const totalSize = assets.reduce((acc, asset) => {
+  const activeAssets = assets.filter(asset => asset.status === 'active')
+
+  const totalSize = activeAssets.reduce((acc, asset) => {
     const size = Number.parseFloat(asset.fileSize.split(' ')[0])
     const unit = asset.fileSize.split(' ')[1]
     const sizeInKB = unit === 'MB' ? size * 1024 : size
@@ -41,20 +43,20 @@ export function AssetStats({ assets }: AssetStatsProps) {
     return `${sizeInKB.toFixed(0)} KB`
   }
 
-  const favoriteCount = assets.filter(asset => asset.isFavorite).length
-  const totalUsage = assets.reduce(
+  const favoriteCount = activeAssets.filter(asset => asset.isFavorite).length
+  const totalUsage = activeAssets.reduce(
     (acc, asset) => acc + (asset.usageCount || 0),
     0
   )
 
   return (
-    <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
+    <div className='grid grid-cols-1 md:grid-cols-4 gap-4 overflow-hidden'>
       <Card>
         <CardHeader className='pb-2'>
           <CardTitle className='text-sm font-medium'>Total Assets</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className='text-2xl font-bold'>{assets.length}</div>
+          <div className='text-2xl font-bold'>{activeAssets.length}</div>
         </CardContent>
       </Card>
 

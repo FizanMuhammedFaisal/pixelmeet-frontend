@@ -1,0 +1,17 @@
+import { useMutation } from '@tanstack/react-query'
+
+import { uploadService } from '../services'
+
+import type { UploadToAssetStorePaylod } from '../schema/uploadTab.schema'
+import type { AxiosError, AxiosResponse } from 'axios'
+import type { ErrorResponse } from '../../../shared/types'
+
+export const useUploadAsset = () => {
+  return useMutation<
+    AxiosResponse,
+    AxiosError<ErrorResponse>,
+    UploadToAssetStorePaylod
+  >({
+    mutationFn: uploadService.uploadToAssetStore
+  })
+}
