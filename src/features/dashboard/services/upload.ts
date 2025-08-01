@@ -12,6 +12,7 @@ export const uploadService = {
       API_ENDPOINTS.ASSET.GET_PRESINGED_URL,
       credentials
     )
+    console.log(res)
     return res.data
   },
   uploadToAssetStore: async (credentials: UploadToAssetStorePaylod) => {

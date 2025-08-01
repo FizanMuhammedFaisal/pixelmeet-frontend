@@ -10,13 +10,11 @@ import {
 } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Progress } from '@/components/ui/progress'
+
 import { Badge } from '@/components/ui/badge'
 
 import {
   X,
-  Upload,
   Loader2,
   CheckCircle,
   AlertCircle,
@@ -50,7 +48,7 @@ export function FileUploadCard({
     type,
     metadata,
     uploadStatus,
-
+    description,
     error
   } = file
   const formatBytes = (bytes: number) => {
@@ -193,8 +191,8 @@ export function FileUploadCard({
               <Label htmlFor={`asset-name-${id}`}>Asset Name</Label>
               <Input
                 id={`asset-name-${id}`}
-                value={metadata?.url || ''}
-                onChange={e => handleMetadataChange('name', e.target.value)}
+                value={name || ''}
+                onChange={e => onUpdate({ name: e.target.value })}
                 placeholder='e.g., Forest Tileset'
               />
             </div>
@@ -202,10 +200,8 @@ export function FileUploadCard({
               <Label htmlFor={`description-${id}`}>Description</Label>
               <Input
                 id={`description-${id}`}
-                value={metadata?.url || ''}
-                onChange={e =>
-                  handleMetadataChange('description', e.target.value)
-                }
+                value={description || ''}
+                onChange={e => onUpdate({ description: e.target.value })}
                 placeholder='Optional description'
               />
             </div>

@@ -22,6 +22,7 @@ type BaseUploadFile = {
   id: string
   name: string
   file: File
+  description?: string
   urlKey: string | null
   type: AssetType
   size: number

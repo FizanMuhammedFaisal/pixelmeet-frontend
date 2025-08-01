@@ -1,6 +1,9 @@
 import { create } from 'zustand'
 import type {
   AssetType,
+  AudioMetadata,
+  ImageMetadata,
+  SpriteSheetMetadata,
   UploadFile
 } from '../../features/dashboard/types/uploadTab'
 
@@ -55,7 +58,39 @@ export const useUploadTabStore = create<UploadState>()((set, get) => ({
   },
   updateFile(id, updates) {
     set(state => ({
-      files: state.files.map(f => (f.id === id ? { ...f, ...updates } : f))
+      files: state.files.map(f => {
+        if (f.id !== id) return f
+
+        if (f.type === 'image') {
+          return {
+            ...f,
+            ...updates,
+            type: 'image',
+            metadata: (updates.metadata ?? f.metadata) as ImageMetadata | null
+          }
+        }
+
+        if (f.type === 'audio') {
+          return {
+            ...f,
+            ...updates,
+            type: 'audio',
+            metadata: (updates.metadata ?? f.metadata) as AudioMetadata | null
+          }
+        }
+
+        if (f.type === 'spritesheet') {
+          return {
+            ...f,
+            ...updates,
+            type: 'spritesheet',
+            metadata: (updates.metadata ??
+              f.metadata) as SpriteSheetMetadata | null
+          }
+        }
+
+        return f
+      })
     }))
   },
   removeFile(id) {

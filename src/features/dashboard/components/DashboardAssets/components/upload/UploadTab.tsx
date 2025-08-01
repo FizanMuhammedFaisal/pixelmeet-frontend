@@ -59,6 +59,7 @@ export default function UploadTab() {
           )
         }
         updateFile(fileToUpload.id, { urlKey: res.data.assetKey })
+        console.log(res.data)
         const assetRes = await uploadAssetMutation.mutateAsync({
           contentType: res.data.mimeType,
           file: fileToUpload.file,
