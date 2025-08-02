@@ -3,33 +3,18 @@ import type {
   AssetType,
   UploadFile
 } from '../../features/dashboard/types/upload/types'
-
-// import { get, set, del } from 'idb-keyval'
-
-// const idbStorage = {
-//   getItem: async (name: string) => (await get(name)) ?? null,
-//   setItem: async (name: string, value: any) => {
-//     await set(name, value)
-//   },
-//   removeItem: async (name: string) => {
-//     await del(name)
-//   }
-// }
-
-type UpdateFileFn = {
-  (id: string, updates: Partial<Extract<UploadFile, { type: 'image' }>>): void
-  (id: string, updates: Partial<Extract<UploadFile, { type: 'audio' }>>): void
-  (
-    id: string,
-    updates: Partial<Extract<UploadFile, { type: 'spritesheet' }>>
-  ): void
-}
+export type UpdateFileInput =
+  | Partial<Extract<UploadFile, { type: 'image' }>>
+  | Partial<Extract<UploadFile, { type: 'audio' }>>
+  | Partial<Extract<UploadFile, { type: 'spritesheet' }>>
+  | Partial<Extract<UploadFile, { type: 'tilemapTiledJSON' }>>
 
 interface UploadState {
   files: UploadFile[]
   addFile: (file: File) => void
-  updateFile: UpdateFileFn
+  updateFile: (id: string, updates: UpdateFileInput) => void
   removeFile: (id: string) => void
+  clearAllFiles: () => void
 }
 //need to fix teh logic
 const inferFileType = (file: File) => {
@@ -65,6 +50,7 @@ export const useUploadTabStore = create<UploadState>()((set, get) => ({
   },
 
   updateFile(id, updates) {
+    console.log(updates)
     set(state => ({
       files: state.files.map(f => {
         if (f.id !== id) return f
@@ -74,7 +60,7 @@ export const useUploadTabStore = create<UploadState>()((set, get) => ({
             ...f,
             ...updates,
             type: 'image',
-            metadata: updates.metadata ?? f.metadata
+            metadata: { ...f.metadata, ...updates.metadata }
           }
         }
 
@@ -83,7 +69,7 @@ export const useUploadTabStore = create<UploadState>()((set, get) => ({
             ...f,
             ...updates,
             type: 'audio',
-            metadata: updates.metadata ?? f.metadata
+            metadata: { ...f.metadata, ...updates.metadata }
           }
         }
 
@@ -92,7 +78,28 @@ export const useUploadTabStore = create<UploadState>()((set, get) => ({
             ...f,
             ...updates,
             type: 'spritesheet',
-            metadata: updates.metadata ?? f.metadata
+            metadata: {
+              ...f.metadata,
+              ...updates.metadata,
+              frameConfig: {
+                ...f.metadata?.frameConfig,
+                ...updates.metadata?.frameConfig
+              }
+            }
+          }
+        }
+        if (
+          f.type === 'tilemapTiledJSON' &&
+          updates.type === 'tilemapTiledJSON'
+        ) {
+          return {
+            ...f,
+            ...updates,
+            type: 'tilemapTiledJSON',
+            metadata: {
+              ...f.metadata,
+              ...updates.metadata
+            }
           }
         }
 
@@ -104,17 +111,8 @@ export const useUploadTabStore = create<UploadState>()((set, get) => ({
     set(state => ({
       files: state.files.filter(f => f.id !== id)
     }))
+  },
+  clearAllFiles() {
+    set({ files: [] })
   }
 }))
-
-//   name: 'asset-upload-state',
-//   storage: idbStorage
-//   //   partialize: state => ({
-//   //     files: state.files.map(file => ({
-//   //       fileName: file.name,
-//   //       fileSize: file.size,
-//   //       type: file.type,
-//   //       metadata: file.metadata,
-//   //       status: file.uploadStatus
-//   //     }))
-//   //   })

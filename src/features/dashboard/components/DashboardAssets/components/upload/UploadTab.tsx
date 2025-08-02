@@ -7,22 +7,24 @@ import { DragAndDropArea } from './AssetUploadZone'
 import { FileUploadCard } from './FileUploadCard'
 import { useUploadTabStore } from '../../../../../../app/store/uploadTab.store'
 import {
-  hasValidMetadata,
   type AudioMetadata,
   type ImageMetadata,
   type SpriteSheetMetadata,
   type UploadFile
 } from '../../../../types/upload/types'
+
 import { useGetPresignedURL } from '../../../../hooks/useGetPresignedURL'
 import { useUploadAsset } from '../../../../hooks/useUploadAsset'
 import { useCreateAsset } from '../../../../hooks'
+import { hasValidMetadata } from '../../../../types'
 
 export default function UploadTab() {
   const getPresignedURLMutation = useGetPresignedURL()
   const uploadAssetMutation = useUploadAsset()
   const createAssetMutation = useCreateAsset()
 
-  const { files, addFile, updateFile, removeFile } = useUploadTabStore()
+  const { files, addFile, updateFile, removeFile, clearAllFiles } =
+    useUploadTabStore()
 
   const [isUploadingAll, setIsUploadingAll] = useState(false)
 
@@ -133,11 +135,11 @@ export default function UploadTab() {
       files.every((file: UploadFile) => {
         // Basic validation: check if type is selected and metadata is not empty for required fields
         if (!file.type) return false
-        if (
-          file.type === 'aseprite' &&
-          (!file.metadata.textureURL || !file.metadata.textureURL)
-        )
-          return false
+        // if (
+        //   file.type === 'aseprite' &&
+        //   (!file.metadata.textureURL || !file.metadata.textureURL)
+        // )
+        //   return false
         if (file.type === 'audio' && !file.metadata.url) return false
         return file.uploadStatus === 'pending' || file.uploadStatus === 'failed'
       })
@@ -159,13 +161,13 @@ export default function UploadTab() {
             >
               {isUploadingAll ? 'Uploading All...' : 'Upload All'}
             </Button>
-            {/* <Button
+            <Button
               variant='outline'
               onClick={clearAllFiles}
               disabled={files.length === 0 || isUploadingAll}
             >
               Clear All
-            </Button> */}
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -185,7 +187,7 @@ export default function UploadTab() {
                 file={file}
                 onRemove={() => removeFile(file.id)}
                 onUpload={() => handleUpload(file)}
-                onUpdate={updatedFields => updateFile(file.id, updatedFields)}
+                updateFile={updateFile}
               />
             </motion.div>
           ))}
