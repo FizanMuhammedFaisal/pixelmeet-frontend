@@ -140,7 +140,7 @@ export default function UploadTab() {
         //   (!file.metadata.textureURL || !file.metadata.textureURL)
         // )
         //   return false
-        if (file.type === 'audio' && !file.metadata.url) return false
+        if (file.type === 'audio' && !file?.metadata?.url) return false
         return file.uploadStatus === 'pending' || file.uploadStatus === 'failed'
       })
     )

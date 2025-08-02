@@ -17,8 +17,30 @@ interface UploadState {
   clearAllFiles: () => void
 }
 //need to fix teh logic
-const inferFileType = (file: File) => {
-  return 'image'
+export function inferFileType(file: File): AssetType {
+  const { type, name } = file
+
+  if (type.startsWith('image/')) {
+    return 'image'
+  }
+
+  if (type.startsWith('audio/')) {
+    return 'audio'
+  }
+
+  if (type === 'application/json') {
+    if (
+      name.endsWith('.tilemap') ||
+      name.endsWith('.tilemap.json') ||
+      name.endsWith('.json')
+    ) {
+      return 'tilemapTiledJSON' // be more specific if you can
+    }
+
+    return 'spritesheet' // maybe your app uses .json for spritesheets
+  }
+
+  return 'unknown'
 }
 
 export const useUploadTabStore = create<UploadState>()((set, get) => ({
@@ -102,7 +124,13 @@ export const useUploadTabStore = create<UploadState>()((set, get) => ({
             }
           }
         }
-
+        if ('type' in updates && updates.type && updates.type !== f.type) {
+          return {
+            ...f,
+            ...updates,
+            metadata: null
+          }
+        }
         return f
       })
     }))

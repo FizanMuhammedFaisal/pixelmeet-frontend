@@ -18,7 +18,12 @@ export type ImageMetadata = {
 export type TileMapTiledJSONMetadata = {
   url?: string
 }
-export type AssetType = 'image' | 'audio' | 'spritesheet' | 'tilemapTiledJSON'
+export type AssetType =
+  | 'image'
+  | 'audio'
+  | 'spritesheet'
+  | 'tilemapTiledJSON'
+  | 'unknown'
 // | 'aseprite'
 export type UploadStatus = 'pending' | 'uploading' | 'uploaded' | 'failed'
 

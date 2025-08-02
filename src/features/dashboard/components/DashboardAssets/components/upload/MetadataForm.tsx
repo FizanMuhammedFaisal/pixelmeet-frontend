@@ -1,161 +1,324 @@
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import type {
+  UploadFile,
+  SpriteSheetMetadata,
+  AssetType
+} from '../../../../types'
 import type { UpdateFileInput } from '../../../../../../app/store/uploadTab.store'
-import { Input } from '../../../../../../components/ui/input'
-import { Label } from '../../../../../../components/ui/label'
-import type { UploadFile } from '../../../../types'
+import { Textarea } from '../../../../../../components/ui/textarea'
+import { uploadFileSchema } from '../../../../schema/form.schema'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '../../../../../../components/ui/card'
+import { getStatusBadgeVariant, getStatusIcon } from './Statusbadge'
+import { Badge, Upload } from 'lucide-react'
 
-type Props<T extends UploadFile> = {
+import { useCallback, useState } from 'react'
+import { Button } from '../../../../../../components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '../../../../../../components/ui/select'
+
+type FormValues = z.infer<typeof uploadFileSchema>
+
+type MetadataFormProps<T extends UploadFile> = {
   updateFile: (id: string, updates: UpdateFileInput) => void
   file: T
+  onUpload: () => void
 }
-export const renderMetadataForm = <T extends UploadFile>({
-  updateFile,
-  file
-}: Props<T>) => {
-  const { id, name, type, metadata, description, error } = file
-  switch (type) {
-    case 'spritesheet':
-      return (
-        <>
-          <div className='grid gap-2'>
-            <Label htmlFor={`frame-width-${id}`}>Frame Width (px)</Label>
-            <Input
-              id={`frame-width-${id}`}
-              type='number'
-              value={metadata?.frameConfig?.frameWidth ?? ''}
-              onChange={e =>
-                updateFile(id, {
-                  type: 'spritesheet',
-                  metadata: {
-                    frameConfig: {
-                      frameWidth: Number.parseInt(e.target.value) || 0
-                    }
-                  }
-                })
-              }
-              placeholder='e.g., 32'
-            />
-          </div>
-          <div className='grid gap-2'>
-            <Label htmlFor={`frame-height-${id}`}>Frame Height (px)</Label>
-            <Input
-              id={`frame-height-${id}`}
-              type='number'
-              value={metadata?.frameConfig?.frameHeight ?? ''}
-              onChange={e =>
-                updateFile(id, {
-                  type: 'spritesheet',
-                  metadata: {
-                    frameConfig: {
-                      frameHeight: Number.parseInt(e.target.value) || 0
-                    }
-                  }
-                })
-              }
-              placeholder='e.g., 32'
-            />
-          </div>
-        </>
-      )
-    case 'audio':
-      return (
-        <>
-          <div className='grid gap-2'>
-            <Label htmlFor={`tags-${id}`}>Tags (comma-separated)</Label>
-            <Input
-              id={`tags-${id}`}
-              value={metadata?.url || ''}
-              // onChange={e =>
-              //   handleMetadataChange('audio', 'tags', e.target.value)
-              // }
-              placeholder='e.g., music, background'
-            />
-          </div>
-        </>
-      )
-    case 'tilemapTiledJSON':
-      return (
-        <>
-          <div className='grid gap-2'>
-            <Label htmlFor={`asset-name-${id}`}>Asset Name</Label>
-            <Input
-              id={`asset-name-${id}`}
-              value={name || ''}
-              onChange={e =>
-                updateFile(id, {
-                  type: 'tilemapTiledJSON',
-                  name: e.target.value
-                })
-              }
-              placeholder='e.g., Forest Tileset'
-            />
-          </div>
-          <div className='grid gap-2 col-span-2'>
-            <Label htmlFor={`description-${id}`}>Description</Label>
-            <Input
-              id={`description-${id}`}
-              value={description || ''}
-              onChange={e =>
-                updateFile(id, { type: 'image', description: e.target.value })
-              }
-              placeholder='Optional description'
-            />
-          </div>
-        </>
-      )
-    case 'image':
-      return (
-        <>
-          <div className='grid gap-2'>
-            <Label htmlFor={`asset-name-${id}`}>Asset Name</Label>
-            <Input
-              id={`asset-name-${id}`}
-              value={name || ''}
-              onChange={e =>
-                updateFile(id, { type: 'image', name: e.target.value })
-              }
-              placeholder='e.g., Forest Tileset'
-            />
-          </div>
-          <div className='grid gap-2 col-span-2'>
-            <Label htmlFor={`description-${id}`}>Description</Label>
-            <Input
-              id={`description-${id}`}
-              value={description || ''}
-              onChange={e =>
-                updateFile(id, { type: 'image', description: e.target.value })
-              }
-              placeholder='Optional description'
-            />
-          </div>
-        </>
-      )
 
-    default:
-      return (
-        <>
-          <div className='grid gap-2'>
-            <Label htmlFor={`asset-name-${id}`}>Asset Name</Label>
-            <Input
-              id={`asset-name-${id}`}
-              value={name || ''}
-              onChange={e =>
-                updateFile(id, { type: 'image', name: e.target.value })
-              }
-              placeholder='e.g., Forest Tileset'
-            />
-          </div>
-          <div className='grid gap-2 col-span-2'>
-            <Label htmlFor={`description-${id}`}>Description</Label>
-            <Input
-              id={`description-${id}`}
-              value={description || ''}
-              onChange={e =>
-                updateFile(id, { type: 'image', description: e.target.value })
-              }
-              placeholder='Optional description'
-            />
-          </div>
-        </>
-      )
+export const MetadataForm = <T extends UploadFile>({
+  updateFile,
+  file,
+  onUpload
+}: MetadataFormProps<T>) => {
+  const { id, type, uploadStatus, error } = file
+  const {
+    control,
+    formState: { errors },
+    setValue,
+    handleSubmit
+  } = useForm<FormValues>({
+    resolver: zodResolver(uploadFileSchema),
+    defaultValues: {
+      ...file,
+      metadata: file.metadata || {},
+      ...(file.type === 'spritesheet' && {
+        metadata: {
+          frameConfig: (file.metadata as SpriteSheetMetadata)?.frameConfig || {
+            frameWidth: 0,
+            frameHeight: 0
+          }
+        }
+      })
+    } as FormValues,
+    mode: 'onChange'
+  })
+
+  const getErrorMessage = (fieldPath: string) => {
+    const pathParts = fieldPath.split('.')
+    let currentError: any = errors
+    for (const part of pathParts) {
+      if (currentError && currentError[part]) {
+        currentError = currentError[part]
+      } else {
+        return undefined
+      }
+    }
+    return currentError?.message
   }
+
+  const handleFormSubmit: SubmitHandler<FormValues> = data => {
+    console.log(data)
+    console.log('data')
+    console.log(error)
+
+    onUpload()
+  }
+
+  const [typeAlert, setTypeAlert] = useState(false)
+  const handleTypeChange = useCallback(
+    (newType: AssetType) => {
+      if (newType === 'unknown') {
+        return setTypeAlert(true)
+      } else {
+        setTypeAlert(false)
+      }
+      console.log(newType)
+      updateFile(id, { type: newType })
+    },
+    [updateFile, id]
+  )
+
+  return (
+    <div className='w-full max-w-4xl mx-auto '>
+      <CardContent className='p-6'>
+        <div className='flex flex-col md:flex-row gap-6'>
+          <div className='flex-shrink-0 w-full md:w-1/3'>
+            <div className='grid gap-2'>
+              {typeAlert && (
+                <div className='text-red-500 text-sm mb-2'>
+                  Please select the appropriate type
+                </div>
+              )}
+              <Label htmlFor={`file-type-${id}`} className='mb-2'>
+                Asset Type
+              </Label>
+              <Select value={type || ''} onValueChange={handleTypeChange}>
+                <SelectTrigger id={`file-type-${id}`}>
+                  <SelectValue placeholder='Select type' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='tilemapTiledJSON'>Tileset JSON</SelectItem>
+                  <SelectItem value='spritesheet'>Sprite Sheet</SelectItem>
+                  <SelectItem value='image'>Image</SelectItem>
+                  <SelectItem value='audio'>Audio</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <form
+            className='flex-grow grid grid-cols-1 md:grid-cols-2 gap-4'
+            onSubmit={handleSubmit(handleFormSubmit, error => {
+              console.log(error)
+            })}
+          >
+            <div className='grid gap-2'>
+              <Label htmlFor={`asset-name-${id}`}>Asset Name</Label>
+              <Controller
+                name='name'
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id={`asset-name-${id}`}
+                    placeholder='e.g., Forest Tileset'
+                    {...field}
+                    onChange={e => {
+                      field.onChange(e)
+                      updateFile(id, { type: type, name: e.target.value })
+                    }}
+                  />
+                )}
+              />
+              {errors.name && (
+                <p className='text-red-500 text-sm'>{errors.name.message}</p>
+              )}
+            </div>
+
+            <div className='grid gap-2 col-span-2'>
+              <Label htmlFor={`description-${id}`}>Description</Label>
+              <Controller
+                name='description'
+                control={control}
+                render={({ field }) => (
+                  <Textarea
+                    id={`description-${id}`}
+                    placeholder='Optional description'
+                    {...field}
+                    onChange={e => {
+                      field.onChange(e)
+                      updateFile(id, {
+                        type: type,
+                        description: e.target.value
+                      })
+                    }}
+                  />
+                )}
+              />
+              {errors.description && (
+                <p className='text-red-500 text-sm'>
+                  {errors.description.message}
+                </p>
+              )}
+            </div>
+
+            {type === 'spritesheet' && (
+              <>
+                <div className='grid gap-2'>
+                  <Label htmlFor={`frame-width-${id}`}>Frame Width (px)</Label>
+                  <Controller
+                    name='metadata.frameConfig.frameWidth'
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        id={`frame-width-${id}`}
+                        type='number'
+                        placeholder='32'
+                        {...field}
+                        value={field.value ?? ''}
+                        onChange={e => {
+                          const value = Number.parseInt(e.target.value)
+                          field.onChange(value)
+                          updateFile(id, {
+                            type: type,
+                            metadata: {
+                              frameConfig: { frameWidth: value || 0 }
+                            }
+                          })
+                        }}
+                      />
+                    )}
+                  />
+                  {getErrorMessage('metadata.frameConfig.frameWidth') && (
+                    <p className='text-red-500 text-sm'>
+                      {getErrorMessage('metadata.frameConfig.frameWidth')}
+                    </p>
+                  )}
+                </div>
+                <div className='grid gap-2'>
+                  <Label htmlFor={`frame-height-${id}`}>
+                    Frame Height (px)
+                  </Label>
+                  <Controller
+                    name='metadata.frameConfig.frameHeight'
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        id={`frame-height-${id}`}
+                        type='number'
+                        placeholder='32'
+                        {...field}
+                        value={field.value ?? ''}
+                        onChange={e => {
+                          const value = Number.parseInt(e.target.value)
+                          field.onChange(value)
+                          updateFile(id, {
+                            type: type,
+                            metadata: {
+                              frameConfig: { frameHeight: value || 0 }
+                            }
+                          })
+                        }}
+                      />
+                    )}
+                  />
+                  {getErrorMessage('metadata.frameConfig.frameHeight') && (
+                    <p className='text-red-500 text-sm'>
+                      {getErrorMessage('metadata.frameConfig.frameHeight')}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
+
+            {type === 'audio' && (
+              <div className='grid gap-2 col-span-2'>
+                <Label htmlFor={`tags-${id}`}>Tags (comma-separated)</Label>
+                <Controller
+                  name='metadata.url'
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id={`tags-${id}`}
+                      placeholder='e.g., music, background'
+                      {...field}
+                      value={
+                        Array.isArray(field.value) ? field.value.join(', ') : ''
+                      }
+                      onChange={e => {
+                        const tags = e.target.value
+                          .split(',')
+                          .map(tag => tag.trim())
+                          .filter(tag => tag.length > 0)
+                        field.onChange(tags)
+                        updateFile(id, { type: type, metadata: { url: tags } })
+                      }}
+                    />
+                  )}
+                />
+                {getErrorMessage('metadata.url') && (
+                  <p className='text-red-500 text-sm'>
+                    {getErrorMessage('metadata.url')}
+                  </p>
+                )}
+              </div>
+            )}
+
+            <CardFooter className='flex flex-col md:flex-row items-center justify-between p-0 pt-4 gap-3 col-span-full'>
+              <div className='flex items-center gap-2 w-full md:w-auto'>
+                {getStatusIcon(uploadStatus)}
+                <Badge
+                  variant={getStatusBadgeVariant(uploadStatus)}
+                  className='capitalize'
+                >
+                  {uploadStatus}
+                </Badge>
+                {uploadStatus === 'failed' && error && (
+                  <span className='text-sm text-red-500 truncate max-w-[200px]'>
+                    {error.message}
+                  </span>
+                )}
+              </div>
+              <div className='flex gap-2 w-full md:w-auto justify-end'>
+                {uploadStatus === 'failed' && (
+                  <Button variant='outline' onClick={onUpload}>
+                    Retry
+                  </Button>
+                )}
+                {(uploadStatus === 'pending' || uploadStatus === 'failed') && (
+                  <Button type='submit'>
+                    <Upload className='w-4 h-4 mr-2' /> Upload
+                  </Button>
+                )}
+              </div>
+            </CardFooter>
+          </form>
+        </div>
+      </CardContent>
+    </div>
+  )
 }

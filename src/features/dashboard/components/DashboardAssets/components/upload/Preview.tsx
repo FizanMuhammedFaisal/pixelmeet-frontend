@@ -1,4 +1,4 @@
-import { ImageIcon } from 'lucide-react'
+import { FolderIcon, ImageIcon } from 'lucide-react'
 
 import type { AssetType } from '../../../../types'
 
@@ -32,7 +32,7 @@ export const renderPreview = ({ type, previewUrl }: Props) => {
   }
   return (
     <div className='flex items-center justify-center w-full h-full bg-muted rounded-md'>
-      <ImageIcon className='w-8 h-8 text-muted-foreground' />
+      <FolderIcon className='w-8 h-8 text-muted-foreground' />
     </div>
   )
 }
