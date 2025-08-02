@@ -4,7 +4,10 @@ import { uploadService } from '../services'
 
 import type { AxiosError, AxiosResponse } from 'axios'
 import type { ErrorResponse } from '../../../shared/types'
-import type { CreateAssetRequestPayload, UploadFile } from '../types/uploadTab'
+import type {
+  CreateAssetRequestPayload,
+  UploadFile
+} from '../types/upload/types'
 
 export const useCreateAsset = () => {
   return useMutation<

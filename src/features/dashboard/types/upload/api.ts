@@ -1,61 +1,4 @@
 import z from 'zod'
-export type AsepriteMetadata = {
-  textureURL: string
-  atlasURL: string
-}
-export type SpriteSheetMetadata = {
-  url: string
-  frameConfig: {
-    frameWidth: 32
-    frameHeight: 32
-  }
-}
-export type AudioMetadata = {
-  url?: string[]
-}
-export type ImageMetadata = {
-  url: string
-}
-export type AssetType = 'image' | 'audio' | 'spritesheet' | 'aseprite'
-export type UploadStatus = 'pending' | 'uploading' | 'uploaded' | 'failed'
-type BaseUploadFile = {
-  id: string
-  name: string
-  file: File
-  description?: string
-  urlKey: string | null
-  type: AssetType
-  size: number
-  previewUrl?: string
-  uploadStatus: UploadStatus
-  error?: Error
-}
-
-export function hasValidMetadata(
-  file: UploadFile
-): file is UploadFile & { metadata: NonNullable<UploadFile['metadata']> } {
-  return file.metadata != null
-}
-
-export function isImageFile(
-  file: UploadFile
-): file is Extract<UploadFile, { type: 'image' }> {
-  return file.type === 'image'
-}
-export type UploadFile =
-  | ({ type: 'image'; metadata: ImageMetadata | null } & BaseUploadFile)
-  | ({ type: 'audio'; metadata: AudioMetadata | null } & BaseUploadFile)
-  | ({
-      type: 'spritesheet'
-      metadata: SpriteSheetMetadata | null
-    } & BaseUploadFile)
-// | ({ type: 'aseprite'; metadata: AsepriteMetadata | null } & BaseUploadFile)
-
-//
-
-//
-
-//
 
 export const CreateAssetSchema = z.discriminatedUnion('type', [
   z.object({
@@ -108,3 +51,11 @@ export const CreateAssetSchema = z.discriminatedUnion('type', [
 ])
 
 export type CreateAssetRequestPayload = z.infer<typeof CreateAssetSchema>
+
+export type PresignedURLApiResponse = {
+  data: {
+    url: string
+    mimeType: string
+    assetKey: string
+  }
+}

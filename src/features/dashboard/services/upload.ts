@@ -4,7 +4,7 @@ import type {
   GetPresingedURLPayload,
   UploadToAssetStorePaylod
 } from '../schema/uploadTab.schema'
-import type { CreateAssetRequestPayload } from '../types/uploadTab'
+import type { CreateAssetRequestPayload } from '../types/upload/types'
 
 export const uploadService = {
   getPresingedUrl: async (credentials: GetPresingedURLPayload) => {
@@ -21,7 +21,7 @@ export const uploadService = {
         'Content-Type': credentials.contentType
       }
     })
-    return res.data
+    return res
   },
   createAsset: async (credentials: CreateAssetRequestPayload) => {
     const res = await apiClient.put(

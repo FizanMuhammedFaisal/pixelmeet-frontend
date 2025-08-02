@@ -1,11 +1,8 @@
 import { create } from 'zustand'
 import type {
   AssetType,
-  AudioMetadata,
-  ImageMetadata,
-  SpriteSheetMetadata,
   UploadFile
-} from '../../features/dashboard/types/uploadTab'
+} from '../../features/dashboard/types/upload/types'
 
 // import { get, set, del } from 'idb-keyval'
 
@@ -18,10 +15,20 @@ import type {
 //     await del(name)
 //   }
 // }
+
+type UpdateFileFn = {
+  (id: string, updates: Partial<Extract<UploadFile, { type: 'image' }>>): void
+  (id: string, updates: Partial<Extract<UploadFile, { type: 'audio' }>>): void
+  (
+    id: string,
+    updates: Partial<Extract<UploadFile, { type: 'spritesheet' }>>
+  ): void
+}
+
 interface UploadState {
   files: UploadFile[]
   addFile: (file: File) => void
-  updateFile: (id: string, updates: Partial<UploadFile>) => void
+  updateFile: UpdateFileFn
   removeFile: (id: string) => void
 }
 //need to fix teh logic
@@ -56,36 +63,36 @@ export const useUploadTabStore = create<UploadState>()((set, get) => ({
       files: [...state.files, newFile]
     }))
   },
+
   updateFile(id, updates) {
     set(state => ({
       files: state.files.map(f => {
         if (f.id !== id) return f
 
-        if (f.type === 'image') {
+        if (f.type === 'image' && updates.type === 'image') {
           return {
             ...f,
             ...updates,
             type: 'image',
-            metadata: (updates.metadata ?? f.metadata) as ImageMetadata | null
+            metadata: updates.metadata ?? f.metadata
           }
         }
 
-        if (f.type === 'audio') {
+        if (f.type === 'audio' && updates.type === 'audio') {
           return {
             ...f,
             ...updates,
             type: 'audio',
-            metadata: (updates.metadata ?? f.metadata) as AudioMetadata | null
+            metadata: updates.metadata ?? f.metadata
           }
         }
 
-        if (f.type === 'spritesheet') {
+        if (f.type === 'spritesheet' && updates.type === 'spritesheet') {
           return {
             ...f,
             ...updates,
             type: 'spritesheet',
-            metadata: (updates.metadata ??
-              f.metadata) as SpriteSheetMetadata | null
+            metadata: updates.metadata ?? f.metadata
           }
         }
 

@@ -25,7 +25,7 @@ import type {
   AssetType,
   UploadFile,
   UploadStatus
-} from '../../../../types/uploadTab'
+} from '../../../../types/upload/types'
 
 interface FileUploadCardProps {
   file: UploadFile

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { DragAndDropArea } from './AssetUploadZone'
-import { FileUploadCard, type FileType } from './FileUploadCard'
+import { FileUploadCard } from './FileUploadCard'
 import { useUploadTabStore } from '../../../../../../app/store/uploadTab.store'
 import {
   hasValidMetadata,
@@ -12,7 +12,7 @@ import {
   type ImageMetadata,
   type SpriteSheetMetadata,
   type UploadFile
-} from '../../../../types/uploadTab'
+} from '../../../../types/upload/types'
 import { useGetPresignedURL } from '../../../../hooks/useGetPresignedURL'
 import { useUploadAsset } from '../../../../hooks/useUploadAsset'
 import { useCreateAsset } from '../../../../hooks'
@@ -23,6 +23,7 @@ export default function UploadTab() {
   const createAssetMutation = useCreateAsset()
 
   const { files, addFile, updateFile, removeFile } = useUploadTabStore()
+
   const [isUploadingAll, setIsUploadingAll] = useState(false)
 
   const handleFilesAdded = useCallback(
@@ -34,6 +35,7 @@ export default function UploadTab() {
     [addFile]
   )
   console.log(files)
+
   const handleUpload = useCallback(
     async (fileToUpload: UploadFile) => {
       if (
@@ -59,15 +61,14 @@ export default function UploadTab() {
           )
         }
         updateFile(fileToUpload.id, { urlKey: res.data.assetKey })
-        console.log(res.data)
+
         const assetRes = await uploadAssetMutation.mutateAsync({
           contentType: res.data.mimeType,
           file: fileToUpload.file,
           url: res.data.url
         })
-        if (assetRes.status === 200) {
-          toast.success(`Asset ${fileToUpload.name} uploaded `)
-        } else {
+        console.log(assetRes)
+        if (assetRes.status !== 200) {
           return toast.error(
             `Upload for ${fileToUpload.name} failed, Try again`
           )
@@ -87,7 +88,7 @@ export default function UploadTab() {
             {
               urlKey: fileToUpload.urlKey as string,
               name: fileToUpload.name,
-              type: fileToUpload.type as FileType,
+              type: fileToUpload.type,
               metadata,
               size: fileToUpload.size
             },

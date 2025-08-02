@@ -44,7 +44,7 @@ export const QueryProvider: React.FC<QueryProviderProps> = ({ children }) => {
   useOfflineStatus()
   return (
     <QueryClientProvider client={queryClient}>
-      <Toaster />
+      <Toaster richColors={true} />
 
       {children}
       {process.env.NODE_ENV === 'development' && <ReactQueryDevtools />}
