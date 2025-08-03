@@ -1,5 +1,4 @@
-import type React from 'react'
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -11,59 +10,94 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { useNavigate } from 'react-router'
+import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import type { AssetTags } from '../TagList'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useQueryClient } from '@tanstack/react-query'
+import { useGetTag, useUpdateTag } from '../../../../../hooks'
+import { Spinner } from '../../../../../../../components/ui/spinner'
 
-interface EditTagFormProps {
-  tagId: string
-}
+// Define the Zod schema for form validation
+const formSchema = z.object({
+  id: z.string(),
+  name: z.string().min(2, {
+    message: 'Tag name must be at least 2 characters.'
+  }),
+  description: z.string().optional()
+})
 
-export function EditTagForm({ tagId }: EditTagFormProps) {
-  const [tag, setTag] = useState<AssetTags | null>(null)
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+export function EditTagForm() {
   const router = useNavigate()
+  const { id: tagId } = useParams<{ id: string }>()
+  const queryClient = useQueryClient()
 
-  //   useEffect(() => {
-  // const fetchedTag = getTagById(tagId)
-  //     if (fetchedTag) {
-  //       setTag(fetchedTag)
-  //       setName(fetchedTag.name)
-  //       setDescription(fetchedTag.description)
-  //     } else {
-  //       toast.error('Tag not found.')
-  //       router('/tags')
-  //     }
-  //   }, [tagId, router])
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      id: tagId,
+      name: '',
+      description: ''
+    }
+  })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // if (!name.trim()) {
-    //   toast({
-    //     title: 'Error',
-    //     description: 'Tag name cannot be empty.',
-    //     variant: 'destructive'
-    //   })
-    //   return
-    // }
+  const { data: tagData, isLoading, isError, error } = useGetTag(tagId!)
 
-    // setIsSubmitting(true)
-    // // Simulate API call
-    // setTimeout(() => {
-    //   updateTag(tagId, name, description)
-    //   setIsSubmitting(false)
-    //   toast({
-    //     title: 'Success',
-    //     description: 'Tag updated successfully.'
-    //   })
-    //   router.push('/tags') // Navigate back to the tags list
-    // }, 500)
+  const {
+    mutate,
+    isPending,
+    isSuccess,
+    isError: isMutationError,
+    error: mutationError
+  } = useUpdateTag()
+
+  useEffect(() => {
+    if (tagData) {
+      const tag = tagData.data.data
+      console.log(tag)
+      form.reset({
+        id: tag.id,
+        name: tag.name,
+        description: tag.description
+      })
+    }
+  }, [tagData, form])
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success('Tag updated successfully.')
+
+      queryClient.invalidateQueries(['tag', tagId])
+      router('/dashboard/assets')
+    }
+    if (isMutationError) {
+      toast.error(mutationError?.message || 'Failed to update tag.')
+    }
+  }, [isSuccess, isMutationError, mutationError, router, queryClient, tagId])
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    if (!tagId) {
+      toast.error('Tag ID is missing.')
+      return
+    }
+    mutate({ id: tagId, name: values.name, description: values.description })
   }
 
-  if (!tag) {
-    return <div className='text-center py-8'>Loading tag data...</div> // Or a spinner
+  if (isLoading) {
+    return (
+      <div className='fixed inset-0 flex items-center justify-center z-50 '>
+        <Spinner />
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className='text-center py-8 text-red-500'>
+        Error loading tag: {error.message}
+      </div>
+    )
   }
 
   return (
@@ -75,27 +109,33 @@ export function EditTagForm({ tagId }: EditTagFormProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className='grid gap-4 py-4'>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className='grid gap-4 py-4'
+        >
           <div className='grid grid-cols-4 items-center gap-4'>
             <Label htmlFor='name' className='text-right'>
               Name
             </Label>
             <Input
               id='name'
-              value={name}
-              onChange={e => setName(e.target.value)}
+              {...form.register('name')}
               className='col-span-3'
               required
             />
           </div>
+          {form.formState.errors.name && (
+            <p className='col-start-2 col-span-3 text-red-500 text-sm'>
+              {form.formState.errors.name.message}
+            </p>
+          )}
           <div className='grid grid-cols-4 items-center gap-4'>
             <Label htmlFor='description' className='text-right'>
               Description
             </Label>
             <Textarea
               id='description'
-              value={description}
-              onChange={e => setDescription(e.target.value)}
+              {...form.register('description')}
               className='col-span-3'
               placeholder='Optional description for the tag'
             />
@@ -104,12 +144,12 @@ export function EditTagForm({ tagId }: EditTagFormProps) {
             <Button
               type='button'
               variant='outline'
-              onClick={() => router.push('/tags')}
+              onClick={() => router('/dashboard/tags')}
             >
               Cancel
             </Button>
-            <Button type='submit' disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
+            <Button type='submit' disabled={isPending}>
+              {isPending ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>
         </form>

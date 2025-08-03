@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 
 import './index.css'
 import { cn } from '../../../shared/lib/utils'
+import { motion } from 'motion/react'
 
 type ButtonSize = 'sm' | 'md' | 'lg'
 
@@ -88,12 +89,14 @@ export function HoldToDeleteButton({
   )
 
   return (
-    <button
+    <motion.button
       className={cn(
         'button',
         `button-${size}  inset-0 bg-card rounded-lg shadow-sm border border-border/90`,
         className
       )}
+      whileHover={{ scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
       onMouseDown={startHold}
       onMouseUp={cancelHold}
       onMouseLeave={cancelHold}
@@ -109,6 +112,6 @@ export function HoldToDeleteButton({
         {children || defaultContent}
       </div>
       {children || defaultContent}
-    </button>
+    </motion.button>
   )
 }

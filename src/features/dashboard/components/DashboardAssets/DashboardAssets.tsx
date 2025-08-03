@@ -1,21 +1,25 @@
 import { TopNavigation } from './components/TopNavigation'
 import DashboardTab from './components/dashboard/Main'
 import AllAssetsTab from './components/allAssets/AllAssetsTab'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import UploadTab from './components/upload/UploadTab'
 import TagsTab from './components/tags/TagsTab'
+import { useSearchParams } from 'react-router'
 
-export type AssetDashboardTabs =
-  | 'dashboard'
-  | 'all'
-  | 'favorites'
-  | 'deleted'
-  | 'upload'
-  | 'tags'
+export const AssetDashboardTabs = [
+  'dashboard',
+  'all',
+  'favorites',
+  'deleted',
+  'upload',
+  'tags'
+] as const
+type AssetDashboardTabs = (typeof AssetDashboardTabs)[number]
 export default function AdminAssetsPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabFromUrl = searchParams.get('tab')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-
   const [currentTab, setCurrentTab] = useState<AssetDashboardTabs>('dashboard')
   const tabComponents: Record<AssetDashboardTabs, React.ReactNode> = {
     dashboard: <DashboardTab currentTab={currentTab} viewMode={viewMode} />,
@@ -25,12 +29,25 @@ export default function AdminAssetsPage() {
     upload: <UploadTab />,
     tags: <TagsTab />
   }
+  const DEFAULT_TAB = 'dashboard'
+  function validTab(tab: string | null): tab is AssetDashboardTabs {
+    return AssetDashboardTabs.includes(tab as AssetDashboardTabs)
+  }
+  useEffect(() => {
+    if (!validTab(tabFromUrl)) {
+      setSearchParams({ tab: DEFAULT_TAB })
+    }
+  }, [tabFromUrl])
 
+  const onTabChange = (tab: AssetDashboardTabs) => {
+    setSearchParams({ tab })
+    setCurrentTab(tab)
+  }
   return (
     <div className='flex flex-col min-h-screen bg-background'>
       <TopNavigation
-        currentTab={currentTab}
-        onTabChange={setCurrentTab}
+        currentTab={tabFromUrl}
+        onTabChange={onTabChange}
         onViewModeToggle={setViewMode}
         viewMode={viewMode}
       />

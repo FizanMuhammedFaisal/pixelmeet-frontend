@@ -102,7 +102,7 @@ export default function TagsList() {
                 <p>Loading new page...</p>
               </div>
             )}
-            <div className='overflow-x-auto flex-grow border rounded-md'>
+            <div className='overflow-x-auto flex-grow mb-5 rounded-md'>
               <Table>
                 <TableHeader>
                   <TableRow>

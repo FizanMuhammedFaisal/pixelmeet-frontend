@@ -36,7 +36,7 @@ const AdminRouter: RouteObject[] = [
             element: <NewTagPage />
           },
           {
-            path: '/dashboard/assets/edit-tag',
+            path: '/dashboard/assets/edit-tag/:id',
             element: <EditTagPage />
           },
           {

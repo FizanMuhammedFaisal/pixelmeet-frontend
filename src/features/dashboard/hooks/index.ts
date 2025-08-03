@@ -1,3 +1,6 @@
 export * from './useGetPresignedURL'
 export * from './useUploadAsset'
 export * from './useCreateAsset'
+export * from './useCreateTag'
+export * from './useGetTag'
+export * from './useUpdateTag'

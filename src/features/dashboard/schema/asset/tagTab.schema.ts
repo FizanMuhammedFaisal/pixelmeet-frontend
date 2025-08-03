@@ -9,10 +9,17 @@ export type CreateTagPayload = {
   name: string
   description: string
 }
-export type EditTagPayload = {
+export type GetTagPayload = {
+  id: string
+}
+
+export type UpdateTagPayload = {
+  id: string
   name?: string
   description?: string
 }
+
+//response
 export interface TagResponse {
   data: {
     total: number
@@ -25,6 +32,15 @@ export interface TagResponse {
 export type CreateTagResponse = {
   tag: AssetTags
 }
-export type EditTagResponse = {
+export type UpdateTagResponse = {
   tag: AssetTags
+}
+export type GetTagResponse = {
+  data: {
+    id: string
+    name: string
+    description: string
+    updatedAt: Date
+    createdAt: Date
+  }
 }

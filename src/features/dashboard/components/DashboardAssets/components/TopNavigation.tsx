@@ -11,6 +11,7 @@ import {
   TagsIcon
 } from 'lucide-react'
 import { cn } from '@/shared/lib/utils'
+import type { AssetDashboardTabs } from '../DashboardAssets'
 
 const LAYOUT_SPRING = {
   type: 'spring' as const,
@@ -24,13 +25,6 @@ const BUTTON_SPRING = {
   damping: 17
 }
 
-// Types
-export type AssetDashboardTabs =
-  | 'dashboard'
-  | 'all'
-  | 'favorites'
-  | 'deleted'
-  | 'upload'
 export type ViewMode = 'grid' | 'list'
 
 interface TabConfig {
