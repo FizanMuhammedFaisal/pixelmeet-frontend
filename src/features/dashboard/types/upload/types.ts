@@ -3,20 +3,20 @@ export type AsepriteMetadata = {
   atlasURL?: string
 }
 export type SpriteSheetMetadata = {
-  url?: string
+  urlKey?: string
   frameConfig?: {
     frameWidth?: number
     frameHeight?: number
   }
 }
 export type AudioMetadata = {
-  url?: string[]
+  urlKey?: string[]
 }
 export type ImageMetadata = {
-  url?: string
+  urlKey?: string
 }
 export type TileMapTiledJSONMetadata = {
-  url?: string
+  urlKey?: string
 }
 export type AssetType =
   | 'image'
@@ -32,7 +32,6 @@ type BaseAsset = {
   name: string
   file: File
   description?: string
-  urlKey: string | null
   type: AssetType
   size: number
 }
@@ -41,6 +40,11 @@ interface BaseUploadFile extends BaseAsset {
   previewUrl?: string
   uploadStatus: UploadStatus
   error?: Error
+}
+
+interface serverAsset extends BaseAsset {
+  favourite?: boolean
+  deleted?: boolean
 }
 
 export type UploadFile =
@@ -58,13 +62,16 @@ export type UploadFile =
 // | ({ type: 'aseprite'; metadata: AsepriteMetadata | null } & BaseUploadFile)
 
 export type Asset =
-  | ({ type: 'image'; metadata: ImageMetadata | null } & BaseAsset)
-  | ({ type: 'audio'; metadata: AudioMetadata | null } & BaseAsset)
-  | ({ type: 'spritesheet'; metadata: SpriteSheetMetadata | null } & BaseAsset)
+  | ({ type: 'image'; metadata: ImageMetadata | null } & serverAsset)
+  | ({ type: 'audio'; metadata: AudioMetadata | null } & serverAsset)
+  | ({
+      type: 'spritesheet'
+      metadata: SpriteSheetMetadata | null
+    } & serverAsset)
   | ({
       type: 'tilemapTiledJSON'
       metadata: TileMapTiledJSONMetadata | null
-    } & BaseAsset)
+    } & serverAsset)
 
 //
 

@@ -301,36 +301,34 @@ function MainTab({ viewMode, currentTab }: Props) {
     setActiveFilters(prev => prev.filter(f => f !== filter))
   }
   return (
-    <main className='flex-1 flex flex-col p-6 overflow-auto container mx-auto '>
+    <main className='flex-1 flex flex-col p-2 sm:p-4 overflow-auto container mx-auto max-w-full'>
       {/* Header */}
-      <div className='flex items-center justify-between flex-wrap gap-4 mb-6'>
-        <div>
-          <h1 className='text-3xl font-bold'>Assets Dashboard</h1>
+      <div className='flex items-center justify-between flex-wrap gap-2 mb-4'>
+        <div className='max-w-full truncate'>
+          <h1 className='text-2xl sm:text-3xl font-bold'>Assets Dashboard</h1>
         </div>
       </div>
-
       {/* Search Bar */}
-      <div className='mb-6'>
+      <div className='mb-4'>
         <AssetSearchBar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           activeFilters={activeFilters}
           onRemoveFilter={handleRemoveFilter}
-          onToggleFilter={() => {}} // Placeholder for filter toggle
+          onToggleFilter={() => {}}
         />
       </div>
-
-      {/* Overview Section (replacing just stats) */}
-      <section className='mb-8'>
-        <h2 className='text-xl font-semibold mb-4'>Overview</h2>
+      {/* Overview Section */}
+      <section className='mb-6'>
+        <h2 className='text-lg sm:text-xl font-semibold mb-3'>Overview</h2>
         <OverviewStats assets={assets} />
       </section>
-
-      {/* <section className='mb-8'>
-        <h2 className='text-xl font-semibold mb-4'>Browse Categories</h2>
-
+      <section className='mb-6'>
+        <h2 className='text-lg sm:text-xl font-semibold mb-3'>
+          Browse Categories
+        </h2>
         <div className='overflow-x-auto w-full'>
-          <div className='flex gap-4 pb-4 w-max px-4'>
+          <div className='flex flex-wrap gap-3 pb-3 px-2'>
             {assetCategories.map(category => (
               <AssetCategoryCard
                 key={category.id}
@@ -340,21 +338,20 @@ function MainTab({ viewMode, currentTab }: Props) {
             ))}
           </div>
         </div>
-      </section> */}
-
+      </section>
       {/* Recent Assets */}
-      <section className='mb-8'>
-        <h2 className='text-xl font-semibold mb-4'>Recent Assets</h2>
+      <section className='mb-6'>
+        <h2 className='text-lg sm:text-xl font-semibold mb-3'>Recent Assets</h2>
         {recentAssets.length === 0 ? (
-          <div className='text-center py-8 text-muted-foreground'>
+          <div className='text-center py-6 text-muted-foreground'>
             <p>No recent assets to display.</p>
           </div>
         ) : (
           <div
             className={cn(
-              'grid gap-4 overflow-x-auto pb-4 scrollbar-hide',
+              'grid gap-3 overflow-x-auto pb-3 scrollbar-hide',
               viewMode === 'grid'
-                ? 'grid-cols-[repeat(auto-fill,minmax(200px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(220px,1fr))]'
+                ? 'grid-cols-[repeat(auto-fill,minmax(120px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(150px,1fr))]'
                 : 'grid-cols-1'
             )}
           >
@@ -370,43 +367,6 @@ function MainTab({ viewMode, currentTab }: Props) {
           </div>
         )}
       </section>
-
-      {/* <section className='flex-1 flex flex-col'>
-          <h2 className='text-xl font-semibold mb-4'>
-            {currentTab === 'all' && 'All Active Assets'}
-            {currentTab === 'favorites' && 'Your Favorite Assets'}
-            {currentTab === 'deleted' && 'Deleted Assets'}
-            {currentTab === 'upload' && 'Upload New Assets'}
-          </h2>
-          {currentTab === 'upload' ? (
-            <div className='max-w-2xl mx-auto w-full'>
-              <AssetUploadZone onUpload={handleUpload} />
-            </div>
-          ) : filteredAssets.length === 0 ? (
-            <div className='text-center py-12 text-muted-foreground'>
-              <p>No assets found in this section matching your criteria.</p>
-            </div>
-          ) : (
-            <div
-              className={cn(
-                'grid gap-4 flex-1',
-                viewMode === 'grid'
-                  ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'
-                  : 'grid-cols-1'
-              )}
-            >
-              {filteredAssets.map(asset => (
-                <AssetPreview
-                  key={asset.id}
-                  asset={asset}
-                  onToggleFavorite={handleToggleFavorite}
-                  onDelete={handleDeleteAsset}
-                  onRestore={handleRestoreAsset}
-                />
-              ))}
-            </div>
-          )}
-        </section> */}
     </main>
   )
 }

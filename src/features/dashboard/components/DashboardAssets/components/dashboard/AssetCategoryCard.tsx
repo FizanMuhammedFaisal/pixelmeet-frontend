@@ -37,7 +37,7 @@ export function AssetCategoryCard({
 
   return (
     <Card
-      className='min-w-[200px] cursor-pointer transition-all hover:shadow-md'
+      className='min-w-[200px] max-w-[200px] flex-1 hover:border-primary/50 border-2 cursor-pointer transition-all hover:shadow-md'
       onClick={onClick}
     >
       <CardHeader className='pb-3'>

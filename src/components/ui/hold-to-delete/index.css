@@ -1,0 +1,51 @@
+.button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  transition: transform 160ms ease-out;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* Size Variants */
+.button-sm {
+  height: 32px;
+  padding-inline: 16px;
+  font-size: 0.875rem;
+  gap: 6px;
+}
+
+.button-md {
+  height: 40px;
+  padding-inline: 24px;
+  font-size: 1rem;
+  gap: 8px;
+}
+
+.button-lg {
+  height: 48px;
+  padding-inline: 32px;
+  font-size: 1.125rem;
+  gap: 10px;
+}
+
+.button:active {
+  transform: scale(0.97);
+}
+
+.hold-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: var(--radius);
+  background-color: #ffdbdc;
+  color: #e5484d;
+  clip-path: inset(0% 100% 0% 0%);
+  transition: clip-path 200ms ease-out;
+}

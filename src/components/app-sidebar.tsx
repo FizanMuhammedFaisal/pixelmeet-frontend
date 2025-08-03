@@ -92,8 +92,8 @@ const data = {
       icon: Users2
     },
     {
-      title: 'Spaces',
-      url: '/dashboard/spaces',
+      title: 'Maps',
+      url: '/dashboard/maps',
       icon: MapIcon
     },
     {

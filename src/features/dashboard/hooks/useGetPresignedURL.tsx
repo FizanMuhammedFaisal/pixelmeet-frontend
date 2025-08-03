@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query'
 
 import { uploadService } from '../services'
-import type { PresignedURLApiResponse } from '../types/responseTypes'
-import type { GetPresingedURLPayload } from '../schema/uploadTab.schema'
+import type { PresignedURLApiResponse } from '../types'
+import type { GetPresingedURLPayload } from '../schema/asset/uploadTab.schema'
 import type { AxiosError } from 'axios'
 import type { ErrorResponse } from '../../../shared/types'
 

@@ -6,9 +6,11 @@ import AdminHome from '@/pages/admin/Home'
 import AdminAssetsPage from '@/pages/admin/Assets'
 import AdminUsersPage from '@/pages/admin/User'
 import AdminAvatarPage from '@/pages/admin/Avatar'
-import AdminSpacesPage from '@/pages/admin/Spaces'
+import AdminMapsPage from '@/pages/admin/Maps'
 import AdminSettingsPage from '@/pages/admin/Settings'
 import AdminMapEditor from '@/pages/admin/MapEditor'
+import NewTagPage from '../../features/dashboard/components/DashboardAssets/components/tags/newTag/CreateNewTag'
+import EditTagPage from '../../features/dashboard/components/DashboardAssets/components/tags/editTag/EditTag'
 
 const AdminRouter: RouteObject[] = [
   {
@@ -30,6 +32,14 @@ const AdminRouter: RouteObject[] = [
             element: <AdminAssetsPage />
           },
           {
+            path: '/dashboard/assets/new-tag',
+            element: <NewTagPage />
+          },
+          {
+            path: '/dashboard/assets/edit-tag',
+            element: <EditTagPage />
+          },
+          {
             path: '/dashboard/users',
             element: <AdminUsersPage />
           },
@@ -38,8 +48,8 @@ const AdminRouter: RouteObject[] = [
             element: <AdminAvatarPage />
           },
           {
-            path: '/dashboard/spaces',
-            element: <AdminSpacesPage />
+            path: '/dashboard/maps',
+            element: <AdminMapsPage />
           },
           {
             path: '/dashboard/settings',

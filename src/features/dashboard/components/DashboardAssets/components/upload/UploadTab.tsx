@@ -5,25 +5,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { DragAndDropArea } from './AssetUploadZone'
 import { FileUploadCard } from './FileUploadCard'
-import { useUploadTabStore } from '../../../../../../app/store/uploadTab.store'
-import {
-  type AudioMetadata,
-  type ImageMetadata,
-  type SpriteSheetMetadata,
-  type UploadFile
-} from '../../../../types/upload/types'
-
+import { type UploadFile } from '../../../../types/upload/types'
 import { useGetPresignedURL } from '../../../../hooks/useGetPresignedURL'
 import { useUploadAsset } from '../../../../hooks/useUploadAsset'
 import { useCreateAsset } from '../../../../hooks'
 import { hasValidMetadata } from '../../../../types'
+import { GlobalMutationError } from '../../../../../../shared/lib/utils'
+import type { AxiosError } from 'axios'
+import type { ErrorResponse } from '../../../../../../shared/types'
+import { useUploadTabStore } from '../../../../../../app/store/admin/uploadTab.store'
 
 export default function UploadTab() {
   const getPresignedURLMutation = useGetPresignedURL()
   const uploadAssetMutation = useUploadAsset()
   const createAssetMutation = useCreateAsset()
 
-  const { files, addFile, updateFile, removeFile, clearAllFiles } =
+  const { files, addFile, updateFile, removeFile, clearAllFiles, getFile } =
     useUploadTabStore()
 
   const [isUploadingAll, setIsUploadingAll] = useState(false)
@@ -36,8 +33,27 @@ export default function UploadTab() {
     },
     [addFile]
   )
-  console.log(files)
 
+  function updateURLKey(file: UploadFile, urlKey: string) {
+    console.log(urlKey)
+    switch (file.type) {
+      case 'audio':
+        updateFile(file.id, { type: 'audio', metadata: { urlKey: [urlKey] } })
+        break
+      case 'image':
+        updateFile(file.id, { type: 'image', metadata: { urlKey } })
+        break
+
+      case 'spritesheet':
+        updateFile(file.id, { type: 'spritesheet', metadata: { urlKey } })
+        break
+      case 'tilemapTiledJSON':
+        updateFile(file.id, { type: 'tilemapTiledJSON', metadata: { urlKey } })
+        break
+      default:
+        break
+    }
+  }
   const handleUpload = useCallback(
     async (fileToUpload: UploadFile) => {
       if (
@@ -62,7 +78,8 @@ export default function UploadTab() {
             `Upload for ${fileToUpload.name} failed, Try again`
           )
         }
-        updateFile(fileToUpload.id, { urlKey: res.data.assetKey })
+        console.log(res.data)
+        updateURLKey(fileToUpload, res.data.assetKey)
 
         const assetRes = await uploadAssetMutation.mutateAsync({
           contentType: res.data.mimeType,
@@ -75,43 +92,54 @@ export default function UploadTab() {
             `Upload for ${fileToUpload.name} failed, Try again`
           )
         }
-        if (hasValidMetadata(fileToUpload)) {
-          let metadata: any
-
-          if (fileToUpload.type === 'image') {
-            metadata = fileToUpload.metadata as ImageMetadata
-          } else if (fileToUpload.type === 'audio') {
-            metadata = fileToUpload.metadata as AudioMetadata
-          } else if (fileToUpload.type === 'spritesheet') {
-            metadata = fileToUpload.metadata as SpriteSheetMetadata
-          }
-
-          await createAssetMutation.mutate(
+        const updatedFile = getFile(fileToUpload.id)
+        console.log(updatedFile)
+        console.log('updateFile')
+        if (hasValidMetadata(fileToUpload) && updatedFile) {
+          createAssetMutation.mutate(
             {
-              urlKey: fileToUpload.urlKey as string,
-              name: fileToUpload.name,
-              type: fileToUpload.type,
-              metadata,
-              size: fileToUpload.size
+              name: updatedFile.name,
+              type: updatedFile.type,
+              metadata: updatedFile.metadata,
+              size: updatedFile.size
             },
             {
               onSuccess: () => {
                 toast.success(`Asset ${fileToUpload.name} uploaded `)
                 removeFile(fileToUpload.id)
+              },
+              onError: error => {
+                GlobalMutationError(error)
+                const axiosError = error as AxiosError<ErrorResponse>
+                const firstDetail =
+                  axiosError.response?.data?.issues?.[0]?.message
+                const fallback =
+                  axiosError.response?.data?.message || 'Try Again'
+                toast.error(
+                  `Asset ${fileToUpload.name} upload failed, ${
+                    firstDetail || fallback
+                  }`
+                )
               }
             }
           )
+        } else {
+          toast.error(
+            `Asset ${fileToUpload.name} upload failed due to validation error `
+          )
         }
       } catch (error: any) {
-        console.error('Upload failed:', error)
         updateFile(fileToUpload.id, {
           uploadStatus: 'failed',
           error: error.message || 'Upload failed'
         })
+
+        GlobalMutationError(error)
+        const axiosError = error as AxiosError<ErrorResponse>
+        const firstDetail = axiosError.response?.data?.issues?.[0]?.message
+        const fallback = axiosError.response?.data?.message || 'Try Again'
         toast.error(
-          `Failed to upload "${fileToUpload.file.name}": ${
-            error.message || 'Unknown error'
-          }`
+          `Asset ${fileToUpload.name} upload failed, ${firstDetail || fallback}`
         )
       }
     },

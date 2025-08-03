@@ -3,8 +3,8 @@ import { API_ENDPOINTS } from '../../../api/config/enpoints'
 import type {
   GetPresingedURLPayload,
   UploadToAssetStorePaylod
-} from '../schema/uploadTab.schema'
-import type { CreateAssetRequestPayload } from '../types/upload/types'
+} from '../schema/asset/uploadTab.schema'
+import type { CreateAssetRequestPayload } from '../types/upload'
 
 export const uploadService = {
   getPresingedUrl: async (credentials: GetPresingedURLPayload) => {
@@ -24,7 +24,7 @@ export const uploadService = {
     return res
   },
   createAsset: async (credentials: CreateAssetRequestPayload) => {
-    const res = await apiClient.put(
+    const res = await apiClient.post(
       API_ENDPOINTS.ASSET.CREATE_ASSET,
       credentials
     )

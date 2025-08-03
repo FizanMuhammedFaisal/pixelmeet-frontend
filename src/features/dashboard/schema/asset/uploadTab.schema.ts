@@ -2,8 +2,9 @@ import z from 'zod'
 export const AssetCategoryEnum = z.enum([
   'image',
   'audio',
-  'aseprite',
-  'spritesheet'
+  // 'aseprite',
+  'spritesheet',
+  'tilemapTiledJSON'
 ])
 export const GetPresingedURLSchema = z
   .object({

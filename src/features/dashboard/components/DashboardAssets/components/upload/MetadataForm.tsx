@@ -10,15 +10,8 @@ import type {
 } from '../../../../types'
 import type { UpdateFileInput } from '../../../../../../app/store/uploadTab.store'
 import { Textarea } from '../../../../../../components/ui/textarea'
-import { uploadFileSchema } from '../../../../schema/form.schema'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '../../../../../../components/ui/card'
+import { uploadFileSchema } from '../../../../schema/asset/form.schema'
+import { CardContent, CardFooter } from '../../../../../../components/ui/card'
 import { getStatusBadgeVariant, getStatusIcon } from './Statusbadge'
 import { Badge, Upload } from 'lucide-react'
 

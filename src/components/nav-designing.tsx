@@ -28,8 +28,8 @@ export function NavDesigning({
       <SidebarMenu>
         {projects.map(item => {
           const isActive = item.url === pathname
-          const classnamebutton = `hover:bg-primary/10 hover:dark:bg-primary/70 ${
-            isActive ? 'bg-primary/10 dark:bg-primary/70' : ''
+          const classnamebutton = `hover:bg-primary/10 hover:dark:bg-primary/30 dark:text-zinc-200 text-zinc-900  ${
+            isActive ? 'bg-primary/10 dark:bg-primary/50' : ''
           }`
 
           return (
@@ -59,7 +59,7 @@ export function NavDesigning({
         })}
 
         <SidebarMenuItem>
-          <SidebarMenuButton className='text-sidebar-foreground/70 hover:bg-primary/10 hover:dark:bg-primary/70'>
+          <SidebarMenuButton className=' hover:bg-primary/10 hover:dark:bg-primary/30 dark:text-zinc-200 text-zinc-900 '>
             <MoreHorizontal className='text-sidebar-foreground/70' />
             <span>More</span>
           </SidebarMenuButton>

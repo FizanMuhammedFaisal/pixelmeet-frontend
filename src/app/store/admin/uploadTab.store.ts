@@ -15,6 +15,7 @@ interface UploadState {
   updateFile: (id: string, updates: UpdateFileInput) => void
   removeFile: (id: string) => void
   clearAllFiles: () => void
+  getFile: (id: string) => UploadFile | undefined
 }
 //need to fix teh logic
 export function inferFileType(file: File): AssetType {
@@ -142,5 +143,8 @@ export const useUploadTabStore = create<UploadState>()((set, get) => ({
   },
   clearAllFiles() {
     set({ files: [] })
+  },
+  getFile: id => {
+    return get().files.find(f => f.id === id)
   }
 }))

@@ -7,7 +7,7 @@ import {
   SidebarTrigger
 } from '@/components/ui/sidebar'
 import { Outlet } from 'react-router'
-import { ThemeToggleButton } from './ThemeButton'
+import { ThemeToggle } from './ThemeButton'
 import { OfflineIndicator } from './OfflineIndicator'
 
 export default function DashboardLayout() {
@@ -28,7 +28,7 @@ export default function DashboardLayout() {
             </div>
           </div>
           <div className='px-4'>
-            <ThemeToggleButton />
+            <ThemeToggle />
           </div>
         </header>
         <Outlet />

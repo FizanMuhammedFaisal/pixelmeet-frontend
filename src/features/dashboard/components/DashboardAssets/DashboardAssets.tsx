@@ -4,6 +4,7 @@ import AllAssetsTab from './components/allAssets/AllAssetsTab'
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import UploadTab from './components/upload/UploadTab'
+import TagsTab from './components/tags/TagsTab'
 
 export type AssetDashboardTabs =
   | 'dashboard'
@@ -11,6 +12,7 @@ export type AssetDashboardTabs =
   | 'favorites'
   | 'deleted'
   | 'upload'
+  | 'tags'
 export default function AdminAssetsPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
@@ -20,7 +22,8 @@ export default function AdminAssetsPage() {
     all: <AllAssetsTab />,
     favorites: <div>Favorites (WIP)</div>,
     deleted: <div>Deleted (WIP)</div>,
-    upload: <UploadTab />
+    upload: <UploadTab />,
+    tags: <TagsTab />
   }
 
   return (

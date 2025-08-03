@@ -3,12 +3,12 @@ import { Button } from '@/components/ui/button'
 
 import { X } from 'lucide-react'
 import type { UploadFile } from '../../../../types/upload/types'
-import type { UpdateFileInput } from '../../../../../../app/store/uploadTab.store'
 
 import { formatBytes } from '../../../../../../shared/lib/helper'
-import { renderPreview } from './preview'
 
 import { MetadataForm } from './MetadataForm'
+import { renderPreview } from './Preview'
+import type { UpdateFileInput } from '../../../../../../app/store/admin/uploadTab.store'
 
 interface FileUploadCardProps<T extends UploadFile> {
   file: T

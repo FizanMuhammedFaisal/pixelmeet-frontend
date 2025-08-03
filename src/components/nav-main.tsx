@@ -35,11 +35,11 @@ export function NavMain({
 
   return (
     <SidebarGroup>
-      <SidebarMenu>
+      <SidebarMenu className='mt-2'>
         {items.map(item => {
           const isActive = item.url === pathname
-          const classnamebutton = `hover:bg-primary/10 hover:dark:bg-primary/70 ${
-            isActive ? 'bg-primary/10 dark:bg-primary/70' : ''
+          const classnamebutton = `hover:bg-primary/10 hover:dark:bg-primary/30 dark:text-zinc-200 text-zinc-900 ${
+            isActive ? 'bg-primary/10 dark:bg-primary/50' : ''
           }`
 
           return (
@@ -55,7 +55,7 @@ export function NavMain({
                     {isActive && (
                       <motion.div
                         layoutId='nav-background'
-                        className='absolute inset-0 bg-primary/40 dark:bg-primary/70 text-zinc-100  rounded-md'
+                        className='absolute inset-0 bg-primary/40 dark:bg-primary/70 rounded-md'
                         transition={{
                           type: 'spring',
                           stiffness: 400,
@@ -80,12 +80,12 @@ export function NavMain({
                           return (
                             <SidebarMenuSubItem
                               key={subItem.title}
-                              className='relative'
+                              className='relativ'
                             >
                               {isSubActive && (
                                 <motion.div
                                   layoutId='nav-background'
-                                  className='absolute inset-0 bg-primary/40 dark:bg-primary/70 text-zinc-100  rounded-md'
+                                  className='absolute inset-0 bg-primary/40 dark:bg-primary/70 rounded-md'
                                   transition={{
                                     type: 'spring',
                                     stiffness: 400,
@@ -113,7 +113,7 @@ export function NavMain({
                   {isActive && (
                     <motion.div
                       layoutId='nav-background'
-                      className='absolute inset-0 bg-primary/40 dark:bg-primary/70 text-zinc-100  rounded-md'
+                      className='absolute inset-0 bg-primary/40 dark:bg-primary/70 rounded-md'
                       transition={{
                         type: 'spring',
                         stiffness: 400,
