@@ -19,6 +19,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCreateTag } from '../../../../../hooks/useCreateTag'
 import { GlobalMutationError } from '../../../../../../../shared/lib/utils'
+import SubmitButton from '../../../../../../../components/ui/submit-button'
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -41,7 +42,7 @@ export function CreateTagForm() {
   useEffect(() => {
     if (isSuccess) {
       toast.success('Tag created successfully.')
-      router('/dashboard/assets')
+      router('/dashboard/assets?tab=tags')
     }
     if (isError) {
       toast.error(error.message || 'Failed to create tag.')
@@ -118,9 +119,13 @@ export function CreateTagForm() {
             >
               Cancel
             </Button>
-            <Button type='submit' disabled={isPending}>
-              {isPending ? 'Creating...' : 'Create Tag'}
-            </Button>
+            <SubmitButton
+              processingName='Creating'
+              isLoading={isPending}
+              isSuccess={isSuccess}
+            >
+              Create
+            </SubmitButton>
           </div>
         </form>
       </CardContent>

@@ -20,6 +20,8 @@ import { useAssetTagsStore } from '../../../../../../app/store/admin/tagsTab.sto
 import { usePaginatedTags } from '../../../../hooks/usePaginatedTags'
 import { Spinner } from '../../../../../../components/ui/spinner'
 import { HoldToDeleteButton } from '../../../../../../components/ui/hold-to-delete'
+import { useDeleteTag } from '../../../../hooks/useDeleteTag'
+import { GlobalMutationError } from '../../../../../../shared/lib/utils'
 export default function TagsList() {
   const [currentPage, setCurrentPage] = useState(1)
   const limit = 10
@@ -27,10 +29,9 @@ export default function TagsList() {
   const router = useNavigation()
   const { deleteTag } = useAssetTagsStore()
 
-  const { data, isLoading, isFetching, isError, error } = usePaginatedTags(
-    currentPage,
-    limit
-  )
+  const { data, isLoading, isFetching, isError, error, refetch } =
+    usePaginatedTags(currentPage, limit)
+  const deleteTagMutation = useDeleteTag()
   console.log(data)
   const tags = data?.data?.data.tags || []
   const totalPages = data?.data?.data.totalPages || 0
@@ -41,19 +42,19 @@ export default function TagsList() {
   }
 
   const handleDelete = (id: string) => {
-    // Simulate API call
-    setTimeout(() => {
-      const success = deleteTag(id)
-      if (success) {
-        toast.success('Tag deleted successfully.')
-        // If the current page becomes empty after deletion, go to the previous page
-        if (tags.length === 1 && currentPage > 1) {
-          setCurrentPage(currentPage - 1)
+    deleteTagMutation.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          toast.success('Tag deleted successfully.')
+          refetch()
+        },
+        onError: error => {
+          GlobalMutationError(error)
+          toast.error('Failed to delete tag.')
         }
-      } else {
-        toast.error('Failed to delete tag.')
       }
-    }, 300)
+    )
   }
 
   const showPaginationControls = totalTags > limit
@@ -152,7 +153,7 @@ export default function TagsList() {
                           <HoldToDeleteButton
                             size='sm'
                             onHoldComplete={() => handleDelete(tag.id)}
-                            holdDuration={2500}
+                            holdDuration={2000}
                             aria-label={`Hold to delete ${tag.name}`}
                           />
                         </div>

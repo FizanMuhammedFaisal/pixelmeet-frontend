@@ -20,7 +20,7 @@ export default function AdminAssetsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const tabFromUrl = searchParams.get('tab')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [currentTab, setCurrentTab] = useState<AssetDashboardTabs>('dashboard')
+  const [currentTab, setCurrentTab] = useState<AssetDashboardTabs>(tabFromUrl)
   const tabComponents: Record<AssetDashboardTabs, React.ReactNode> = {
     dashboard: <DashboardTab currentTab={currentTab} viewMode={viewMode} />,
     all: <AllAssetsTab />,
@@ -36,6 +36,7 @@ export default function AdminAssetsPage() {
   useEffect(() => {
     if (!validTab(tabFromUrl)) {
       setSearchParams({ tab: DEFAULT_TAB })
+      setCurrentTab(DEFAULT_TAB)
     }
   }, [tabFromUrl])
 
@@ -46,7 +47,7 @@ export default function AdminAssetsPage() {
   return (
     <div className='flex flex-col min-h-screen bg-background'>
       <TopNavigation
-        currentTab={tabFromUrl}
+        currentTab={currentTab}
         onTabChange={onTabChange}
         onViewModeToggle={setViewMode}
         viewMode={viewMode}

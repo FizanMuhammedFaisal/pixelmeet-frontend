@@ -2,6 +2,7 @@ import { apiClient } from '../../../api/config/axios'
 import { API_ENDPOINTS } from '../../../api/config/enpoints'
 import type {
   CreateTagPayload,
+  DeleteTagPayload,
   GetTagPayload,
   GetTagsPayload,
   UpdateTagPayload
@@ -24,6 +25,12 @@ export const tagServices = {
   },
   updateTag: async (data: UpdateTagPayload) => {
     const res = await apiClient.put(API_ENDPOINTS.ASSET.UPDATE_TAG, data)
+    return res
+  },
+  deleteTag: async (data: DeleteTagPayload) => {
+    const res = await apiClient.delete(
+      `${API_ENDPOINTS.ASSET.DELETE_TAG}${data.id}`
+    )
     return res
   }
 }

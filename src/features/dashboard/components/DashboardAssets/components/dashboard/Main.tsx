@@ -3,7 +3,6 @@ import { AssetCategoryCard } from './AssetCategoryCard'
 import { AssetSearchBar } from './AssetSearch'
 import { OverviewStats } from './OverviewStats'
 
-import { type AssetDashboardTabs } from '../../DashboardAssets'
 import { cn } from '@/shared/lib/utils'
 import { useMemo, useState } from 'react'
 import { AssetPreview } from './AssetPreview'
@@ -36,7 +35,7 @@ export interface AssetCategory {
 }
 export const assetCategories: AssetCategory[] = [
   {
-    id: 'tilesets',
+    id: 'd',
     name: 'Tilesets',
     description: 'Tile graphics used in maps',
     icon: 'Grid3X3',
@@ -331,7 +330,7 @@ function MainTab({ viewMode, currentTab }: Props) {
           <div className='flex flex-wrap gap-3 pb-3 px-2'>
             {assetCategories.map(category => (
               <AssetCategoryCard
-                key={category.id}
+                key={category.id + category.description}
                 category={category}
                 onClick={() => router(`/assets/${category.id}`)}
               />

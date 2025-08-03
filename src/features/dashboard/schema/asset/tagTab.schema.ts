@@ -12,6 +12,9 @@ export type CreateTagPayload = {
 export type GetTagPayload = {
   id: string
 }
+export type DeleteTagPayload = {
+  id: string
+}
 
 export type UpdateTagPayload = {
   id: string
@@ -42,5 +45,11 @@ export type GetTagResponse = {
     description: string
     updatedAt: Date
     createdAt: Date
+  }
+}
+
+export type DeleteTagResponse = {
+  data: {
+    deleted: boolean
   }
 }
