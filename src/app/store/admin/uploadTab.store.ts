@@ -1,8 +1,6 @@
 import { create } from 'zustand'
-import type {
-  AssetType,
-  UploadFile
-} from '../../features/dashboard/types/upload/types'
+import type { AssetType, UploadFile } from '../../../features/dashboard/types'
+
 export type UpdateFileInput =
   | Partial<Extract<UploadFile, { type: 'image' }>>
   | Partial<Extract<UploadFile, { type: 'audio' }>>
@@ -132,7 +130,7 @@ export const useUploadTabStore = create<UploadState>()((set, get) => ({
             metadata: null
           }
         }
-        return f
+        return { ...f, ...updates, metadata: null }
       })
     }))
   },

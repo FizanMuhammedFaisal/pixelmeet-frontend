@@ -6,7 +6,7 @@ import { GlobalMutationError } from '../../shared/lib/utils'
 import type { AxiosError } from 'axios'
 import { useOfflineStatus } from '../../shared/hooks/useOfflineStatus'
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5,

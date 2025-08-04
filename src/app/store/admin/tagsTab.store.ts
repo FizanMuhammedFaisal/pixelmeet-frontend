@@ -40,9 +40,14 @@ export const useAssetTagsStore = create<AssetTagsState>()((set, get) => ({
     })
   },
   deleteTag: (id: string) => {
-    console.log(id)
+    const length = get().tags.length - 1
+    let currPage = get().page
+    if (length < 1) {
+      currPage -= 1
+    }
     set(state => ({
-      tags: state.tags.filter(c => c.id !== id)
+      tags: state.tags.filter(c => c.id !== id),
+      page: currPage
     }))
   },
   addTags: newTags => {

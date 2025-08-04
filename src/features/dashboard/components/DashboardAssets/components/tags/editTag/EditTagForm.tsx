@@ -15,11 +15,11 @@ import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useQueryClient } from '@tanstack/react-query'
 import { useGetTag, useUpdateTag } from '../../../../../hooks'
 import { Spinner } from '../../../../../../../components/ui/spinner'
 import SubmitButton from '../../../../../../../components/ui/submit-button'
 import { useAssetTagsStore } from '../../../../../../../app/store/admin/tagsTab.store'
+import { queryClient } from '../../../../../../../app/providers/QueryProvider'
 
 // Define the Zod schema for form validation
 const formSchema = z.object({
@@ -33,8 +33,6 @@ const formSchema = z.object({
 export function EditTagForm() {
   const router = useNavigate()
   const { id: tagId } = useParams<{ id: string }>()
-  const queryClient = useQueryClient()
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -87,6 +85,7 @@ export function EditTagForm() {
       {
         onSuccess: data => {
           editTag(tagId, data.data.tag)
+          queryClient.invalidateQueries({ queryKey: ['tags'] })
         }
       }
     )

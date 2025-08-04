@@ -21,6 +21,7 @@ import { useCreateTag } from '../../../../../hooks/useCreateTag'
 import { GlobalMutationError } from '../../../../../../../shared/lib/utils'
 import SubmitButton from '../../../../../../../components/ui/submit-button'
 import { useAssetTagsStore } from '../../../../../../../app/store/admin/tagsTab.store'
+import { queryClient } from '../../../../../../../app/providers/QueryProvider'
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -47,7 +48,7 @@ export function CreateTagForm() {
         onSuccess: data => {
           addTag(data.data.data.tag)
           console.log(data)
-          console.log('asdfasdf')
+          queryClient.invalidateQueries({ queryKey: ['tags'] })
 
           toast.success('Tag created successfully.')
 

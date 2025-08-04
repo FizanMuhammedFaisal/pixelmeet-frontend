@@ -1,9 +1,16 @@
 import z from 'zod'
-
+const Tag = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  updatedAt: z.date(),
+  createdAt: z.date()
+})
 const baseFileSchema = z.object({
   id: z.string(),
   name: z.string().min(1, 'Asset Name is required'),
-  description: z.string('Description Needed').nonempty('Description Needed')
+  description: z.string('Description Needed').nonempty('Description Needed'),
+  tags: z.array(Tag).optional()
 })
 
 // const imageMetadataSchema = z.object({

@@ -22,6 +22,7 @@ import { Spinner } from '../../../../../../components/ui/spinner'
 import { HoldToDeleteButton } from '../../../../../../components/ui/hold-to-delete'
 import { useDeleteTag } from '../../../../hooks/useDeleteTag'
 import { GlobalMutationError } from '../../../../../../shared/lib/utils'
+import { queryClient } from '../../../../../../app/providers/QueryProvider'
 export default function TagsList() {
   const limit = 10
 
@@ -42,12 +43,12 @@ export default function TagsList() {
 
   const tags = useAssetTagsStore(state => state.tags)
   useEffect(() => {
-    if (isSuccess && data && !isFetching && tags.length === 0) {
-      addTags(data.data.data.tags)
+    if (isSuccess && data && !isFetching) {
+      setTags(data.data.data.tags)
       setTotalPages(data.data.data.totalPages)
       setTotalTagsCount(data.data.data.total)
     }
-  }, [isSuccess, data, setTags, setTotalPages, setTotalTagsCount])
+  }, [isSuccess, data, setTags, setTotalPages, setTotalTagsCount, isFetching])
 
   const totalPages = useAssetTagsStore(state => state.totalPages)
   const totalTags = useAssetTagsStore(state => state.total)
@@ -63,6 +64,7 @@ export default function TagsList() {
         onSuccess: () => {
           toast.success('Tag deleted successfully.')
           deleteTag(id)
+          queryClient.invalidateQueries({ queryKey: ['tags'] })
         },
         onError: error => {
           GlobalMutationError(error)
@@ -71,6 +73,7 @@ export default function TagsList() {
       }
     )
   }
+  console.log(tags)
 
   const showPaginationControls = totalTags > limit
   if (isLoading) {
@@ -118,7 +121,7 @@ export default function TagsList() {
                 <p>Loading new page...</p>
               </div>
             )}
-            <div className='overflow-x-auto flex-grow mb-5 rounded-md'>
+            <div className='overflow-x-auto mb-5 flex-grow   max-h-[580px]  rounded-md'>
               <Table>
                 <TableHeader>
                   <TableRow>

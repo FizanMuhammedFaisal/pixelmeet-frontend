@@ -1,3 +1,5 @@
+import type { Tag } from '../../../../app/store/admin/tagsTab.store'
+
 export type AsepriteMetadata = {
   textureURL?: string
   atlasURL?: string
@@ -40,6 +42,7 @@ interface BaseUploadFile extends BaseAsset {
   previewUrl?: string
   uploadStatus: UploadStatus
   error?: Error
+  tags?: Tag[]
 }
 
 interface serverAsset extends BaseAsset {

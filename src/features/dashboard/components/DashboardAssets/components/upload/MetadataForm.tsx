@@ -3,19 +3,15 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import type {
-  UploadFile,
-  SpriteSheetMetadata,
-  AssetType
-} from '../../../../types'
-import type { UpdateFileInput } from '../../../../../../app/store/uploadTab.store'
+import type { UploadFile, AssetType } from '../../../../types'
+
 import { Textarea } from '../../../../../../components/ui/textarea'
 import { uploadFileSchema } from '../../../../schema/asset/form.schema'
 import { CardContent, CardFooter } from '../../../../../../components/ui/card'
 import { getStatusBadgeVariant, getStatusIcon } from './Statusbadge'
 import { Badge, Upload } from 'lucide-react'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Button } from '../../../../../../components/ui/button'
 import {
   Select,
@@ -24,6 +20,16 @@ import {
   SelectTrigger,
   SelectValue
 } from '../../../../../../components/ui/select'
+import {
+  useUploadTabStore,
+  type UpdateFileInput
+} from '../../../../../../app/store/admin/uploadTab.store'
+import { MultiSelectTags } from '../../../../../../components/ui/multi-select-tags'
+import {
+  useAssetTagsStore,
+  type Tag
+} from '../../../../../../app/store/admin/tagsTab.store'
+import { usePaginatedTags } from '../../../../hooks/usePaginatedTags'
 
 type FormValues = z.infer<typeof uploadFileSchema>
 
@@ -34,11 +40,14 @@ type MetadataFormProps<T extends UploadFile> = {
 }
 
 export const MetadataForm = <T extends UploadFile>({
-  updateFile,
   file,
   onUpload
 }: MetadataFormProps<T>) => {
-  const { id, type, uploadStatus, error } = file
+  console.log(file)
+  const { id, type, uploadStatus, error, tags = [] } = file
+  const [typeAlert, setTypeAlert] = useState(false)
+
+  const { updateFile } = useUploadTabStore()
   const {
     control,
     formState: { errors },
@@ -48,13 +57,10 @@ export const MetadataForm = <T extends UploadFile>({
     resolver: zodResolver(uploadFileSchema),
     defaultValues: {
       ...file,
-      metadata: file.metadata || {},
+      metadata: file.metadata,
       ...(file.type === 'spritesheet' && {
         metadata: {
-          frameConfig: (file.metadata as SpriteSheetMetadata)?.frameConfig || {
-            frameWidth: 0,
-            frameHeight: 0
-          }
+          frameConfig: {}
         }
       })
     } as FormValues,
@@ -78,11 +84,18 @@ export const MetadataForm = <T extends UploadFile>({
     console.log(data)
     console.log('data')
     console.log(error)
-
-    onUpload()
+    // onUpload()
   }
+  //
+  const { addTags } = useAssetTagsStore()
+  const { data, isSuccess, isFetching } = usePaginatedTags()
+  const AssetTags = useAssetTagsStore(state => state.tags)
+  useEffect(() => {
+    if (isSuccess && data && !isFetching && AssetTags.length === 0) {
+      addTags(data.data.data.tags)
+    }
+  }, [isSuccess, data])
 
-  const [typeAlert, setTypeAlert] = useState(false)
   const handleTypeChange = useCallback(
     (newType: AssetType) => {
       if (newType === 'unknown') {
@@ -90,7 +103,16 @@ export const MetadataForm = <T extends UploadFile>({
       } else {
         setTypeAlert(false)
       }
-      console.log(newType)
+      setValue('type', newType, { shouldValidate: true })
+
+      if (newType === 'spritesheet') {
+        setValue('metadata', {
+          frameConfig: { frameWidth: 0, frameHeight: 0 }
+        })
+      } else {
+        setValue('metadata', {})
+      }
+
       updateFile(id, { type: newType })
     },
     [updateFile, id]
@@ -110,17 +132,29 @@ export const MetadataForm = <T extends UploadFile>({
               <Label htmlFor={`file-type-${id}`} className='mb-2'>
                 Asset Type
               </Label>
-              <Select value={type || ''} onValueChange={handleTypeChange}>
-                <SelectTrigger id={`file-type-${id}`}>
-                  <SelectValue placeholder='Select type' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='tilemapTiledJSON'>Tileset JSON</SelectItem>
-                  <SelectItem value='spritesheet'>Sprite Sheet</SelectItem>
-                  <SelectItem value='image'>Image</SelectItem>
-                  <SelectItem value='audio'>Audio</SelectItem>
-                </SelectContent>
-              </Select>
+
+              <Controller
+                name='type'
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value || ''}
+                    onValueChange={handleTypeChange}
+                  >
+                    <SelectTrigger id={`file-type-${id}`}>
+                      <SelectValue placeholder='Select type' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='tilemapTiledJSON'>
+                        Tileset JSON
+                      </SelectItem>
+                      <SelectItem value='spritesheet'>Sprite Sheet</SelectItem>
+                      <SelectItem value='image'>Image</SelectItem>
+                      <SelectItem value='audio'>Audio</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
           </div>
 
@@ -142,7 +176,6 @@ export const MetadataForm = <T extends UploadFile>({
                     {...field}
                     onChange={e => {
                       field.onChange(e)
-                      updateFile(id, { type: type, name: e.target.value })
                     }}
                   />
                 )}
@@ -151,7 +184,32 @@ export const MetadataForm = <T extends UploadFile>({
                 <p className='text-red-500 text-sm'>{errors.name.message}</p>
               )}
             </div>
+            <div className='grid gap-2'>
+              <Label htmlFor={`tags-${id}`}>Tags</Label>
+              <Controller
+                name='tags'
+                control={control}
+                render={({ field }) => {
+                  const selectedTagIds = field.value || []
 
+                  return (
+                    <MultiSelectTags
+                      options={AssetTags}
+                      selected={selectedTagIds}
+                      onChange={(selectedTags: Tag[]) => {
+                        // updateFile(id, { tags: selectedTags })
+
+                        field.onChange(selectedTags)
+                      }}
+                      placeholder='Select tags...'
+                    />
+                  )
+                }}
+              />
+              {errors.tags && (
+                <p className='text-red-500 text-sm'>{errors.tags.message}</p>
+              )}
+            </div>
             <div className='grid gap-2 col-span-2'>
               <Label htmlFor={`description-${id}`}>Description</Label>
               <Controller
@@ -164,10 +222,6 @@ export const MetadataForm = <T extends UploadFile>({
                     {...field}
                     onChange={e => {
                       field.onChange(e)
-                      updateFile(id, {
-                        type: type,
-                        description: e.target.value
-                      })
                     }}
                   />
                 )}
@@ -192,16 +246,10 @@ export const MetadataForm = <T extends UploadFile>({
                         type='number'
                         placeholder='32'
                         {...field}
-                        value={field.value ?? ''}
+                        value={field.value}
                         onChange={e => {
                           const value = Number.parseInt(e.target.value)
                           field.onChange(value)
-                          updateFile(id, {
-                            type: type,
-                            metadata: {
-                              frameConfig: { frameWidth: value || 0 }
-                            }
-                          })
                         }}
                       />
                     )}
@@ -225,16 +273,10 @@ export const MetadataForm = <T extends UploadFile>({
                         type='number'
                         placeholder='32'
                         {...field}
-                        value={field.value ?? ''}
+                        value={field.value}
                         onChange={e => {
                           const value = Number.parseInt(e.target.value)
                           field.onChange(value)
-                          updateFile(id, {
-                            type: type,
-                            metadata: {
-                              frameConfig: { frameHeight: value || 0 }
-                            }
-                          })
                         }}
                       />
                     )}

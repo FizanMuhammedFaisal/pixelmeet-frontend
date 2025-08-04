@@ -17,31 +17,35 @@ import {
 } from '@/components/ui/popover'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '../../shared/lib/utils'
-
-interface MultiSelectTagsProps {
-  options: string[]
-  selected: string[]
-  onChange: (selected: string[]) => void
+interface SelectableItems {
+  id: string
+  name: string
+}
+interface MultiSelectTagsProps<T extends SelectableItems> {
+  options: T[]
+  selected: T[]
+  onChange: (selected: T[]) => void
   placeholder?: string
 }
 
-export function MultiSelectTags({
+export function MultiSelectTags<T extends SelectableItems>({
   options,
   selected,
   onChange,
   placeholder = 'Select tags...'
-}: MultiSelectTagsProps) {
+}: MultiSelectTagsProps<T>) {
   const [open, setOpen] = React.useState(false)
+  const selectedIds = new Set(selected.map(item => item.id))
 
-  const handleSelect = (value: string) => {
-    const newSelected = selected.includes(value)
-      ? selected.filter(item => item !== value)
+  const handleSelect = (value: T) => {
+    const newSelected = selectedIds.has(value.id)
+      ? selected.filter(item => item.id !== value.id)
       : [...selected, value]
     onChange(newSelected)
   }
 
-  const handleRemoveTag = (tagToRemove: string) => {
-    onChange(selected.filter(tag => tag !== tagToRemove))
+  const handleRemoveTag = (tagToRemove: T) => {
+    onChange(selected.filter(tag => tag.id !== tagToRemove.id))
   }
 
   return (
@@ -58,11 +62,11 @@ export function MultiSelectTags({
               {selected.length > 0 ? (
                 selected.map(tag => (
                   <Badge
-                    key={tag}
+                    key={tag.id}
                     variant='secondary'
                     className='flex items-center gap-1'
                   >
-                    {tag}
+                    {tag.name}
                     <button
                       type='button'
                       onClick={e => {
@@ -90,7 +94,7 @@ export function MultiSelectTags({
               <CommandGroup>
                 {options.map(tag => (
                   <CommandItem
-                    key={tag}
+                    key={tag.id}
                     onSelect={() => handleSelect(tag)}
                     className='cursor-pointer'
                   >
@@ -100,7 +104,7 @@ export function MultiSelectTags({
                         selected.includes(tag) ? 'opacity-100' : 'opacity-0'
                       )}
                     />
-                    {tag}
+                    {tag.name}
                   </CommandItem>
                 ))}
               </CommandGroup>
