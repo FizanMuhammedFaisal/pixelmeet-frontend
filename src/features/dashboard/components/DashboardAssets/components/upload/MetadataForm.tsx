@@ -29,7 +29,8 @@ import {
   useAssetTagsStore,
   type Tag
 } from '../../../../../../app/store/admin/tagsTab.store'
-import { usePaginatedTags } from '../../../../hooks/usePaginatedTags'
+import { usePaginatedTags } from '../../../../hooks'
+import { TagMultiSelect } from '../../../../../../shared/layout/common/TagMultiSelect'
 
 type FormValues = z.infer<typeof uploadFileSchema>
 
@@ -43,8 +44,7 @@ export const MetadataForm = <T extends UploadFile>({
   file,
   onUpload
 }: MetadataFormProps<T>) => {
-  console.log(file)
-  const { id, type, uploadStatus, error, tags = [] } = file
+  const { id, type, uploadStatus, error } = file
   const [typeAlert, setTypeAlert] = useState(false)
 
   const { updateFile } = useUploadTabStore()
@@ -82,19 +82,50 @@ export const MetadataForm = <T extends UploadFile>({
 
   const handleFormSubmit: SubmitHandler<FormValues> = data => {
     console.log(data)
-    console.log('data')
     console.log(error)
-    // onUpload()
+    switch (data.type) {
+      case 'audio':
+        updateFile(id, {
+          type: 'audio',
+          description: data.description,
+          tags: data.tags,
+          name: data.name
+        })
+        break
+      case 'spritesheet':
+        updateFile(id, {
+          type: 'spritesheet',
+          metadata: data.metadata,
+          description: data.description,
+          tags: data.tags,
+          name: data.name
+        })
+
+        break
+      case 'image':
+        updateFile(id, {
+          type: 'image',
+          description: data.description,
+          tags: data.tags,
+          name: data.name
+        })
+        break
+
+      case 'tilemapTiledJSON':
+        updateFile(id, {
+          type: 'tilemapTiledJSON',
+          description: data.description,
+          tags: data.tags,
+          name: data.name
+        })
+        break
+
+      default:
+        break
+    }
+    onUpload()
   }
   //
-  const { addTags } = useAssetTagsStore()
-  const { data, isSuccess, isFetching } = usePaginatedTags()
-  const AssetTags = useAssetTagsStore(state => state.tags)
-  useEffect(() => {
-    if (isSuccess && data && !isFetching && AssetTags.length === 0) {
-      addTags(data.data.data.tags)
-    }
-  }, [isSuccess, data])
 
   const handleTypeChange = useCallback(
     (newType: AssetType) => {
@@ -119,7 +150,7 @@ export const MetadataForm = <T extends UploadFile>({
   )
 
   return (
-    <div className='w-full max-w-4xl mx-auto '>
+    <div className='w-full max-w-4xl mx-auto ' key={id}>
       <CardContent className='p-6'>
         <div className='flex flex-col md:flex-row gap-6'>
           <div className='flex-shrink-0 w-full md:w-1/3'>
@@ -193,11 +224,10 @@ export const MetadataForm = <T extends UploadFile>({
                   const selectedTagIds = field.value || []
 
                   return (
-                    <MultiSelectTags
-                      options={AssetTags}
+                    <TagMultiSelect
                       selected={selectedTagIds}
                       onChange={(selectedTags: Tag[]) => {
-                        // updateFile(id, { tags: selectedTags })
+                        updateFile(id, { tags: selectedTags })
 
                         field.onChange(selectedTags)
                       }}
@@ -288,39 +318,6 @@ export const MetadataForm = <T extends UploadFile>({
                   )}
                 </div>
               </>
-            )}
-
-            {type === 'audio' && (
-              <div className='grid gap-2 col-span-2'>
-                <Label htmlFor={`tags-${id}`}>Tags (comma-separated)</Label>
-                <Controller
-                  name='metadata.url'
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      id={`tags-${id}`}
-                      placeholder='e.g., music, background'
-                      {...field}
-                      value={
-                        Array.isArray(field.value) ? field.value.join(', ') : ''
-                      }
-                      onChange={e => {
-                        const tags = e.target.value
-                          .split(',')
-                          .map(tag => tag.trim())
-                          .filter(tag => tag.length > 0)
-                        field.onChange(tags)
-                        updateFile(id, { type: type, metadata: { url: tags } })
-                      }}
-                    />
-                  )}
-                />
-                {getErrorMessage('metadata.url') && (
-                  <p className='text-red-500 text-sm'>
-                    {getErrorMessage('metadata.url')}
-                  </p>
-                )}
-              </div>
             )}
 
             <CardFooter className='flex flex-col md:flex-row items-center justify-between p-0 pt-4 gap-3 col-span-full'>

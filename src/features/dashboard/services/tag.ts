@@ -14,8 +14,18 @@ export const tagServices = {
     return res
   },
   getTags: async (data: GetTagsPayload) => {
+    const { page, limit, query } = data
+
+    const params = new URLSearchParams()
+    params.set('page', String(page))
+    params.set('limit', String(limit))
+
+    if (query && query.trim() !== '') {
+      params.set('query', query.trim())
+    }
+
     const res = await apiClient.get(
-      `${API_ENDPOINTS.ASSET.GET_TAGS}?page=${data.page}&limit=${data.limit}`
+      `${API_ENDPOINTS.ASSET.GET_TAGS}?${params.toString()}`
     )
     return res
   },

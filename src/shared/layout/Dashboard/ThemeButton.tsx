@@ -31,6 +31,7 @@ export function ThemeToggle() {
       showLabel
       variant='circle-blur'
       start='top-right'
+      key={'theme buttom'}
     />
     // <motion.button
     //   onClick={handleToggle}

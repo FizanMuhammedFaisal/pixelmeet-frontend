@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 
 import type { AxiosError, AxiosResponse } from 'axios'
-import type { ErrorResponse } from '../../../shared/types'
-import { tagServices } from '../services/tag'
-import type { TagResponse } from '../schema/asset/tagTab.schema'
+import type { TagResponse } from '../../schema/asset/tagTab.schema'
+import type { ErrorResponse } from 'react-router'
+import { tagServices } from '../../services/tag'
 
 export const usePaginatedTags = (page: number = 1, limit: number = 10) => {
   return useQuery<AxiosResponse<TagResponse>, AxiosError<ErrorResponse>>({

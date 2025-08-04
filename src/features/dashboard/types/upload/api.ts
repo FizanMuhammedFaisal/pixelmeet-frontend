@@ -5,7 +5,8 @@ export const CreateAssetSchema = z.discriminatedUnion('type', [
     type: z.literal('image'),
     name: z.string().nonempty(),
     size: z.number(),
-    desciption: z.string().optional(),
+    description: z.string().optional(),
+    tags: z.array(z.string()).optional(),
     metadata: z.object({
       urlKey: z.string().nonempty()
     })
@@ -15,9 +16,20 @@ export const CreateAssetSchema = z.discriminatedUnion('type', [
     type: z.literal('audio'),
     name: z.string().nonempty(),
     size: z.number(),
-    desciption: z.string().optional(),
+    description: z.string().optional(),
+    tags: z.array(z.string()).optional(),
     metadata: z.object({
       urlKey: z.array(z.string().nonempty())
+    })
+  }),
+  z.object({
+    type: z.literal('tilemapTiledJSON'),
+    name: z.string().nonempty(),
+    size: z.number(),
+    description: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    metadata: z.object({
+      urlKey: z.string().nonempty()
     })
   }),
 
@@ -25,7 +37,8 @@ export const CreateAssetSchema = z.discriminatedUnion('type', [
     type: z.literal('spritesheet'),
     name: z.string().nonempty(),
     size: z.number(),
-    desciption: z.string().optional(),
+    description: z.string().optional(),
+    tags: z.array(z.string()).optional(),
     metadata: z.object({
       urlKey: z.string().nonempty(),
       frameConfig: z.object({
@@ -39,7 +52,8 @@ export const CreateAssetSchema = z.discriminatedUnion('type', [
     type: z.literal('aseprite'),
     name: z.string().nonempty(),
     size: z.number(),
-    desciption: z.string().optional(),
+    description: z.string().optional(),
+    tags: z.array(z.string()).optional(),
     metadata: z.object({
       textureURLKey: z.string().nonempty(),
       atlasURLKey: z.string().nonempty()

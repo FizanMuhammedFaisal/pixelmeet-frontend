@@ -3,6 +3,7 @@ import type { AssetTags } from '../../types/tag/api'
 export type GetTagsPayload = {
   limit: number
   page: number
+  query?: string
 }
 
 export type CreateTagPayload = {

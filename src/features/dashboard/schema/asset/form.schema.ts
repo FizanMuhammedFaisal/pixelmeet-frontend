@@ -3,8 +3,8 @@ const Tag = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
-  updatedAt: z.date(),
-  createdAt: z.date()
+  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date()
 })
 const baseFileSchema = z.object({
   id: z.string(),
@@ -53,7 +53,7 @@ export const uploadFileSchema = z.discriminatedUnion('type', [
     metadata: spritesheetMetadataSchema
   }),
   baseFileSchema.extend({
-    type: z.literal('tilemapTiledJSON'),
-    metadata: tilemapTiledJSONMetadataSchema
+    type: z.literal('tilemapTiledJSON')
+    // metadata: tilemapTiledJSONMetadataSchema
   })
 ])

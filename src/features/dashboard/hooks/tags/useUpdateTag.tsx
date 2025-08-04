@@ -4,8 +4,8 @@ import type { ErrorResponse } from 'react-router'
 import type {
   UpdateTagPayload,
   UpdateTagResponse
-} from '../schema/asset/tagTab.schema'
-import { tagServices } from '../services/tag'
+} from '../../schema/asset/tagTab.schema'
+import { tagServices } from '../../services/tag'
 
 export const useUpdateTag = () => {
   return useMutation<

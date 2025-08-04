@@ -5,15 +5,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { DragAndDropArea } from './AssetUploadZone'
 import { FileUploadCard } from './FileUploadCard'
-import { type UploadFile } from '../../../../types/upload/types'
-import { useGetPresignedURL } from '../../../../hooks/useGetPresignedURL'
-import { useUploadAsset } from '../../../../hooks/useUploadAsset'
+
+import { useGetPresignedURL } from '../../../../hooks/'
+import { useUploadAsset } from '../../../../hooks/'
 import { useCreateAsset } from '../../../../hooks'
-import { hasValidMetadata } from '../../../../types'
+import {
+  hasValidMetadata,
+  type CreateAssetRequestPayload,
+  type UploadFile
+} from '../../../../types'
 import { GlobalMutationError } from '../../../../../../shared/lib/utils'
 import type { AxiosError } from 'axios'
-import type { ErrorResponse } from '../../../../../../shared/types'
+
 import { useUploadTabStore } from '../../../../../../app/store/admin/uploadTab.store'
+import type { ErrorResponse } from '../../../../../../shared/types'
 
 export default function UploadTab() {
   const getPresignedURLMutation = useGetPresignedURL()
@@ -55,7 +60,13 @@ export default function UploadTab() {
     }
   }
   const handleUpload = useCallback(
-    async (fileToUpload: UploadFile) => {
+    async (id: string) => {
+      const fileToUpload = getFile(id)
+      console.log(fileToUpload)
+      if (fileToUpload === undefined) {
+        return toast.error("Couldn't upload file try agin")
+      }
+
       if (
         fileToUpload.uploadStatus === 'uploading' ||
         fileToUpload.uploadStatus === 'uploaded'
@@ -80,10 +91,15 @@ export default function UploadTab() {
         }
         console.log(res.data)
         updateURLKey(fileToUpload, res.data.assetKey)
-
+        let ToUpload = getFile(id)
+        if (ToUpload === undefined) {
+          return toast.error(
+            `Upload for ${fileToUpload.name} failed, Try again`
+          )
+        }
         const assetRes = await uploadAssetMutation.mutateAsync({
           contentType: res.data.mimeType,
-          file: fileToUpload.file,
+          file: ToUpload.file,
           url: res.data.url
         })
         console.log(assetRes)
@@ -92,21 +108,21 @@ export default function UploadTab() {
             `Upload for ${fileToUpload.name} failed, Try again`
           )
         }
-        const updatedFile = getFile(fileToUpload.id)
-        console.log(updatedFile)
-        console.log('updateFile')
-        if (hasValidMetadata(fileToUpload) && updatedFile) {
+
+        if (hasValidMetadata(ToUpload) && ToUpload) {
           createAssetMutation.mutate(
             {
-              name: updatedFile.name,
-              type: updatedFile.type,
-              metadata: updatedFile.metadata,
-              size: updatedFile.size
-            },
+              name: ToUpload.name,
+              type: ToUpload.type,
+              metadata: ToUpload.metadata,
+              size: ToUpload.size,
+              description: ToUpload.description,
+              tags: ToUpload.tags?.map(tag => tag.id)
+            } as CreateAssetRequestPayload,
             {
               onSuccess: () => {
-                toast.success(`Asset ${fileToUpload.name} uploaded `)
-                removeFile(fileToUpload.id)
+                toast.success(`Asset ${ToUpload.name} uploaded `)
+                removeFile(ToUpload.id)
               },
               onError: error => {
                 GlobalMutationError(error)
@@ -214,7 +230,7 @@ export default function UploadTab() {
               <FileUploadCard
                 file={file}
                 onRemove={() => removeFile(file.id)}
-                onUpload={() => handleUpload(file)}
+                onUpload={() => handleUpload(file.id)}
                 updateFile={updateFile}
               />
             </motion.div>

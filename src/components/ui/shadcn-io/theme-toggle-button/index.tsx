@@ -80,17 +80,17 @@ export const ThemeToggleButton = ({
             animation: none;
           }
           ::view-transition-new(root) {
-            animation: circle-blur-expand 0.5s ease-out;
+            animation: circle-blur-expand 0.9s cubic-bezier(0.46, -0.14, 0.11, 1);
             transform-origin: ${positions[start]};
             filter: blur(0);
           }
           @keyframes circle-blur-expand {
             from {
               clip-path: circle(0% at ${cx}% ${cy}%);
-              filter: blur(4px);
+              filter: blur(15px);
             }
             to {
-              clip-path: circle(150% at ${cx}% ${cy}%);
+              clip-path: circle(145% at ${cx}% ${cy}%);
               filter: blur(0);
             }
           }
