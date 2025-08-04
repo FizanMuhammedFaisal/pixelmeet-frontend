@@ -15,7 +15,7 @@ export const AssetDashboardTabs = [
   'upload',
   'tags'
 ] as const
-type AssetDashboardTabs = (typeof AssetDashboardTabs)[number]
+export type AssetDashboardTabs = (typeof AssetDashboardTabs)[number]
 export default function AdminAssetsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const tabFromUrl = searchParams.get('tab')

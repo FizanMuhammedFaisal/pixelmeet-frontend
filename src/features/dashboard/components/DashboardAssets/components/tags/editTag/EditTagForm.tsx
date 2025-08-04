@@ -18,6 +18,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { useGetTag, useUpdateTag } from '../../../../../hooks'
 import { Spinner } from '../../../../../../../components/ui/spinner'
+import SubmitButton from '../../../../../../../components/ui/submit-button'
+import { useAssetTagsStore } from '../../../../../../../app/store/admin/tagsTab.store'
 
 // Define the Zod schema for form validation
 const formSchema = z.object({
@@ -43,7 +45,7 @@ export function EditTagForm() {
   })
 
   const { data: tagData, isLoading, isError, error } = useGetTag(tagId!)
-
+  const { editTag } = useAssetTagsStore()
   const {
     mutate,
     isPending,
@@ -68,8 +70,7 @@ export function EditTagForm() {
     if (isSuccess) {
       toast.success('Tag updated successfully.')
 
-      queryClient.invalidateQueries(['tag', tagId])
-      router('/dashboard/assets')
+      router('/dashboard/assets?tab=tags')
     }
     if (isMutationError) {
       toast.error(mutationError?.message || 'Failed to update tag.')
@@ -81,7 +82,14 @@ export function EditTagForm() {
       toast.error('Tag ID is missing.')
       return
     }
-    mutate({ id: tagId, name: values.name, description: values.description })
+    mutate(
+      { id: tagId, name: values.name, description: values.description },
+      {
+        onSuccess: data => {
+          editTag(tagId, data.data.tag)
+        }
+      }
+    )
   }
 
   if (isLoading) {
@@ -148,9 +156,13 @@ export function EditTagForm() {
             >
               Cancel
             </Button>
-            <Button type='submit' disabled={isPending}>
-              {isPending ? 'Saving...' : 'Save Changes'}
-            </Button>
+            <SubmitButton
+              processingName='Saving...'
+              isLoading={isPending}
+              isSuccess={isSuccess}
+            >
+              Save
+            </SubmitButton>
           </div>
         </form>
       </CardContent>

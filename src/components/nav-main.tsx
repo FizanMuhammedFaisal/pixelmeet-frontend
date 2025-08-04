@@ -59,7 +59,8 @@ export function NavMain({
                         transition={{
                           type: 'spring',
                           stiffness: 400,
-                          damping: 30
+                          damping: 30,
+                          ease: 'easeInOut'
                         }}
                       />
                     )}
@@ -89,7 +90,8 @@ export function NavMain({
                                   transition={{
                                     type: 'spring',
                                     stiffness: 400,
-                                    damping: 30
+                                    damping: 30,
+                                    ease: 'easeInOut'
                                   }}
                                 />
                               )}
@@ -117,7 +119,8 @@ export function NavMain({
                       transition={{
                         type: 'spring',
                         stiffness: 400,
-                        damping: 30
+                        damping: 30,
+                        ease: 'easeInOut'
                       }}
                     />
                   )}

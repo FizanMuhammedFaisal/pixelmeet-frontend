@@ -33,7 +33,9 @@ export interface TagResponse {
 }
 
 export type CreateTagResponse = {
-  tag: AssetTags
+  data: {
+    tag: AssetTags
+  }
 }
 export type UpdateTagResponse = {
   tag: AssetTags

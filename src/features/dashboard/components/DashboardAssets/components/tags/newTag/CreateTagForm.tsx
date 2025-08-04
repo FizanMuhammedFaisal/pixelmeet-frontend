@@ -20,6 +20,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useCreateTag } from '../../../../../hooks/useCreateTag'
 import { GlobalMutationError } from '../../../../../../../shared/lib/utils'
 import SubmitButton from '../../../../../../../components/ui/submit-button'
+import { useAssetTagsStore } from '../../../../../../../app/store/admin/tagsTab.store'
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -32,27 +33,26 @@ const formSchema = z.object({
 
 export function CreateTagForm() {
   const router = useNavigate()
-
-  const { mutate, isPending, isSuccess, isError, error } = useCreateTag()
+  const { addTag } = useAssetTagsStore()
+  const { mutate, isPending, isSuccess } = useCreateTag()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema)
   })
 
-  useEffect(() => {
-    if (isSuccess) {
-      toast.success('Tag created successfully.')
-      router('/dashboard/assets?tab=tags')
-    }
-    if (isError) {
-      toast.error(error.message || 'Failed to create tag.')
-    }
-  }, [isSuccess, isError, error, router])
-
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     mutate(
       { name: values.name, description: values.description },
       {
+        onSuccess: data => {
+          addTag(data.data.data.tag)
+          console.log(data)
+          console.log('asdfasdf')
+
+          toast.success('Tag created successfully.')
+
+          router('/dashboard/assets?tab=tags')
+        },
         onError: error => {
           GlobalMutationError(error)
 

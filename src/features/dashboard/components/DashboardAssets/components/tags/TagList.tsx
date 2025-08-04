@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { PlusIcon, PencilIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -14,7 +14,7 @@ import {
 
 import { PaginationControls } from './PaginationControls'
 
-import { Link, useNavigation } from 'react-router'
+import { Link } from 'react-router'
 import { toast } from 'sonner'
 import { useAssetTagsStore } from '../../../../../../app/store/admin/tagsTab.store'
 import { usePaginatedTags } from '../../../../hooks/usePaginatedTags'
@@ -23,22 +23,37 @@ import { HoldToDeleteButton } from '../../../../../../components/ui/hold-to-dele
 import { useDeleteTag } from '../../../../hooks/useDeleteTag'
 import { GlobalMutationError } from '../../../../../../shared/lib/utils'
 export default function TagsList() {
-  const [currentPage, setCurrentPage] = useState(1)
   const limit = 10
 
-  const router = useNavigation()
-  const { deleteTag } = useAssetTagsStore()
+  const {
+    deleteTag,
+    setTags,
+    setTotalPages,
+    setTotalTagsCount,
+    setPage,
+    addTags
+  } = useAssetTagsStore()
 
-  const { data, isLoading, isFetching, isError, error, refetch } =
+  const currentPage = useAssetTagsStore(state => state.page)
+
+  const { data, isLoading, isFetching, isError, error, isSuccess, refetch } =
     usePaginatedTags(currentPage, limit)
   const deleteTagMutation = useDeleteTag()
-  console.log(data)
-  const tags = data?.data?.data.tags || []
-  const totalPages = data?.data?.data.totalPages || 0
-  const totalTags = data?.data?.data.total || 0
+
+  const tags = useAssetTagsStore(state => state.tags)
+  useEffect(() => {
+    if (isSuccess && data && !isFetching && tags.length === 0) {
+      addTags(data.data.data.tags)
+      setTotalPages(data.data.data.totalPages)
+      setTotalTagsCount(data.data.data.total)
+    }
+  }, [isSuccess, data, setTags, setTotalPages, setTotalTagsCount])
+
+  const totalPages = useAssetTagsStore(state => state.totalPages)
+  const totalTags = useAssetTagsStore(state => state.total)
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page)
+    setPage(page)
   }
 
   const handleDelete = (id: string) => {
@@ -47,7 +62,7 @@ export default function TagsList() {
       {
         onSuccess: () => {
           toast.success('Tag deleted successfully.')
-          refetch()
+          deleteTag(id)
         },
         onError: error => {
           GlobalMutationError(error)
@@ -69,7 +84,7 @@ export default function TagsList() {
   if (isError) {
     return <div>Error: {error.message}</div>
   }
-  console.log(tags)
+
   return (
     <div className='w-full max-w-6xl mx-auto p-4 md:p-8 bg-background rounded-lg shadow-sm flex flex-col min-h-[calc(100vh-2rem)] md:min-h-[calc(100vh-4rem)]'>
       <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-4 px-0 pt-0'>
@@ -153,7 +168,7 @@ export default function TagsList() {
                           <HoldToDeleteButton
                             size='sm'
                             onHoldComplete={() => handleDelete(tag.id)}
-                            holdDuration={2000}
+                            holdDuration={1100}
                             aria-label={`Hold to delete ${tag.name}`}
                           />
                         </div>
