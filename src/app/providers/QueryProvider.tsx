@@ -1,40 +1,9 @@
 import React from 'react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Toaster } from 'sonner'
-import { GlobalMutationError } from '../../shared/lib/utils'
-import type { AxiosError } from 'axios'
+import { queryClient } from '../../api/config/queryClient'
 import { useOfflineStatus } from '../../shared/hooks/useOfflineStatus'
-
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5,
-      retry: failureCount => {
-        if (!navigator.onLine) return false
-
-        return failureCount < 3
-      },
-      retryDelay(failureCount) {
-        return Math.min(1000 * 2 ** failureCount, 10000)
-      }
-    },
-    mutations: {
-      retry: failureCount => {
-        if (!navigator.onLine) return false
-        return failureCount < 3
-      },
-      retryDelay(failureCount) {
-        return Math.min(1000 * 2 ** failureCount, 10000)
-      },
-      onError(error) {
-        const err = error as AxiosError
-        GlobalMutationError(err)
-      }
-    }
-  }
-})
-// utils/errorHandlers.js
 
 interface QueryProviderProps {
   children: React.ReactNode

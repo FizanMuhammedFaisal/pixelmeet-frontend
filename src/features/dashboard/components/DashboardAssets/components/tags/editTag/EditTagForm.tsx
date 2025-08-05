@@ -19,7 +19,7 @@ import { useGetTag, useUpdateTag } from '../../../../../hooks'
 import { Spinner } from '../../../../../../../components/ui/spinner'
 import SubmitButton from '../../../../../../../components/ui/submit-button'
 import { useAssetTagsStore } from '../../../../../../../app/store/admin/tagsTab.store'
-import { queryClient } from '../../../../../../../app/providers/QueryProvider'
+import { queryClient } from '../../../../../../../api/config/queryClient'
 
 // Define the Zod schema for form validation
 const formSchema = z.object({

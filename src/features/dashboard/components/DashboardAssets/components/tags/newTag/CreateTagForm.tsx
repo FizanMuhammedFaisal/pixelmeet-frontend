@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -21,7 +20,7 @@ import { useCreateTag } from '../../../../../hooks/'
 import { GlobalMutationError } from '../../../../../../../shared/lib/utils'
 import SubmitButton from '../../../../../../../components/ui/submit-button'
 import { useAssetTagsStore } from '../../../../../../../app/store/admin/tagsTab.store'
-import { queryClient } from '../../../../../../../app/providers/QueryProvider'
+import { queryClient } from '../../../../../../../api/config/queryClient'
 
 const formSchema = z.object({
   name: z.string().min(2, {

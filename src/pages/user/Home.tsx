@@ -7,6 +7,7 @@ const HomePage = () => {
   return (
     <div className='min-h-screen bg-background'>
       <Navigation />
+
       <Hero />
       <Features />
       <Footer />

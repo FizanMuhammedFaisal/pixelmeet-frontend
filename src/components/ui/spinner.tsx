@@ -10,11 +10,11 @@ interface SpinnerProps {
   className?: string
 }
 
-const MotionLoaderIcon = motion(LoaderIcon)
+const MotionLoaderIcon = motion.create(LoaderIcon)
 
 export const Spinner = ({
   size = 'default',
-  speed = 1,
+  speed = 0.6,
   className,
   ...props
 }: SpinnerProps) => {

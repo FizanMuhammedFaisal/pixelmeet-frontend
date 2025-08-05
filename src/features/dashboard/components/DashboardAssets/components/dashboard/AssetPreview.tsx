@@ -8,9 +8,13 @@ import {
   Play,
   Volume2,
   Trash2,
-  Undo2
+  Undo2,
+  FileCode
 } from 'lucide-react'
 import type { Asset } from '../../../../types'
+import { ImageZoom } from '../../../../../../components/ui/shadcn-io/image-zoom'
+import { useState } from 'react'
+import { cn } from '../../../../../../shared/lib/utils'
 
 interface AssetPreviewProps {
   asset: Asset
@@ -25,6 +29,7 @@ export function AssetPreview({
   onDelete,
   onRestore
 }: AssetPreviewProps) {
+  const [imageLoaded, setImageLoaded] = useState(false)
   const renderPreview = () => {
     switch (asset.type) {
       case 'audio':
@@ -33,17 +38,33 @@ export function AssetPreview({
             <Volume2 className='h-8 w-8 text-muted-foreground' />
           </div>
         )
+      case 'tilemapTiledJSON':
+        return (
+          <div className='flex items-center justify-center h-24 bg-muted rounded-lg'>
+            <FileCode className='h-8 w-8 text-muted-foreground' />
+          </div>
+        )
       default:
         return (
           <div className='relative h-24 bg-muted rounded-lg overflow-hidden'>
-            <img
-              src={
-                asset.metadata?.urlKey ||
-                '/placeholder.svg?height=96&width=96&query=asset preview'
-              }
-              alt={asset.name}
-              className='object-cover w-full h-full'
-            />
+            {!imageLoaded && (
+              <div className='absolute inset-0 flex items-center justify-center backdrop-blur-lg rounded-lg'></div>
+            )}
+            <ImageZoom>
+              <img
+                alt={asset.name}
+                className={cn(
+                  'object-cover w-full h-full rounded-lg',
+                  !imageLoaded && 'opacity-0'
+                )}
+                src={
+                  asset.metadata?.url ||
+                  '/placeholder.svg?height=96&width=96&query=asset preview'
+                }
+                onLoad={() => setImageLoaded(true)}
+                style={{ transition: 'opacity 0.3s ease-in-out' }}
+              />
+            </ImageZoom>
           </div>
         )
     }

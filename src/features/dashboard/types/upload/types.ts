@@ -36,13 +36,13 @@ type BaseAsset = {
   description?: string
   type: AssetType
   size: number
+  tags?: Tag[]
 }
 
 interface BaseUploadFile extends BaseAsset {
   previewUrl?: string
   uploadStatus: UploadStatus
   error?: Error
-  tags?: Tag[]
 }
 
 interface serverAsset extends BaseAsset {
@@ -64,16 +64,37 @@ export type UploadFile =
 
 // | ({ type: 'aseprite'; metadata: AsepriteMetadata | null } & BaseUploadFile)
 
+export type AsepriteMetadataServer = {
+  textureURL?: string
+  atlasURL?: string
+}
+export type SpriteSheetMetadataServer = {
+  url?: string
+  frameConfig?: {
+    frameWidth?: number
+    frameHeight?: number
+  }
+}
+export type AudioMetadataServer = {
+  url?: string[]
+}
+export type ImageMetadataServer = {
+  url?: string
+}
+export type TileMapTiledJSONMetadataServer = {
+  url?: string
+}
+
 export type Asset =
-  | ({ type: 'image'; metadata: ImageMetadata | null } & serverAsset)
-  | ({ type: 'audio'; metadata: AudioMetadata | null } & serverAsset)
+  | ({ type: 'image'; metadata: ImageMetadataServer | null } & serverAsset)
+  | ({ type: 'audio'; metadata: AudioMetadataServer | null } & serverAsset)
   | ({
       type: 'spritesheet'
-      metadata: SpriteSheetMetadata | null
+      metadata: SpriteSheetMetadataServer | null
     } & serverAsset)
   | ({
       type: 'tilemapTiledJSON'
-      metadata: TileMapTiledJSONMetadata | null
+      metadata: TileMapTiledJSONMetadataServer | null
     } & serverAsset)
 
 //

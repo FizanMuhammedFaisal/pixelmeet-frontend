@@ -22,8 +22,6 @@ export function ThemeToggle() {
   }
   if (!mounted) return null
 
-  const isDark = theme === 'dark'
-
   return (
     <ThemeToggleButton
       theme={theme}

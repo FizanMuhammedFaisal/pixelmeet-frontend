@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { Navigation } from '@/shared/layout/home/Navigation'
+import { apiClient } from '../../api/config/axios'
 
 const workspaces = [
   {
@@ -87,11 +88,11 @@ export default function SpacePage() {
   )
 
   return (
-    <div className='min-h-screen bg-background'>
+    <div className='min-h-screen  bg-background'>
       {/* Header */}
       <Navigation />
 
-      {/* Sub Navigation */}
+      {/* 
       <motion.div
         initial={{ y: -10, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -128,9 +129,16 @@ export default function SpacePage() {
             </div>
           </div>
         </div>
-      </motion.div>
-
-      {/* Main Content */}
+      </motion.div> */}
+      <Button
+        className='mt-20'
+        onClick={() => {
+          apiClient.get('/api/user/auth/hello')
+        }}
+      >
+        clk to hello
+      </Button>
+      {/* 
       <main className='container mx-auto px-6 py-8'>
         <motion.div
           layout
@@ -149,7 +157,7 @@ export default function SpacePage() {
                 className='group relative'
               >
                 <div className='bg-card border border-border/50 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 backdrop-blur-sm'>
-                  {/* Online Indicator */}
+                 
                   <div className='absolute top-3 left-3 z-10 flex items-center space-x-1 bg-background/80 backdrop-blur-sm rounded-full px-2 py-1'>
                     <div className='w-2 h-2 bg-emerald-500 rounded-full' />
                     <span className='text-xs font-medium'>
@@ -157,7 +165,7 @@ export default function SpacePage() {
                     </span>
                   </div>
 
-                  {/* Menu Button */}
+                 
                   <div className='absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity'>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -177,7 +185,7 @@ export default function SpacePage() {
                     </DropdownMenu>
                   </div>
 
-                  {/* Workspace Image */}
+                
                   <div className='aspect-[4/3] overflow-hidden'>
                     <motion.img
                       src={workspace.image}
@@ -187,7 +195,7 @@ export default function SpacePage() {
                     />
                   </div>
 
-                  {/* Workspace Info */}
+                
                   <div className='p-4'>
                     <div className='flex items-center justify-between'>
                       <h3 className='font-medium text-foreground group-hover:text-primary transition-colors'>
@@ -215,7 +223,7 @@ export default function SpacePage() {
             </p>
           </motion.div>
         )}
-      </main>
+      </main> */}
     </div>
   )
 }

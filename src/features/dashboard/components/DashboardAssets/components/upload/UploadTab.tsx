@@ -91,7 +91,7 @@ export default function UploadTab() {
         }
         console.log(res.data)
         updateURLKey(fileToUpload, res.data.assetKey)
-        let ToUpload = getFile(id)
+        const ToUpload = getFile(id)
         if (ToUpload === undefined) {
           return toast.error(
             `Upload for ${fileToUpload.name} failed, Try again`

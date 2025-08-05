@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import UploadTab from './components/upload/UploadTab'
 import TagsTab from './components/tags/TagsTab'
 import { useSearchParams } from 'react-router'
+import FavouritesTab from './components/favourites/Favourites'
 
 export const AssetDashboardTabs = [
   'dashboard',
@@ -24,7 +25,7 @@ export default function AdminAssetsPage() {
   const tabComponents: Record<AssetDashboardTabs, React.ReactNode> = {
     dashboard: <DashboardTab currentTab={currentTab} viewMode={viewMode} />,
     all: <AllAssetsTab />,
-    favorites: <div>Favorites (WIP)</div>,
+    favorites: <FavouritesTab />,
     deleted: <div>Deleted (WIP)</div>,
     upload: <UploadTab />,
     tags: <TagsTab />

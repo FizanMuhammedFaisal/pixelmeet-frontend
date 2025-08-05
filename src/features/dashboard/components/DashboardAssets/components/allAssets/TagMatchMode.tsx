@@ -1,6 +1,4 @@
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { motion } from 'motion/react'
 
 interface TagMatchModeProps {
   tagMatchMode: 'all' | 'any'
@@ -12,38 +10,55 @@ export function TagMatchMode({
   onValueChange
 }: TagMatchModeProps) {
   return (
-    <Card className='bg-card border-border text-card-foreground h-full'>
-      <CardHeader className='pb-2'>
-        <CardTitle className='text-sm font-medium'>Tag Match Mode</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <RadioGroup
-          value={tagMatchMode}
-          onValueChange={onValueChange}
-          className='flex flex-col space-y-2'
-        >
-          <div className='flex items-center space-x-2'>
-            <RadioGroupItem
-              value='any'
-              id='match-any'
-              className='border-input text-primary data-[state=checked]:bg-primary data-[state=checked]:border-primary'
-            />
-            <Label htmlFor='match-any' className='text-foreground'>
-              Match Any
-            </Label>
-          </div>
-          <div className='flex items-center space-x-2'>
-            <RadioGroupItem
-              value='all'
-              id='match-all'
-              className='border-input text-primary data-[state=checked]:bg-primary data-[state=checked]:border-primary'
-            />
-            <Label htmlFor='match-all' className='text-foreground'>
-              Match All
-            </Label>
-          </div>
-        </RadioGroup>
-      </CardContent>
-    </Card>
+    <div className='space-y-2'>
+      <label className='text-sm font-medium leading-none text-foreground'>
+        Tag Match Mode
+      </label>
+      <div className='flex gap-1 bg-card p-1 rounded-md'>
+        <RadioOption
+          value='any'
+          label='Any'
+          isSelected={tagMatchMode === 'any'}
+          onSelect={() => onValueChange('any')}
+        />
+        <RadioOption
+          value='all'
+          label='All'
+          isSelected={tagMatchMode === 'all'}
+          onSelect={() => onValueChange('all')}
+        />
+      </div>
+    </div>
+  )
+}
+
+interface RadioOptionProps {
+  value: string
+  label: string
+  isSelected: boolean
+  onSelect: () => void
+}
+
+function RadioOption({ value, label, isSelected, onSelect }: RadioOptionProps) {
+  return (
+    <motion.button
+      onClick={onSelect}
+      className={`
+        flex-1 flex items-center justify-center rounded-md px-3 py-1.5 
+        text-sm font-medium transition-colors duration-200
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring 
+        focus-visible:ring-offset-2 focus-visible:ring-offset-background
+        ${
+          isSelected
+            ? 'bg-background border-2 border-primary text-foreground shadow-sm'
+            : 'bg-card border border-border text-muted-foreground hover:text-foreground'
+        }
+      `}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      layout
+    >
+      {label}
+    </motion.button>
   )
 }

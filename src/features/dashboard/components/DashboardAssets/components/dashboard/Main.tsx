@@ -6,6 +6,7 @@ import { OverviewStats } from './OverviewStats'
 import { cn } from '@/shared/lib/utils'
 import { useMemo, useState } from 'react'
 import { AssetPreview } from './AssetPreview'
+import type { AssetDashboardTabs } from '../../DashboardAssets'
 type Props = {
   viewMode: 'grid' | 'list'
   currentTab: AssetDashboardTabs

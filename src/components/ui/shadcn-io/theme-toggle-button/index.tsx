@@ -2,6 +2,7 @@ import { Moon, Sun } from 'lucide-react'
 import { useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { cn } from '../../../../shared/lib/utils'
+import { AnimatePresence, motion } from 'motion/react'
 
 type AnimationVariant = 'circle' | 'circle-blur' | 'gif' | 'polygon'
 
@@ -87,7 +88,7 @@ export const ThemeToggleButton = ({
           @keyframes circle-blur-expand {
             from {
               clip-path: circle(0% at ${cx}% ${cy}%);
-              filter: blur(15px);
+              filter: blur(20px);
             }
             to {
               clip-path: circle(145% at ${cx}% ${cy}%);
@@ -177,28 +178,65 @@ export const ThemeToggleButton = ({
     // Call the onClick handler if provided
     onClick?.()
   }, [onClick, variant, start, url, theme])
-
+  const MotionButton = motion.create(Button)
+  const MotionSun = motion.create(Sun)
+  const MotionMoon = motion.create(Moon)
   return (
-    <Button
+    <MotionButton
       variant='outline'
       size={showLabel ? 'default' : 'icon'}
       onClick={handleClick}
       className={cn(
         'relative overflow-hidden transition-all',
-        showLabel && 'gap-2',
+        showLabel ? 'gap-2 px-4' : 'px-0',
         className
       )}
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: 1.02 }}
     >
-      {theme === 'light' ? (
-        <Sun className='h-[1.2rem] w-[1.2rem]' />
-      ) : (
-        <Moon className='h-[1.2rem] w-[1.2rem]' />
-      )}
-      {showLabel && (
-        <span className='text-sm'>{theme === 'light' ? 'Light' : 'Dark'}</span>
-      )}
-    </Button>
+      <AnimatePresence mode='wait' initial={false}>
+        {theme === 'light' ? (
+          <MotionSun
+            key='sun-icon'
+            initial={{ rotate: -90, opacity: 0 }}
+            animate={{ rotate: 0, opacity: 1 }}
+            exit={{ rotate: 90, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className={cn(
+              'h-[1.2rem] w-[1.2rem]',
+              showLabel ? 'relative' : 'absolute inset-0 m-auto'
+            )}
+          />
+        ) : (
+          <MotionMoon
+            key='moon-icon'
+            initial={{ rotate: 90, opacity: 0 }}
+            animate={{ rotate: 0, opacity: 1 }}
+            exit={{ rotate: -90, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className={cn(
+              'h-[1.2rem] w-[1.2rem]',
+              showLabel ? 'relative' : 'absolute inset-0 m-auto'
+            )}
+          />
+        )}
+      </AnimatePresence>
+      {/* {showLabel && (
+        <AnimatePresence mode='wait' initial={false}>
+          <motion.span
+            key={theme === 'light' ? 'light-label' : 'dark-label'}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            transition={{ duration: 0.2 }}
+            className='text-sm'
+          >
+            {theme === 'light' ? 'Light' : 'Dark'}
+          </motion.span>
+        </AnimatePresence>
+      )} */}
+    </MotionButton>
   )
 }
 

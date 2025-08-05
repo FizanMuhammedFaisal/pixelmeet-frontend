@@ -11,7 +11,7 @@ import { CardContent, CardFooter } from '../../../../../../components/ui/card'
 import { getStatusBadgeVariant, getStatusIcon } from './Statusbadge'
 import { Badge, Upload } from 'lucide-react'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Button } from '../../../../../../components/ui/button'
 import {
   Select,
@@ -24,12 +24,9 @@ import {
   useUploadTabStore,
   type UpdateFileInput
 } from '../../../../../../app/store/admin/uploadTab.store'
-import { MultiSelectTags } from '../../../../../../components/ui/multi-select-tags'
-import {
-  useAssetTagsStore,
-  type Tag
-} from '../../../../../../app/store/admin/tagsTab.store'
-import { usePaginatedTags } from '../../../../hooks'
+
+import { type Tag } from '../../../../../../app/store/admin/tagsTab.store'
+
 import { TagMultiSelect } from '../../../../../../shared/layout/common/TagMultiSelect'
 
 type FormValues = z.infer<typeof uploadFileSchema>
@@ -191,9 +188,7 @@ export const MetadataForm = <T extends UploadFile>({
 
           <form
             className='flex-grow grid grid-cols-1 md:grid-cols-2 gap-4'
-            onSubmit={handleSubmit(handleFormSubmit, error => {
-              console.log(error)
-            })}
+            onSubmit={handleSubmit(handleFormSubmit)}
           >
             <div className='grid gap-2'>
               <Label htmlFor={`asset-name-${id}`}>Asset Name</Label>

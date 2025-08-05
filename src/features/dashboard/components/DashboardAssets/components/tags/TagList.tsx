@@ -22,7 +22,8 @@ import { Spinner } from '../../../../../../components/ui/spinner'
 import { HoldToDeleteButton } from '../../../../../../components/ui/hold-to-delete'
 import { useDeleteTag } from '../../../../hooks'
 import { GlobalMutationError } from '../../../../../../shared/lib/utils'
-import { queryClient } from '../../../../../../app/providers/QueryProvider'
+import { queryClient } from '../../../../../../api/config/queryClient'
+
 export default function TagsList() {
   const limit = 10
 

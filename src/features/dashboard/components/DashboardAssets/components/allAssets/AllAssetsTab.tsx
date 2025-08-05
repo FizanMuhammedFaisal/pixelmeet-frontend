@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -15,232 +15,63 @@ import {
   PaginationNext,
   PaginationPrevious
 } from '@/components/ui/pagination'
-
-TagMatchMode
 import { Label } from '@/components/ui/label'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
-import { TagMatchMode } from './TagMatchMode'
-import { MultiSelectTags } from '../../../../../../components/ui/multi-select-tags'
+
 import { AssetPreview } from '../dashboard/AssetPreview'
 import type { Asset, AssetType } from '../../../../types'
+import { TagMultiSelect } from '../../../../../../shared/layout/common/TagMultiSelect'
+import type { Tag } from '../../../../../../app/store/admin/tagsTab.store'
+import { cn } from '../../../../../../shared/lib/utils'
+import { TagMatchMode } from './TagMatchMode'
+import { useGetAssets } from '../../../../hooks/assets/useGetAssets'
 
 export default function AllAssetsTab() {
-  const initialAssets: Asset[] = [
-    {
-      id: '1',
-      name: 'Forest Background',
-      file: null,
-      type: 'image',
-      size: 250000,
-      metadata: { urlKey: '/placeholder.svg?height=96&width=96' },
-      favourite: false,
-      deleted: false,
-      tags: ['nature', 'landscape', 'background']
-    },
-    {
-      id: '2',
-      name: 'Epic Battle Music',
-      file: null,
-      type: 'audio',
-      size: 1200000,
-      metadata: null,
-      favourite: true,
-      deleted: false,
-      tags: ['music', 'fantasy', 'soundtrack']
-    },
-    {
-      id: '3',
-      name: 'Player Character Sprites',
-      file: null,
-      type: 'spritesheet',
-      size: 80000,
-      metadata: { urlKey: '/placeholder.svg?height=96&width=96' },
-      favourite: false,
-      deleted: false,
-      tags: ['character', 'animation', 'pixel-art']
-    },
-    {
-      id: '4',
-      name: 'Dungeon Tilemap',
-      file: null,
-      type: 'tilemapTiledJSON',
-      size: 45000,
-      metadata: { urlKey: '/placeholder.svg?height=96&width=96' },
-      favourite: true,
-      deleted: false,
-      tags: ['level-design', 'tiles', 'environment']
-    },
-    {
-      id: '5',
-      name: 'Deleted Asset Image',
-      file: null,
-      type: 'image',
-      size: 150000,
-      metadata: { urlKey: '/placeholder.svg?height=96&width=96' },
-      favourite: false,
-      deleted: true,
-      tags: ['trash', 'old']
-    },
-    {
-      id: '6',
-      name: 'Another Image',
-      file: null,
-      type: 'image',
-      size: 90000,
-      metadata: { urlKey: '/placeholder.svg?height=96&width=96' },
-      favourite: false,
-      deleted: false,
-      tags: ['abstract', 'design']
-    },
-    {
-      id: '7',
-      name: 'Sound Effect',
-      file: null,
-      type: 'audio',
-      size: 30000,
-      metadata: null,
-      favourite: false,
-      deleted: false,
-      tags: ['sfx', 'game-audio']
-    },
-    {
-      id: '8',
-      name: 'UI Spritesheet',
-      file: null,
-      type: 'spritesheet',
-      size: 60000,
-      metadata: { urlKey: '/placeholder.svg?height=96&width=96' },
-      favourite: false,
-      deleted: false,
-      tags: ['ui', 'interface']
-    },
-    {
-      id: '9',
-      name: 'City Background',
-      file: null,
-      type: 'image',
-      size: 300000,
-      metadata: { urlKey: '/placeholder.svg?height=96&width=96' },
-      favourite: false,
-      deleted: false,
-      tags: ['city', 'urban', 'background']
-    },
-    {
-      id: '10',
-      name: 'Ambient Soundscape',
-      file: null,
-      type: 'audio',
-      size: 900000,
-      metadata: null,
-      favourite: false,
-      deleted: false,
-      tags: ['ambient', 'soundscape']
-    },
-    {
-      id: '11',
-      name: 'Fantasy Character',
-      file: null,
-      type: 'image',
-      size: 180000,
-      metadata: { urlKey: '/placeholder.svg?height=96&width=96' },
-      favourite: false,
-      deleted: false,
-      tags: ['character', 'fantasy']
-    },
-    {
-      id: '12',
-      name: 'Sci-Fi UI Elements',
-      file: null,
-      type: 'spritesheet',
-      size: 75000,
-      metadata: { urlKey: '/placeholder.svg?height=96&width=96' },
-      favourite: false,
-      deleted: false,
-      tags: ['ui', 'sci-fi']
-    }
-  ]
-
-  const [assets, setAssets] = useState<Asset[]>(initialAssets)
+  const [assets, setAssets] = useState<Asset[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedType, setSelectedType] = useState<AssetType | 'all'>('all')
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([])
   const [tagMatchMode, setTagMatchMode] = useState<'all' | 'any'>('any')
   const [currentPage, setCurrentPage] = useState(1)
-  const assetsPerPage = 8
 
-  const uniqueTags = useMemo(() => {
-    const tags = new Set<string>()
-    initialAssets.forEach(asset => {
-      asset.tags?.forEach(tag => tags.add(tag))
-    })
-    return Array.from(tags).sort()
-  }, [initialAssets])
+  const limit = 8
 
-  const filteredAssets = useMemo(() => {
-    return assets.filter(asset => {
-      const matchesSearch = asset.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase())
-      const matchesType = selectedType === 'all' || asset.type === selectedType
-
-      let matchesTags = true
-      if (selectedTags.length > 0) {
-        if (tagMatchMode === 'all') {
-          matchesTags = selectedTags.every(tag => asset.tags?.includes(tag))
-        } else {
-          matchesTags = selectedTags.some(tag => asset.tags?.includes(tag))
-        }
-      }
-
-      return matchesSearch && matchesType && matchesTags
-    })
-  }, [assets, searchQuery, selectedType, selectedTags, tagMatchMode])
-
-  const totalPages = Math.ceil(filteredAssets.length / assetsPerPage)
-  const paginatedAssets = useMemo(() => {
-    const startIndex = (currentPage - 1) * assetsPerPage
-    const endIndex = startIndex + assetsPerPage
-    return filteredAssets.slice(startIndex, endIndex)
-  }, [filteredAssets, currentPage, assetsPerPage])
-
-  const handleToggleFavorite = (id: string) => {
-    setAssets(prevAssets =>
-      prevAssets.map(asset =>
-        asset.id === id ? { ...asset, favourite: !asset.favourite } : asset
-      )
-    )
-  }
-
-  const handleDelete = (id: string) => {
-    setAssets(prevAssets =>
-      prevAssets.map(asset =>
-        asset.id === id ? { ...asset, deleted: true } : asset
-      )
-    )
-  }
-
-  const handleRestore = (id: string) => {
-    setAssets(prevAssets =>
-      prevAssets.map(asset =>
-        asset.id === id ? { ...asset, deleted: false } : asset
-      )
-    )
-  }
+  const totalPages = Math.ceil(assets.length / limit)
 
   const handleFilterChange = () => {
     setCurrentPage(1)
   }
 
+  const { data, isLoading } = useGetAssets({
+    limit,
+    page: currentPage,
+    type: selectedType,
+    tags: selectedTags.map(c => c.id),
+    matchmode: tagMatchMode,
+    q: searchQuery
+  })
+  useEffect(() => {
+    if (data && !isLoading) {
+      console.log('settingd ta')
+      setAssets(data.data.data.assets)
+    }
+  }, [data, isLoading])
+  const handleToggleFavorite = () => {
+    console.log('toglg fav')
+  }
+  const handleDelete = () => {
+    console.log('toglg del')
+  }
+  const handleRestore = () => {
+    console.log('toglg res')
+  }
   return (
     <div className='bg-background text-foreground min-h-screen p-4 sm:p-6 lg:p-8'>
-      {/* Removed h1 "All Assets" as per request */}
-
-      <div className='mb-8 flex flex-col md:flex-row md:items-end gap-4'>
+      <div className='mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
         {/* Search Input */}
-        <div className='flex-1 min-w-[200px]'>
+        <div className='space-y-2'>
           <Label
             htmlFor='search-input'
-            className='text-sm font-medium leading-none mb-2 block text-foreground'
+            className='text-sm font-medium leading-none text-foreground'
           >
             Search assets
           </Label>
@@ -257,16 +88,16 @@ export default function AllAssetsTab() {
         </div>
 
         {/* Filter by Type */}
-        <div className='w-full md:w-[180px]'>
+        <div className='space-y-2'>
           <Label
             htmlFor='type-select'
-            className='text-sm font-medium leading-none mb-2 block text-foreground'
+            className='text-sm font-medium leading-none text-foreground'
           >
             Filter by Type
           </Label>
           <Select
             value={selectedType}
-            onValueChange={(value: AssetType | 'all') => {
+            onValueChange={(value: AssetType) => {
               setSelectedType(value)
               handleFilterChange()
             }}
@@ -308,55 +139,41 @@ export default function AllAssetsTab() {
               >
                 Tilemap
               </SelectItem>
-              <SelectItem
-                value='unknown'
-                className='hover:bg-accent hover:text-accent-foreground'
-              >
-                Unknown
-              </SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* Filter by Tags */}
-        <div className='flex-1 min-w-[250px]'>
-          <Card className='bg-card border-border text-card-foreground h-full'>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium'>
-                Filter by Tags
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <MultiSelectTags
-                options={uniqueTags}
-                selected={selectedTags}
-                onChange={newSelected => {
-                  setSelectedTags(newSelected)
-                  handleFilterChange()
-                }}
-                placeholder='Select tags...'
-              />
-            </CardContent>
-          </Card>
+        <div className='space-y-2'>
+          <Label
+            htmlFor='tag-multi-select'
+            className='text-sm font-medium leading-none text-foreground'
+          >
+            Filter by Tags
+          </Label>
+          <TagMultiSelect
+            key='tag-multi-select'
+            selected={selectedTags}
+            onChange={newTags => {
+              setSelectedTags(newTags)
+              handleFilterChange()
+            }}
+          />
         </div>
 
-        {/* Tag Match Mode */}
-        {selectedTags.length > 0 && ( // Show only if any tag is selected
-          <div className='w-full md:w-[200px]'>
-            <TagMatchMode
-              tagMatchMode={tagMatchMode}
-              onValueChange={value => {
-                setTagMatchMode(value)
-                handleFilterChange()
-              }}
-            />
-          </div>
+        {selectedTags.length > 0 && (
+          <TagMatchMode
+            tagMatchMode={tagMatchMode}
+            onValueChange={value => {
+              setTagMatchMode(value)
+              handleFilterChange()
+            }}
+          />
         )}
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-        {paginatedAssets.length > 0 ? (
-          paginatedAssets.map(asset => (
+        {assets.length > 0 ? (
+          assets.map(asset => (
             <AssetPreview
               key={asset.id}
               asset={asset}
@@ -384,11 +201,10 @@ export default function AllAssetsTab() {
                 }}
                 aria-disabled={currentPage === 1}
                 tabIndex={currentPage === 1 ? -1 : undefined}
-                className={
-                  currentPage === 1
-                    ? 'pointer-events-none opacity-50'
-                    : 'text-foreground hover:bg-accent'
-                }
+                className={cn(
+                  currentPage === 1 ? 'pointer-events-none opacity-50' : '',
+                  'text-foreground hover:bg-accent'
+                )}
               />
             </PaginationItem>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
@@ -400,11 +216,12 @@ export default function AllAssetsTab() {
                     e.preventDefault()
                     setCurrentPage(page)
                   }}
-                  className={
+                  className={cn(
                     page === currentPage
                       ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                      : 'text-foreground hover:bg-accent hover:text-accent-foreground'
-                  }
+                      : '',
+                    'text-foreground hover:bg-accent hover:text-accent-foreground'
+                  )}
                 >
                   {page}
                 </PaginationLink>
@@ -419,11 +236,12 @@ export default function AllAssetsTab() {
                 }}
                 aria-disabled={currentPage === totalPages}
                 tabIndex={currentPage === totalPages ? -1 : undefined}
-                className={
+                className={cn(
                   currentPage === totalPages
                     ? 'pointer-events-none opacity-50'
-                    : 'text-foreground hover:bg-accent'
-                }
+                    : '',
+                  'text-foreground hover:bg-accent'
+                )}
               />
             </PaginationItem>
           </PaginationContent>
