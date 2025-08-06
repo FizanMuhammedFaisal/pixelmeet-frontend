@@ -76,7 +76,6 @@ export const MetadataForm = <T extends UploadFile>({ file, onUpload }: MetadataF
 
   const handleFormSubmit: SubmitHandler<FormValues> = (data) => {
     console.log(data);
-    console.log(error);
     switch (data.type) {
       case 'audio':
         updateFile(id, {

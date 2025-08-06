@@ -35,7 +35,6 @@ export function TagMultiSelect({
   onChange,
   placeholder = 'Select tags...',
 }: TagMultiSelectProps) {
-  console.log(selected);
   const [open, setOpen] = React.useState(false);
   let selectedIds;
   if (isIds(selected)) {
