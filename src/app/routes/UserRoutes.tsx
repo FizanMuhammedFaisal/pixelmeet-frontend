@@ -11,15 +11,11 @@ import SpacesPage from '@/pages/user/Spaces'
 
 const UserRouter: RouteObject[] = [
   {
-    element: <AppLayout />,
+    element: <UserLayout />,
     children: [
       {
         path: '/',
-        element: (
-          <UserLayout>
-            <HomePage />
-          </UserLayout>
-        )
+        element: <HomePage />
       },
       {
         element: <GuestWrapper />,

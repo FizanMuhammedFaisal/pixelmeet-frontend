@@ -1,6 +1,10 @@
 import { apiClient } from '../../../api/config/axios'
 import { API_ENDPOINTS } from '../../../api/config/enpoints'
-import type { GetAssetsPayload } from '../schema/asset/asset.schema'
+import type {
+  GetAssetPayload,
+  GetAssetsPayload
+} from '../schema/asset/asset.schema'
+import type { UpdateAssetRequestPayload } from '../types/asset/api'
 
 export const assetsService = {
   getAssets: async (data: GetAssetsPayload) => {
@@ -29,8 +33,18 @@ export const assetsService = {
     }
 
     const res = await apiClient.get(
-      `${API_ENDPOINTS.ASSET.GET_ASSET}?${params.toString()}`
+      `${API_ENDPOINTS.ASSET.GET_ASSETS}?${params.toString()}`
     )
     return res
+  },
+  getAsset: async (data: GetAssetPayload) => {
+    const res = await apiClient.get(
+      `${API_ENDPOINTS.ASSET.GET_ASSET}/${data.id}`
+    )
+    return res
+  },
+  updateAsset: async (data: UpdateAssetRequestPayload) => {
+    const res = await apiClient.put(API_ENDPOINTS.ASSET.UPDATE_ASSET, data)
+    return res.data
   }
 }

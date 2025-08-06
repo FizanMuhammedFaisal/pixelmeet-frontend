@@ -20,3 +20,15 @@ export type GetAssetsResponse = {
     assets: Asset[]
   }
 }
+
+export type GetAssetPayload = {
+  id: string
+}
+
+export type GetAssetResponse = {
+  data: { assets: Asset }
+}
+
+export type UpdateAssetResponse = {
+  data: { assets: Asset }
+}

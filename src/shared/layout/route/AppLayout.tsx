@@ -5,7 +5,9 @@ export default function AppLayout() {
   useAuthInit()
   return (
     <>
-      <Outlet />
+      <main className='flex min-h-screen flex-col'>
+        <Outlet />
+      </main>
     </>
   )
 }

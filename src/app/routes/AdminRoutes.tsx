@@ -11,6 +11,7 @@ import AdminSettingsPage from '@/pages/admin/Settings'
 import AdminMapEditor from '@/pages/admin/MapEditor'
 import NewTagPage from '../../features/dashboard/components/DashboardAssets/components/tags/newTag/CreateNewTag'
 import EditTagPage from '../../features/dashboard/components/DashboardAssets/components/tags/editTag/EditTag'
+import EditAssetPage from '../../features/dashboard/components/DashboardAssets/components/allAssets/editAssets/EditAsset'
 
 const AdminRouter: RouteObject[] = [
   {
@@ -30,6 +31,10 @@ const AdminRouter: RouteObject[] = [
           {
             path: '/dashboard/assets',
             element: <AdminAssetsPage />
+          },
+          {
+            path: '/dashboard/assets/edit-asset/:id',
+            element: <EditAssetPage />
           },
           {
             path: '/dashboard/assets/new-tag',
