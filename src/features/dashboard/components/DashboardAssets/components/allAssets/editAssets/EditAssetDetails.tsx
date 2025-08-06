@@ -1,323 +1,294 @@
-import { useEffect, useCallback } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import {
-  Card,
-  CardContent,
-  CardDescription,
+
+
+
+  CardFooter,
   CardHeader,
-  CardTitle
-} from '@/components/ui/card'
+  CardTitle,
+} from '@/components/ui/card';
+import { FormError } from '@/components/ui/form-error';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-import { toast } from 'sonner'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-
+import { Spinner } from '@/components/ui/spinner';
+import { useGetAsset } from '@/features/dashboard/hooks/assets/useGetAsset';
+import { useUpdateAsset } from '@/features/dashboard/hooks/assets/useUpdateAsset';
+import type { UpdateAssetPayload } from '@/features/dashboard/schema/asset/edit.schema';
+import type { Asset } from '@/features/dashboard/types';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
-import { useNavigate, useParams } from 'react-router'
-import { Spinner } from '../../../../../../../components/ui/spinner'
-import { useGetAsset } from '../../../../../hooks/assets/useGetAsset'
-import { UpdateAssetSchema } from '../../../../../types/asset/api'
+  type UpdateAssetTypeForm,
+  UpdateAssetSchemaForm,
+} from '@/features/dashboard/types/asset/api';
+import { TagMultiSelect, type sTags } from '@/shared/layout/common/TagMultiSelect';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Separator } from '@radix-ui/react-separator';
+
+import { FileCode, ImageIcon, Music } from 'lucide-react';
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router';
+import { toast } from 'sonner';
 
 export function EditAssetDetailsForm() {
-  type UpdateAssetSchema = typeof UpdateAssetSchema
-  const router = useNavigate()
-  const { id: assetId } = useParams<{ id: string }>()
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  type FormValues = UpdateAssetTypeForm;
+
+  const { data, isLoading } = useGetAsset({ id: id as string });
+  const asset = data?.data.data.assets;
 
   const {
-    data: assetData,
-    isLoading,
-    isError,
-    error
-  } = useGetAsset({ assetId })
-  const {
-    mutate,
-    isPending,
-    isSuccess,
-    isError: isMutationError,
-    error: mutationError
-  } = useUpdateAsset()
-
-  const form = useForm<UpdateAssetSchema>({
-    resolver: zodResolver(UpdateAssetSchema),
+    control,
+    formState: { errors, isSubmitting },
+    setValue,
+    handleSubmit,
+    reset,
+  } = useForm<FormValues>({
+    resolver: zodResolver(UpdateAssetSchemaForm),
     defaultValues: {
-      id: assetId,
-      name: '',
-      description: '',
-      tags: [],
-      type: 'image',
-      metadata: {}
+      type: asset?.type,
     },
-    mode: 'onChange'
-  })
-
+  });
   useEffect(() => {
-    if (assetData) {
-      const asset = assetData.data
-      form.reset({
-        id: asset.id,
-        name: asset.name,
-        description: asset.description || '',
-        tags: asset.tags || [],
-        type: asset.type,
-        metadata: asset.metadata || {}
-      })
+    if (data && asset) {
+      reset(asset);
     }
-  }, [assetData, form])
+  }, [data, asset]);
 
-  useEffect(() => {
-    if (isSuccess) {
-      toast.success('Asset updated successfully.')
-      router('/dashboard/assets') // Navigate back to assets list
-    }
-    if (isMutationError) {
-      toast.error(mutationError?.message || 'Failed to update asset.')
-    }
-  }, [isSuccess, isMutationError, mutationError, router])
+  const { mutate } = useUpdateAsset();
 
-  const onSubmit = (values: EditAssetSchema) => {
-    if (!assetId) {
-      toast.error('Asset ID is missing.')
-      return
-    }
-
-    const updates: Partial<EditAssetSchema> = {
-      name: values.name,
-      description: values.description,
-      tags: values.tags,
-      type: values.type
-    }
-
-    if (values.type === 'spritesheet' && values.metadata?.frameConfig) {
-      updates.metadata = {
-        frameConfig: {
-          frameWidth: values.metadata.frameConfig.frameWidth,
-          frameHeight: values.metadata.frameConfig.frameHeight
-        }
-      }
-    } else {
-      // Ensure metadata is cleared or set appropriately for non-spritesheet types
-      // This prevents sending old spritesheet metadata if type changes
-      updates.metadata = {}
-    }
-
-    mutate({ id: assetId, updates })
-  }
-
-  const handleTypeChange = useCallback(
-    (newType: AssetType) => {
-      form.setValue('type', newType, { shouldValidate: true })
-      if (newType === 'spritesheet') {
-        form.setValue('metadata', {
-          frameConfig: { frameWidth: 0, frameHeight: 0 }
-        })
-      } else {
-        form.setValue('metadata', {})
-      }
-    },
-    [form]
-  )
-
-  const getErrorMessage = (fieldPath: string) => {
-    const pathParts = fieldPath.split('.')
-    let currentError: any = form.formState.errors
-    for (const part of pathParts) {
-      if (currentError && currentError[part]) {
-        currentError = currentError[part]
-      } else {
-        return undefined
-      }
-    }
-    return currentError?.message
-  }
+  const onSubmit = (data: FormValues) => {
+    console.log(data);
+    const tags = data.tags?.map((curr) => curr.id);
+    console.log(tags);
+    mutate(
+      {
+        id: data.id,
+        type: data.type,
+        name: data.name,
+        description: data.description,
+        metadata: data.metadata,
+        tags: tags,
+      } as UpdateAssetPayload,
+      {
+        onSuccess: (data) => {
+          reset();
+          toast.success('Asset Edited');
+          navigate('/dashboard/assets?tab=all');
+          queryClient.invalidateQueries({
+            queryKey: ['assets'],
+            refetchType: 'active',
+          });
+        },
+      },
+    );
+  };
 
   if (isLoading) {
     return (
-      <div className='fixed inset-0 flex items-center justify-center z-50'>
+      <div className="flex min-h-[300px] items-center justify-center">
         <Spinner />
       </div>
-    )
+    );
   }
 
-  if (isError) {
+  if (!asset) {
     return (
-      <div className='text-center py-8 text-red-500'>
-        Error loading asset: {error?.message || 'Unknown error'}
+      <div className="flex min-h-[300px] items-center justify-center text-muted-foreground">
+        Asset not found.
       </div>
-    )
+    );
   }
 
-  if (!assetData?.data) {
-    return (
-      <div className='text-center py-8 text-gray-500'>Asset not found.</div>
-    )
-  }
-
-  const currentAssetType = form.watch('type')
+  const renderTypeSpecificFields = (currentAsset: Asset) => {
+    switch (currentAsset.type) {
+      case 'image': {
+        return (
+          <div className="grid gap-2">
+            <Label htmlFor={`asset-preview-${id}`}>Image Preview</Label>
+            <div className="relative w-full max-w-xs overflow-hidden rounded-lg border bg-muted p-2">
+              {currentAsset.metadata?.url ? (
+                <img
+                  src={currentAsset.metadata.url || '/placeholder.svg'} // Assuming urlKey holds the direct URL
+                  alt="Asset Preview"
+                  className="w-full h-auto object-contain rounded-md"
+                />
+              ) : (
+                <div className="flex h-32 items-center justify-center text-muted-foreground">
+                  <ImageIcon className="h-8 w-8" />
+                  <span className="ml-2 text-sm">No image URL available</span>
+                </div>
+              )}
+            </div>
+            <FormError message={errors.metadata?.message} />
+          </div>
+        );
+      }
+      case 'spritesheet': {
+        return (
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-2">
+              <Label htmlFor={`frame-width-${id}`}>Frame Width (px)</Label>
+              <Controller
+                name="metadata.frameConfig.frameWidth"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id={`frame-width-${id}`}
+                    type="number"
+                    placeholder="32"
+                    {...field}
+                    value={field.value ?? ''}
+                    onChange={(e) => {
+                      const value = Number.parseInt(e.target.value);
+                      field.onChange(Number.isNaN(value) ? undefined : value);
+                    }}
+                  />
+                )}
+              />
+              <FormError message={errors.metadata?.frameConfig?.frameWidth?.message} />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor={`frame-height-${id}`}>Frame Height (px)</Label>
+              <Controller
+                name="metadata.frameConfig.frameHeight"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id={`frame-height-${id}`}
+                    type="number"
+                    placeholder="32"
+                    {...field}
+                    value={field.value ?? ''}
+                    onChange={(e) => {
+                      const value = Number.parseInt(e.target.value);
+                      field.onChange(Number.isNaN(value) ? undefined : value);
+                    }}
+                  />
+                )}
+              />
+              <FormError message={errors.metadata?.frameConfig?.frameHeight?.message} />
+            </div>
+          </div>
+        );
+      }
+      case 'tilemapTiledJSON': {
+        return (
+          <div className="flex flex-col items-center justify-center h-32 bg-muted rounded-lg text-muted-foreground p-4 text-center">
+            <FileCode className="h-8 w-8 mb-2" />
+            <p className="text-sm">
+              No specific editable metadata fields for Tilemap (Tiled JSON).
+            </p>
+          </div>
+        );
+      }
+      case 'audio': {
+        return (
+          <div className="flex flex-col items-center justify-center h-32 bg-muted rounded-lg text-muted-foreground p-4 text-center">
+            <Music className="h-8 w-8 mb-2" />
+            <p className="text-sm">No specific editable metadata fields for Audio assets.</p>
+          </div>
+        );
+      }
+      // case 'aseprite': {
+      //   return (
+      //     <div className="flex flex-col items-center justify-center h-32 bg-muted rounded-lg text-muted-foreground p-4 text-center">
+      //       <Puzzle className="h-8 w-8 mb-2" />
+      //       <p className="text-sm">No specific editable metadata fields for Aseprite assets.</p>
+      //     </div>
+      //   );
+      // }
+      default:
+        return (
+          <div className="flex flex-col items-center justify-center h-32 bg-muted rounded-lg text-muted-foreground p-4 text-center">
+            <FileCode className="h-8 w-8 mb-2" />
+            <p className="text-sm">No specific editable metadata fields for this asset type.</p>
+          </div>
+        );
+    }
+  };
 
   return (
-    <Card className='w-full max-w-4xl mx-auto'>
+    <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>Edit Asset</CardTitle>
-        <CardDescription>Update the details for your asset.</CardDescription>
+        <CardTitle>Edit Asset Details</CardTitle>
+        <CardDescription>
+          Update the name, description, and type-specific metadata for your asset.
+        </CardDescription>
       </CardHeader>
-      <CardContent>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className='grid gap-4 py-4'
-        >
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-            {/* Asset Name */}
-            <div className='grid gap-2'>
-              <Label htmlFor='name'>Asset Name</Label>
-              <Input
-                id='name'
-                placeholder='e.g., Forest Tileset'
-                {...form.register('name')}
-                required
-              />
-              {form.formState.errors.name && (
-                <p className='text-red-500 text-sm'>
-                  {form.formState.errors.name.message}
-                </p>
-              )}
-            </div>
-
-            {/* Asset Type */}
-            <div className='grid gap-2'>
-              <Label htmlFor='type'>Asset Type</Label>
+      <form onSubmit={handleSubmit(onSubmit, (error) => console.log(error))}>
+        <CardContent className="grid gap-6">
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor={`asset-name-${id}`}>Asset Name</Label>
               <Controller
-                name='type'
-                control={form.control}
+                name="name"
+                control={control}
                 render={({ field }) => (
-                  <Select
-                    value={field.value || ''}
-                    onValueChange={handleTypeChange}
-                  >
-                    <SelectTrigger id='type'>
-                      <SelectValue placeholder='Select type' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value='tilemapTiledJSON'>
-                        Tileset JSON
-                      </SelectItem>
-                      <SelectItem value='spritesheet'>Sprite Sheet</SelectItem>
-                      <SelectItem value='image'>Image</SelectItem>
-                      <SelectItem value='audio'>Audio</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    id={`asset-name-${id}`}
+                    placeholder="My Awesome Asset"
+                    {...field}
+                    value={field.value ?? ''}
+                  />
                 )}
               />
-              {form.formState.errors.type && (
-                <p className='text-red-500 text-sm'>
-                  {form.formState.errors.type.message}
-                </p>
-              )}
+              <FormError message={errors.name?.message} />
             </div>
-
-            {/* Tags */}
-            <div className='grid gap-2 col-span-full'>
-              <Label htmlFor='tags'>Tags</Label>
+            <div className="grid gap-2">
+              <Label htmlFor={`asset-description-${id}`}>Asset Description</Label>
               <Controller
-                name='tags'
-                control={form.control}
+                name="description"
+                control={control}
                 render={({ field }) => (
+                  <Input
+                    id={`asset-description-${id}`}
+                    placeholder="A brief description of the asset"
+                    {...field}
+                    value={field.value ?? ''}
+                  />
+                )}
+              />
+              <FormError message={errors.description?.message} />
+            </div>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor={`tags-${id}`}>Tags</Label>
+            <Controller
+              name="tags"
+              control={control}
+              render={({ field }) => {
+                const selectedTagIds = (field.value as unknown as sTags[]) || [];
+
+                return (
                   <TagMultiSelect
-                    selected={field.value || []}
-                    onChange={(selectedTags: Tag[]) =>
-                      field.onChange(selectedTags)
-                    }
-                    placeholder='Select tags...'
+                    selected={selectedTagIds}
+                    onChange={(selectedTags: Tag[] | sTags[]) => {
+                      console.log(selectedTagIds);
+                      field.onChange(selectedTags);
+                    }}
+                    placeholder="Select tags..."
                   />
-                )}
-              />
-              {form.formState.errors.tags && (
-                <p className='text-red-500 text-sm'>
-                  {form.formState.errors.tags.message}
-                </p>
-              )}
-            </div>
-
-            {/* Description */}
-            <div className='grid gap-2 col-span-full'>
-              <Label htmlFor='description'>Description</Label>
-              <Textarea
-                id='description'
-                placeholder='Optional description'
-                {...form.register('description')}
-              />
-              {form.formState.errors.description && (
-                <p className='text-red-500 text-sm'>
-                  {form.formState.errors.description.message}
-                </p>
-              )}
-            </div>
-
-            {/* Spritesheet Metadata (Conditional) */}
-            {currentAssetType === 'spritesheet' && (
-              <>
-                <div className='grid gap-2'>
-                  <Label htmlFor='frameWidth'>Frame Width (px)</Label>
-                  <Input
-                    id='frameWidth'
-                    type='number'
-                    placeholder='32'
-                    {...form.register('metadata.frameConfig.frameWidth', {
-                      valueAsNumber: true
-                    })}
-                  />
-                  {getErrorMessage('metadata.frameConfig.frameWidth') && (
-                    <p className='text-red-500 text-sm'>
-                      {getErrorMessage('metadata.frameConfig.frameWidth')}
-                    </p>
-                  )}
-                </div>
-                <div className='grid gap-2'>
-                  <Label htmlFor='frameHeight'>Frame Height (px)</Label>
-                  <Input
-                    id='frameHeight'
-                    type='number'
-                    placeholder='32'
-                    {...form.register('metadata.frameConfig.frameHeight', {
-                      valueAsNumber: true
-                    })}
-                  />
-                  {getErrorMessage('metadata.frameConfig.frameHeight') && (
-                    <p className='text-red-500 text-sm'>
-                      {getErrorMessage('metadata.frameConfig.frameHeight')}
-                    </p>
-                  )}
-                </div>
-              </>
-            )}
+                );
+              }}
+            />
+            {errors.tags && <p className="text-red-500 text-sm">{errors.tags.message}</p>}
           </div>
 
-          <div className='flex justify-end gap-2 pt-4'>
-            <Button
-              type='button'
-              variant='outline'
-              onClick={() => router.push('/dashboard/assets')}
-            >
-              Cancel
-            </Button>
-            <SubmitButton
-              processingName='Saving...'
-              isLoading={isPending}
-              isSuccess={isSuccess}
-            >
-              Save Changes
-            </SubmitButton>
+          <Separator />
+
+          <div className="grid gap-4">
+            <h3 className="text-lg font-semibold">Type-Specific Metadata ({asset.type})</h3>
+            {renderTypeSpecificFields(asset)}
           </div>
-        </form>
-      </CardContent>
+        </CardContent>
+        <CardFooter className="flex justify-end">
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting && <Spinner className="mr-2 h-4 w-4" />}
+            Save Changes
+          </Button>
+        </CardFooter>
+      </form>
     </Card>
-  )
+  );
 }

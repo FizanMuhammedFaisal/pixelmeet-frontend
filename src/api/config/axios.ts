@@ -32,7 +32,7 @@ apiClient.interceptors.request.use(
       return Promise.reject(new Error('OFFLINE'))
     }
     const token = useAuthStore.getState().token
-
+console.log(token)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     } else {

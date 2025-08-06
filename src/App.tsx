@@ -7,7 +7,13 @@ function App() {
     {
       element: <AppLayout />,
       children: [...AdminRouter, ...UserRouter]
+<<<<<<< HEAD
     }
+=======
+
+    },
+
+>>>>>>> 0105f4b (feature(main) lost to last commit had to remake some changes and added a edit asset page which need more work)
   ])
 
   return <RouterProvider router={router} />

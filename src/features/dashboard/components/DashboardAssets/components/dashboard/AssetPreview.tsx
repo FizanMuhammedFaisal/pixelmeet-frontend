@@ -15,33 +15,46 @@ import type { Asset } from '../../../../types'
 import { ImageZoom } from '../../../../../../components/ui/shadcn-io/image-zoom'
 import { useState } from 'react'
 import { cn } from '../../../../../../shared/lib/utils'
+import { useNavigate } from 'react-router'
 
 interface AssetPreviewProps {
   asset: Asset
   onToggleFavorite: (id: string) => void
   onDelete: (id: string) => void
   onRestore: (id: string) => void
+
+
 }
 
 export function AssetPreview({
   asset,
   onToggleFavorite,
   onDelete,
-  onRestore
+  onRestore,
+
+
+
+
 }: AssetPreviewProps) {
   const [imageLoaded, setImageLoaded] = useState(false)
+  const navigate = useNavigate()
   const renderPreview = () => {
+
     switch (asset.type) {
+
       case 'audio':
         return (
           <div className='flex items-center justify-center h-24 bg-muted rounded-lg'>
             <Volume2 className='h-8 w-8 text-muted-foreground' />
           </div>
+
         )
       case 'tilemapTiledJSON':
         return (
+
           <div className='flex items-center justify-center h-24 bg-muted rounded-lg'>
             <FileCode className='h-8 w-8 text-muted-foreground' />
+
           </div>
         )
       default:
@@ -72,6 +85,7 @@ export function AssetPreview({
 
   return (
     <Card className='group relative hover:shadow-md hover:scale-[1.02] transition-all overflow-hidden'>
+
       <CardContent className='p-4'>
         {renderPreview()}
         <div className='mt-3 space-y-2'>
@@ -86,11 +100,12 @@ export function AssetPreview({
               onClick={() => onToggleFavorite(asset.id)}
             >
               <Heart
-                className={`h-3 w-3 ${
-                  asset.favourite ? 'fill-red-500 text-red-500' : ''
-                }`}
+                className={`h-3 w-3 ${asset.favourite ? 'fill-red-500 text-red-500' : ''
+                  }`}
               />
             </Button>
+
+
           </div>
           <div className='flex items-center justify-between text-xs text-muted-foreground'>
             <span>
@@ -105,6 +120,7 @@ export function AssetPreview({
                 {tag}
               </Badge>
             ))}
+
           </div> */}
           <div className='flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity'>
             {asset.type === 'audio' && (
@@ -130,7 +146,7 @@ export function AssetPreview({
               </>
             ) : (
               <>
-                <Button variant='ghost' size='sm' className='h-6 px-2'>
+                <Button variant='ghost' size='sm' className='h-6 px-2' onClick={() => navigate(`/dashboard/assets/edit-asset/${asset.id}`)}>
                   <Edit className='h-3 w-3' />
                   <span className='sr-only'>Edit</span>
                 </Button>

@@ -1,5 +1,5 @@
-const baseAuth = '/api/user'
-const baseAsset = '/api/asset/v1'
+const baseAuth = '/api/user';
+const baseAsset = '/api/asset/v1';
 export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: `${baseAuth}/auth/login`,
@@ -11,7 +11,7 @@ export const API_ENDPOINTS = {
     VERIFYOTP: `${baseAuth}/auth/verify-otp`,
     PASSWORD_RESET_TOKEN_SEND: `${baseAuth}/auth/forgot-password`,
     VERIFY_RESET_TOKEN: `${baseAuth}/auth/verify-token`,
-    RESET_PASSWORD: `${baseAuth}/auth/reset-password`
+    RESET_PASSWORD: `${baseAuth}/auth/reset-password`,
   },
   ASSET: {
     GET_PRESINGED_URL: `${baseAsset}/assets/upload-url`,
@@ -21,8 +21,10 @@ export const API_ENDPOINTS = {
     CREATE_TAG: `${baseAsset}/tags/`,
     UPDATE_TAG: `${baseAsset}/tags/`,
     DELETE_TAG: `${baseAsset}/tags/`,
+
     GET_ASSETS: `${baseAsset}/assets/`,
     GET_ASSET: `${baseAsset}/assets/`,
-    UPDATE_ASSET: `${baseAsset}/assets/`
-  }
-}
+    UPDATE_ASSET: `${baseAsset}/assets/`,
+    GET_ASSET: `${baseAsset}/assets`,
+  },
+};

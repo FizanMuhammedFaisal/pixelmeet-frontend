@@ -1,6 +1,6 @@
-import z from 'zod'
-import { AssetCategoryEnum } from './uploadTab.schema'
-import type { Asset } from '../../types'
+import z from 'zod';
+import { AssetCategoryEnum } from './uploadTab.schema';
+import type { Asset } from '../../types';
 
 export const GetAssetsSchema = z.object({
   page: z.number().optional().default(1),
@@ -10,25 +10,22 @@ export const GetAssetsSchema = z.object({
   tags: z.array(z.string()).optional(),
   type: z.union([AssetCategoryEnum, z.literal('all')]).optional(),
   matchmode: z.enum(['any', 'all']).optional(),
-  q: z.string().optional()
-})
+  q: z.string().optional(),
+});
 
-export type GetAssetsPayload = z.infer<typeof GetAssetsSchema>
+export type GetAssetsPayload = z.infer<typeof GetAssetsSchema>;
 
 export type GetAssetsResponse = {
   data: {
-    assets: Asset[]
-  }
-}
-
+    assets: Asset[];
+  };
+};
 export type GetAssetPayload = {
-  id: string
-}
+  id: string;
+};
 
 export type GetAssetResponse = {
-  data: { assets: Asset }
-}
-
-export type UpdateAssetResponse = {
-  data: { assets: Asset }
-}
+  data: {
+    assets: Asset;
+  };
+};
