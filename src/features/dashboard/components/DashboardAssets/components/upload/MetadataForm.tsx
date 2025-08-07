@@ -299,9 +299,6 @@ export const MetadataForm = <T extends UploadFile>({ file, onUpload }: MetadataF
             <CardFooter className="flex flex-col md:flex-row items-center justify-between p-0 pt-4 gap-3 col-span-full">
               <div className="flex items-center gap-2 w-full md:w-auto">
                 {getStatusIcon(uploadStatus)}
-                <Badge variant={getStatusBadgeVariant(uploadStatus)} className="capitalize">
-                  {uploadStatus}
-                </Badge>
                 {uploadStatus === 'failed' && error && (
                   <span className="text-sm text-red-500 truncate max-w-[200px]">
                     {error.message}

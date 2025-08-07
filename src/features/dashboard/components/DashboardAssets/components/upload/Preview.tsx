@@ -1,12 +1,15 @@
 import { FileCode, FolderIcon, ImageIcon } from 'lucide-react';
 
 import type { AssetType } from '../../../../types';
+import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom';
+import { cn } from '@/shared/lib/utils';
 
 type Props = {
   previewUrl: string | undefined;
   type: AssetType;
 };
 export const renderPreview = ({ type, previewUrl }: Props) => {
+  console.log(type, previewUrl);
   if (!previewUrl) {
     return (
       <div className="flex items-center justify-center w-full h-full bg-muted rounded-md">
@@ -21,13 +24,16 @@ export const renderPreview = ({ type, previewUrl }: Props) => {
       </div>
     );
   }
-  if (type.startsWith('image/')) {
+  if (type.startsWith('image')) {
     return (
-      <img
-        src={previewUrl || '/placeholder.svg'}
-        alt="File preview"
-        className="object-cover w-full h-full rounded-md"
-      />
+      <ImageZoom>
+        <img
+          alt="File preview"
+          className={cn('object-cover w-full h-full rounded-lg')}
+          src={previewUrl}
+          style={{ transition: 'opacity 0.3s ease-in-out' }}
+        />
+      </ImageZoom>
     );
   }
   if (type.startsWith('audio/')) {

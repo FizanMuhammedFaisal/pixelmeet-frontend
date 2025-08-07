@@ -184,7 +184,7 @@ export default function UploadTab() {
         </CardHeader>
         <CardContent>
           <DragAndDropArea onFilesAdded={handleFilesAdded} />
-          <div className="mt-6 flex justify-end gap-2">
+          {/* <div className="mt-6 flex justify-end gap-2">
             <Button onClick={handleUploadAll} disabled={!canUploadAll || isUploadingAll}>
               {isUploadingAll ? 'Uploading All...' : 'Upload All'}
             </Button>
@@ -195,7 +195,7 @@ export default function UploadTab() {
             >
               Clear All
             </Button>
-          </div>
+          </div> */}
         </CardContent>
       </Card>
 

@@ -1,141 +1,156 @@
-import { useState, useEffect } from 'react'
-import { Input } from '@/components/ui/input'
+import { useState, useEffect } from 'react';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationLink,
   PaginationNext,
-  PaginationPrevious
-} from '@/components/ui/pagination'
-import { Label } from '@/components/ui/label'
+  PaginationPrevious,
+} from '@/components/ui/pagination';
+import { Label } from '@/components/ui/label';
 
-import { AssetPreview } from '../dashboard/AssetPreview'
-import type { Asset, AssetType } from '../../../../types'
-import { TagMultiSelect } from '../../../../../../shared/layout/common/TagMultiSelect'
-import type { Tag } from '../../../../../../app/store/admin/tagsTab.store'
-import { cn } from '../../../../../../shared/lib/utils'
-import { TagMatchMode } from './TagMatchMode'
-import { useGetAssets } from '../../../../hooks/assets/useGetAssets'
+import { AssetPreview } from '../dashboard/AssetPreview';
+import type { Asset, AssetType } from '../../../../types';
+import { TagMultiSelect } from '../../../../../../shared/layout/common/TagMultiSelect';
+import type { Tag } from '../../../../../../app/store/admin/tagsTab.store';
+import { cn } from '../../../../../../shared/lib/utils';
+import { TagMatchMode } from './TagMatchMode';
+import { useGetAssets } from '../../../../hooks/assets/useGetAssets';
+import { useUpdateAssetFavourite } from '@/features/dashboard/hooks/assets/useUpdateAssetFavourite';
+import { useUpdateAssetDeleted } from '@/features/dashboard/hooks/assets/useUpdateAssetDeleted';
+import { Spinner } from '@/components/ui/spinner';
+import { PaginationControls } from '@/components/ui/paginationControls';
+import { isServer } from '@tanstack/react-query';
 
 export default function AllAssetsTab() {
-  const [assets, setAssets] = useState<Asset[]>([])
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedType, setSelectedType] = useState<AssetType | 'all'>('all')
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([])
-  const [tagMatchMode, setTagMatchMode] = useState<'all' | 'any'>('any')
-  const [currentPage, setCurrentPage] = useState(1)
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState<AssetType | 'all'>('all');
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [tagMatchMode, setTagMatchMode] = useState<'all' | 'any'>('any');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isSearching, setIsSearching] = useState(false);
 
-  const limit = 8
-
-  const totalPages = Math.ceil(assets.length / limit)
+  const limit = 8;
 
   const handleFilterChange = () => {
-    setCurrentPage(1)
-  }
+    setCurrentPage(1);
+    handleSearching();
+  };
+  const handleSearching = () => {
+    setIsSearching(true);
+    const timeoutId = setTimeout(() => {
+      setIsSearching(false);
+    }, 3000);
+    return () => clearTimeout(timeoutId);
+  };
 
   const { data, isLoading } = useGetAssets({
     limit,
     page: currentPage,
     type: selectedType,
-    tags: selectedTags.map(c => c.id),
+    tags: selectedTags.map((c) => c.id),
     matchmode: tagMatchMode,
-    q: searchQuery
-  })
+    q: searchQuery,
+  });
+
+  const totalPages = data?.data.data.totalPages;
   useEffect(() => {
     if (data && !isLoading) {
-      console.log('settingd ta')
-      setAssets(data.data.data.assets)
+      console.log('settingd ta');
+      setAssets(data.data.data.assets);
     }
-  }, [data, isLoading])
-  const handleToggleFavorite = () => {
-    console.log('toglg fav')
-  }
-  const handleDelete = () => {
-    console.log('toglg del')
-  }
+  }, [data, isLoading]);
+
+  const updateFavouriteMutation = useUpdateAssetFavourite();
+  const updateDeletionMutation = useUpdateAssetDeleted();
+  const handleToggleFavorite = (id: string, status: boolean) => {
+    updateFavouriteMutation.mutate({ isFavourite: status, id });
+  };
+  const handleDelete = (id: string, status: boolean) => {
+    updateDeletionMutation.mutate({ id, isDeleted: status });
+  };
   const handleRestore = () => {
-    console.log('toglg res')
+    console.log('toglg res');
+  };
+
+  if (isLoading && !isSearching) {
+    return (
+      <div className=" h-full grow flex items-center justify-center z-50 ">
+        <Spinner />
+      </div>
+    );
   }
+
   return (
-    <div className='bg-background text-foreground min-h-screen p-4 sm:p-6 lg:p-8'>
-      <div className='mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
+    <div className="bg-background text-foreground min-h-screen p-4 sm:p-6 lg:p-8">
+      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Search Input */}
-        <div className='space-y-2'>
+        <div className="space-y-2">
           <Label
-            htmlFor='search-input'
-            className='text-sm font-medium leading-none text-foreground'
+            htmlFor="search-input"
+            className="text-sm font-medium leading-none text-foreground"
           >
             Search assets
           </Label>
           <Input
-            id='search-input'
-            placeholder='Search assets...'
+            id="search-input"
+            placeholder="Search assets..."
             value={searchQuery}
-            onChange={e => {
-              setSearchQuery(e.target.value)
-              handleFilterChange()
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              handleFilterChange();
             }}
-            className='bg-input border-input text-foreground placeholder:text-muted-foreground focus-visible:ring-ring focus-visible:ring-offset-background'
+            className="bg-input border-input text-foreground placeholder:text-muted-foreground focus-visible:ring-ring focus-visible:ring-offset-background"
           />
         </div>
 
         {/* Filter by Type */}
-        <div className='space-y-2'>
-          <Label
-            htmlFor='type-select'
-            className='text-sm font-medium leading-none text-foreground'
-          >
+        <div className="space-y-2">
+          <Label htmlFor="type-select" className="text-sm font-medium leading-none text-foreground">
             Filter by Type
           </Label>
           <Select
             value={selectedType}
             onValueChange={(value: AssetType) => {
-              setSelectedType(value)
-              handleFilterChange()
+              setSelectedType(value);
+              handleFilterChange();
+              handleSearching();
             }}
           >
             <SelectTrigger
-              id='type-select'
-              className='bg-input border-input text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring focus-visible:ring-offset-background'
+              id="type-select"
+              className="bg-input border-input text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring focus-visible:ring-offset-background"
             >
-              <SelectValue placeholder='All Types' />
+              <SelectValue placeholder="All Types" />
             </SelectTrigger>
-            <SelectContent className='bg-popover border-border text-popover-foreground'>
-              <SelectItem
-                value='all'
-                className='hover:bg-accent hover:text-accent-foreground'
-              >
+            <SelectContent className="bg-popover border-border text-popover-foreground">
+              <SelectItem value="all" className="hover:bg-accent hover:text-accent-foreground">
                 All Types
               </SelectItem>
-              <SelectItem
-                value='image'
-                className='hover:bg-accent hover:text-accent-foreground'
-              >
+              <SelectItem value="image" className="hover:bg-accent hover:text-accent-foreground">
                 Image
               </SelectItem>
-              <SelectItem
-                value='audio'
-                className='hover:bg-accent hover:text-accent-foreground'
-              >
+              <SelectItem value="audio" className="hover:bg-accent hover:text-accent-foreground">
                 Audio
               </SelectItem>
               <SelectItem
-                value='spritesheet'
-                className='hover:bg-accent hover:text-accent-foreground'
+                value="spritesheet"
+                className="hover:bg-accent hover:text-accent-foreground"
               >
                 Spritesheet
               </SelectItem>
               <SelectItem
-                value='tilemapTiledJSON'
-                className='hover:bg-accent hover:text-accent-foreground'
+                value="tilemapTiledJSON"
+                className="hover:bg-accent hover:text-accent-foreground"
               >
                 Tilemap
               </SelectItem>
@@ -143,19 +158,19 @@ export default function AllAssetsTab() {
           </Select>
         </div>
 
-        <div className='space-y-2'>
+        <div className="space-y-2">
           <Label
-            htmlFor='tag-multi-select'
-            className='text-sm font-medium leading-none text-foreground'
+            htmlFor="tag-multi-select"
+            className="text-sm font-medium leading-none text-foreground"
           >
             Filter by Tags
           </Label>
           <TagMultiSelect
-            key='tag-multi-select'
+            key="tag-multi-select"
             selected={selectedTags}
-            onChange={newTags => {
-              setSelectedTags(newTags)
-              handleFilterChange()
+            onChange={(newTags) => {
+              setSelectedTags(newTags);
+              handleFilterChange();
             }}
           />
         </div>
@@ -163,17 +178,17 @@ export default function AllAssetsTab() {
         {selectedTags.length > 0 && (
           <TagMatchMode
             tagMatchMode={tagMatchMode}
-            onValueChange={value => {
-              setTagMatchMode(value)
-              handleFilterChange()
+            onValueChange={(value) => {
+              setTagMatchMode(value);
+              handleFilterChange();
             }}
           />
         )}
       </div>
 
-      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {assets.length > 0 ? (
-          assets.map(asset => (
+          assets.map((asset) => (
             <AssetPreview
               key={asset.id}
               asset={asset}
@@ -183,70 +198,23 @@ export default function AllAssetsTab() {
             />
           ))
         ) : (
-          <div className='col-span-full text-center text-muted-foreground py-8'>
+          <div className="col-span-full text-center text-muted-foreground py-8">
             No assets found matching your criteria.
           </div>
         )}
       </div>
 
-      {totalPages > 1 && (
-        <Pagination className='mt-8'>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href='#'
-                onClick={e => {
-                  e.preventDefault()
-                  setCurrentPage(prev => Math.max(1, prev - 1))
-                }}
-                aria-disabled={currentPage === 1}
-                tabIndex={currentPage === 1 ? -1 : undefined}
-                className={cn(
-                  currentPage === 1 ? 'pointer-events-none opacity-50' : '',
-                  'text-foreground hover:bg-accent'
-                )}
-              />
-            </PaginationItem>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-              <PaginationItem key={page}>
-                <PaginationLink
-                  href='#'
-                  isActive={page === currentPage}
-                  onClick={e => {
-                    e.preventDefault()
-                    setCurrentPage(page)
-                  }}
-                  className={cn(
-                    page === currentPage
-                      ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                      : '',
-                    'text-foreground hover:bg-accent hover:text-accent-foreground'
-                  )}
-                >
-                  {page}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-            <PaginationItem>
-              <PaginationNext
-                href='#'
-                onClick={e => {
-                  e.preventDefault()
-                  setCurrentPage(prev => Math.min(totalPages, prev + 1))
-                }}
-                aria-disabled={currentPage === totalPages}
-                tabIndex={currentPage === totalPages ? -1 : undefined}
-                className={cn(
-                  currentPage === totalPages
-                    ? 'pointer-events-none opacity-50'
-                    : '',
-                  'text-foreground hover:bg-accent'
-                )}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+      {totalPages !== undefined && totalPages > 1 && (
+        <div className="mt-6">
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(e) => {
+              setCurrentPage(e);
+            }}
+          />
+        </div>
       )}
     </div>
-  )
+  );
 }

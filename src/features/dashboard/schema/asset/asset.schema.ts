@@ -18,6 +18,9 @@ export type GetAssetsPayload = z.infer<typeof GetAssetsSchema>;
 export type GetAssetsResponse = {
   data: {
     assets: Asset[];
+    total: number;
+    totalPages: number;
+    page: number;
   };
 };
 export type GetAssetPayload = {
@@ -28,4 +31,20 @@ export type GetAssetResponse = {
   data: {
     assets: Asset;
   };
+};
+
+export type UpdateAssetFavoutieStatusPayload = {
+  isFavourite: boolean;
+  id: string;
+};
+export type UpdateAssetFavoutieStatusResponse = {
+  operation: boolean;
+};
+
+export type UpdateAssetDeletedStatusPayload = {
+  isDeleted: boolean;
+  id: string;
+};
+export type UpdateAssetDeletedStatusResponse = {
+  operation: boolean;
 };

@@ -1,6 +1,11 @@
 import { apiClient } from '../../../api/config/axios';
 import { API_ENDPOINTS } from '../../../api/config/enpoints';
-import type { GetAssetPayload, GetAssetsPayload } from '../schema/asset/asset.schema';
+import type {
+  GetAssetPayload,
+  GetAssetsPayload,
+  UpdateAssetDeletedStatusPayload,
+  UpdateAssetFavoutieStatusPayload,
+} from '../schema/asset/asset.schema';
 import type { UpdateAssetPayload } from '../schema/asset/edit.schema';
 
 export const assetsService = {
@@ -39,6 +44,14 @@ export const assetsService = {
   },
   updateAsset: async (data: UpdateAssetPayload) => {
     const res = await apiClient.put(API_ENDPOINTS.ASSET.GET_ASSET, data);
+    return res;
+  },
+  updateAssetFavouriteStatus: async (data: UpdateAssetFavoutieStatusPayload) => {
+    const res = await apiClient.patch(API_ENDPOINTS.ASSET.PATCH_ASSET, data);
+    return res;
+  },
+  updateAssetDeletedStatus: async (data: UpdateAssetDeletedStatusPayload) => {
+    const res = await apiClient.patch(API_ENDPOINTS.ASSET.PATCH_ASSET, data);
     return res;
   },
 };

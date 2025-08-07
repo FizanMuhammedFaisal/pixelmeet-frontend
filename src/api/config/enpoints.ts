@@ -22,9 +22,7 @@ export const API_ENDPOINTS = {
     UPDATE_TAG: `${baseAsset}/tags/`,
     DELETE_TAG: `${baseAsset}/tags/`,
 
-    GET_ASSETS: `${baseAsset}/assets/`,
-    GET_ASSET: `${baseAsset}/assets/`,
-    UPDATE_ASSET: `${baseAsset}/assets/`,
     GET_ASSET: `${baseAsset}/assets`,
+    PATCH_ASSET: `${baseAsset}/assets`,
   },
 };
