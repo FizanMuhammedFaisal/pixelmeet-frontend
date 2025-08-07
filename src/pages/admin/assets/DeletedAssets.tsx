@@ -1,4 +1,4 @@
-import { DeletedPageComponent } from '@/features/dashboard/components/DashboardAssets/components/deleted/DeletedPageComponent';
+import { DeletedPageComponent } from '@/features/dashboard/sections/DashboardAssets/components/deleted/DeletedPageComponent';
 
 export const AdminDeletedAssetsPage = () => {
   return <DeletedPageComponent />;

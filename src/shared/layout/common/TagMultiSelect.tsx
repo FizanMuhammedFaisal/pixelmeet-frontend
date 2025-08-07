@@ -13,9 +13,10 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '../../lib/utils';
-import { useIncrementalTags } from '../../../features/dashboard';
+
 import type { Tag } from '../../../app/store/admin/tagsTab.store';
 import { Spinner } from '../../../components/ui/spinner';
+import { useIncrementalTags } from '@/features/dashboard/sections/DashboardAssets/hooks';
 export type sTags = {
   id: string;
   __tagType: 'sTag';

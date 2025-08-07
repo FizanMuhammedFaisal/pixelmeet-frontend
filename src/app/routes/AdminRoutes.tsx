@@ -8,14 +8,15 @@ import AdminAssetsPage from '@/pages/admin/assets/Assets';
 
 import AdminUsersPage from '@/pages/admin/User';
 import AdminAvatarPage from '@/pages/admin/Avatar';
-import AdminMapsPage from '@/pages/admin/Maps';
+import AdminMapsPage from '@/pages/admin/maps/Maps';
 import AdminSettingsPage from '@/pages/admin/Settings';
 import AdminMapEditor from '@/pages/admin/MapEditor';
-import NewTagPage from '../../features/dashboard/components/DashboardAssets/components/tags/newTag/CreateNewTag';
-import EditTagPage from '../../features/dashboard/components/DashboardAssets/components/tags/editTag/EditTag';
 
-import EditAssetPage from '@/features/dashboard/components/DashboardAssets/components/allAssets/editAssets/EditAsset';
+import EditAssetPage from '@/features/dashboard/sections/DashboardAssets/components/allAssets/editAssets/EditAsset';
 import { AdminDeletedAssetsPage } from '@/pages/admin/assets/DeletedAssets';
+import NewTagPage from '@/pages/admin/assets/NewTag';
+import EditTagPage from '@/pages/admin/assets/EditTag';
+import { AdminCreateMapPage } from '@/pages/admin/maps/CreateMap';
 
 const AdminRouter: RouteObject[] = [
   {
@@ -62,7 +63,16 @@ const AdminRouter: RouteObject[] = [
           },
           {
             path: '/dashboard/maps',
-            element: <AdminMapsPage />,
+            children: [
+              {
+                path: '',
+                element: <AdminMapsPage />,
+              },
+              {
+                path: 'create',
+                element: <AdminCreateMapPage />,
+              },
+            ],
           },
           {
             path: '/dashboard/settings',
