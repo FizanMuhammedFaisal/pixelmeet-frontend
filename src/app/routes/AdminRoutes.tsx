@@ -3,7 +3,9 @@ import AdminWrapper from '../guards/AdminGuard';
 import AdminLogin from '@/pages/admin/Login';
 import DashboardLayout from '@/shared/layout/Dashboard/Dashboard';
 import AdminHome from '@/pages/admin/Home';
-import AdminAssetsPage from '@/pages/admin/Assets';
+
+import AdminAssetsPage from '@/pages/admin/assets/Assets';
+
 import AdminUsersPage from '@/pages/admin/User';
 import AdminAvatarPage from '@/pages/admin/Avatar';
 import AdminMapsPage from '@/pages/admin/Maps';
@@ -13,6 +15,7 @@ import NewTagPage from '../../features/dashboard/components/DashboardAssets/comp
 import EditTagPage from '../../features/dashboard/components/DashboardAssets/components/tags/editTag/EditTag';
 
 import EditAssetPage from '@/features/dashboard/components/DashboardAssets/components/allAssets/editAssets/EditAsset';
+import { AdminDeletedAssetsPage } from '@/pages/admin/assets/DeletedAssets';
 
 const AdminRouter: RouteObject[] = [
   {
@@ -32,6 +35,10 @@ const AdminRouter: RouteObject[] = [
           {
             path: '/dashboard/assets',
             element: <AdminAssetsPage />,
+          },
+          {
+            path: '/dashboard/assets/deleted',
+            element: <AdminDeletedAssetsPage />,
           },
           {
             path: '/dashboard/assets/edit-asset/:id',

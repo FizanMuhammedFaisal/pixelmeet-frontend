@@ -9,12 +9,12 @@ import { useNavigate } from 'react-router';
 
 interface AssetPreviewProps {
   asset: Asset;
-  onToggleFavorite: (id: string, status: boolean) => void;
-  onDelete: (id: string, status: boolean) => void;
-  onRestore: (id: string) => void;
+  onToggleFavorite?: (id: string, status: boolean) => void;
+  onDelete?: (id: string) => void;
+  onRestore?: (id: string) => void;
 }
 
-export function AssetPreview({ asset, onToggleFavorite, onDelete }: AssetPreviewProps) {
+export function AssetPreview({ asset, onToggleFavorite, onDelete, onRestore }: AssetPreviewProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const navigate = useNavigate();
   const renderPreview = () => {
@@ -60,14 +60,18 @@ export function AssetPreview({ asset, onToggleFavorite, onDelete }: AssetPreview
         <div className="mt-3 space-y-2">
           <div className="flex items-start justify-between">
             <h3 className="font-medium text-sm truncate flex-1">{asset.name}</h3>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={() => onToggleFavorite(asset.id, asset.favourite)}
-            >
-              <Heart className={`h-3 w-3 ${asset.favourite ? 'fill-red-500 text-red-500' : ''}`} />
-            </Button>
+            {onToggleFavorite && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => onToggleFavorite(asset.id, asset.favourite)}
+              >
+                <Heart
+                  className={`h-3 w-3 ${asset.favourite ? 'fill-red-500 text-red-500' : ''}`}
+                />
+              </Button>
+            )}
           </div>
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>{asset.size ? `${(asset.size / 1024).toFixed(2)} KB` : 'N/A'}</span>
@@ -90,19 +94,28 @@ export function AssetPreview({ asset, onToggleFavorite, onDelete }: AssetPreview
             )}
             {asset.deleted ? (
               <>
-                <Button variant="ghost" size="sm" className="h-6 px-2">
-                  <Undo2 className="h-3 w-3" />
-                  <span className="sr-only">Restore</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 px-2 text-red-500"
-                  onClick={() => onDelete(asset.id, asset.deleted)}
-                >
-                  <Trash2 className="h-3 w-3" />
-                  <span className="sr-only">Delete Permanently</span>
-                </Button>
+                {onRestore && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 px-2"
+                    onClick={() => onRestore(asset.id)}
+                  >
+                    <Undo2 className="h-3 w-3" />
+                    <span className="sr-only">Restore</span>
+                  </Button>
+                )}
+                {onDelete && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 px-2 text-red-500"
+                    onClick={() => onDelete(asset.id)}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                    <span className="sr-only">Delete Permanently</span>
+                  </Button>
+                )}
               </>
             ) : (
               <>
@@ -123,15 +136,17 @@ export function AssetPreview({ asset, onToggleFavorite, onDelete }: AssetPreview
                   <Copy className="h-3 w-3" />
                   <span className="sr-only">Copy</span>
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 px-2 text-red-500"
-                  onClick={() => onDelete(asset.id)}
-                >
-                  <Trash2 className="h-3 w-3" />
-                  <span className="sr-only">Move to Trash</span>
-                </Button>
+                {onDelete && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 px-2 text-red-500"
+                    onClick={() => onDelete(asset.id)}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                    <span className="sr-only">Move to Trash</span>
+                  </Button>
+                )}
               </>
             )}
           </div>

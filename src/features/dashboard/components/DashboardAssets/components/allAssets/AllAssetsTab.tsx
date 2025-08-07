@@ -29,6 +29,7 @@ import { useUpdateAssetDeleted } from '@/features/dashboard/hooks/assets/useUpda
 import { Spinner } from '@/components/ui/spinner';
 import { PaginationControls } from '@/components/ui/paginationControls';
 import { isServer } from '@tanstack/react-query';
+import { queryClient } from '@/api/config/queryClient';
 
 export default function AllAssetsTab() {
   const [assets, setAssets] = useState<Asset[]>([]);
@@ -65,7 +66,6 @@ export default function AllAssetsTab() {
   const totalPages = data?.data.data.totalPages;
   useEffect(() => {
     if (data && !isLoading) {
-      console.log('settingd ta');
       setAssets(data.data.data.assets);
     }
   }, [data, isLoading]);
@@ -73,13 +73,45 @@ export default function AllAssetsTab() {
   const updateFavouriteMutation = useUpdateAssetFavourite();
   const updateDeletionMutation = useUpdateAssetDeleted();
   const handleToggleFavorite = (id: string, status: boolean) => {
-    updateFavouriteMutation.mutate({ isFavourite: status, id });
+    const newStatus = !status;
+    const previousStat = assets;
+    setAssets((prev) =>
+      prev.map((curr) => (curr.id === id ? { ...curr, favourite: newStatus } : curr)),
+    );
+    updateFavouriteMutation.mutate(
+      { isFavourite: newStatus, id },
+      {
+        onError: () => {
+          setAssets(previousStat);
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ['assets'],
+          });
+        },
+      },
+    );
   };
-  const handleDelete = (id: string, status: boolean) => {
-    updateDeletionMutation.mutate({ id, isDeleted: status });
-  };
-  const handleRestore = () => {
-    console.log('toglg res');
+  const handleDelete = (id: string) => {
+    const newStatus = true;
+    const previousStat = assets;
+    setAssets((prev) =>
+      prev.map((curr) => (curr.id === id ? { ...curr, favourite: newStatus } : curr)),
+    );
+
+    updateDeletionMutation.mutate(
+      { id, isDeleted: newStatus },
+      {
+        onError: () => {
+          setAssets(previousStat);
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ['assets'],
+          });
+        },
+      },
+    );
   };
 
   if (isLoading && !isSearching) {
@@ -194,7 +226,6 @@ export default function AllAssetsTab() {
               asset={asset}
               onToggleFavorite={handleToggleFavorite}
               onDelete={handleDelete}
-              onRestore={handleRestore}
             />
           ))
         ) : (
