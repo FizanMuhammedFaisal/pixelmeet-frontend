@@ -9,61 +9,61 @@ import { useSearchParams } from 'react-router'
 import FavouritesTab from './components/favourites/Favourites'
 
 export const AssetDashboardTabs = [
-  'dashboard',
-  'all',
-  'favorites',
-  'deleted',
-  'upload',
-  'tags'
+   'dashboard',
+   'all',
+   'favorites',
+   'deleted',
+   'upload',
+   'tags',
 ] as const
 export type AssetDashboardTabs = (typeof AssetDashboardTabs)[number]
 export default function AdminAssetsPage() {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabFromUrl = searchParams.get('tab')
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [currentTab, setCurrentTab] = useState<AssetDashboardTabs>(tabFromUrl)
-  const tabComponents: Record<AssetDashboardTabs, React.ReactNode> = {
-    dashboard: <DashboardTab currentTab={currentTab} viewMode={viewMode} />,
-    all: <AllAssetsTab />,
-    favorites: <FavouritesTab />,
-    deleted: <div>Deleted (WIP)</div>,
-    upload: <UploadTab />,
-    tags: <TagsTab />
-  }
-  const DEFAULT_TAB = 'dashboard'
-  function validTab(tab: string | null): tab is AssetDashboardTabs {
-    return AssetDashboardTabs.includes(tab as AssetDashboardTabs)
-  }
-  useEffect(() => {
-    if (!validTab(tabFromUrl)) {
-      setSearchParams({ tab: DEFAULT_TAB })
-      setCurrentTab(DEFAULT_TAB)
-    }
-  }, [tabFromUrl])
+   const [searchParams, setSearchParams] = useSearchParams()
+   const tabFromUrl = searchParams.get('tab')
+   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+   const [currentTab, setCurrentTab] = useState<AssetDashboardTabs>(tabFromUrl)
+   const tabComponents: Record<AssetDashboardTabs, React.ReactNode> = {
+      dashboard: <DashboardTab currentTab={currentTab} viewMode={viewMode} />,
+      all: <AllAssetsTab />,
+      favorites: <FavouritesTab />,
+      deleted: <div>Deleted (WIP)</div>,
+      upload: <UploadTab />,
+      tags: <TagsTab />,
+   }
+   const DEFAULT_TAB = 'dashboard'
+   function validTab(tab: string | null): tab is AssetDashboardTabs {
+      return AssetDashboardTabs.includes(tab as AssetDashboardTabs)
+   }
+   useEffect(() => {
+      if (!validTab(tabFromUrl)) {
+         setSearchParams({ tab: DEFAULT_TAB })
+         setCurrentTab(DEFAULT_TAB)
+      }
+   }, [tabFromUrl, setSearchParams])
 
-  const onTabChange = (tab: AssetDashboardTabs) => {
-    setSearchParams({ tab })
-    setCurrentTab(tab)
-  }
-  return (
-    <div className='flex flex-col min-h-screen bg-background'>
-      <TopNavigation
-        currentTab={currentTab}
-        onTabChange={onTabChange}
-        onViewModeToggle={setViewMode}
-        viewMode={viewMode}
-      />
-      <AnimatePresence mode='wait'>
-        <motion.div
-          key={currentTab}
-          initial={{ opacity: 0, filter: 'blur(3px)' }}
-          animate={{ opacity: 1, filter: 'blur(0px)' }}
-          exit={{ opacity: 0, filter: 'blur(3px)' }}
-          transition={{ duration: 0.2 }}
-        >
-          {tabComponents[currentTab] || <div>Not implemented yet</div>}
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  )
+   const onTabChange = (tab: AssetDashboardTabs) => {
+      setSearchParams({ tab })
+      setCurrentTab(tab)
+   }
+   return (
+      <div className="flex flex-col min-h-screen bg-background">
+         <TopNavigation
+            currentTab={currentTab}
+            onTabChange={onTabChange}
+            onViewModeToggle={setViewMode}
+            viewMode={viewMode}
+         />
+         <AnimatePresence mode="wait">
+            <motion.div
+               key={currentTab}
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               exit={{ opacity: 0 }}
+               transition={{ duration: 0.3 }}
+            >
+               {tabComponents[currentTab] || <div>Not implemented yet</div>}
+            </motion.div>
+         </AnimatePresence>
+      </div>
+   )
 }

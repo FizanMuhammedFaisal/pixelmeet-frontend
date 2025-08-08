@@ -11,6 +11,6 @@ export function GlobalMutationError(error: AxiosError) {
   if (!navigator.onLine) {
     toast('No internet connection');
   } else if (error?.response?.status >= 500) {
-    toast('Server error. Please try again later.');
+    toast.error('Server error. Please try again later.');
   }
 }

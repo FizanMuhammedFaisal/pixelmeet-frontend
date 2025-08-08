@@ -24,6 +24,7 @@ export const API_ENDPOINTS = {
     GET_ASSET: `${baseAsset}/assets`,
     PATCH_ASSET: `${baseAsset}/assets`,
     //map
-    CREATE_MAP:`${baseAsset}/maps/`,
+    CREATE_MAP: `${baseAsset}/maps/`,
+    GET_MAPS: `${baseAsset}/maps/`,
   },
 };
