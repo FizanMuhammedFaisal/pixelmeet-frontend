@@ -46,13 +46,15 @@ export default function AdminAssetsPage() {
       setCurrentTab(tab)
    }
    return (
-      <div className="flex flex-col min-h-screen bg-background">
-         <TopNavigation
-            currentTab={currentTab}
-            onTabChange={onTabChange}
-            onViewModeToggle={setViewMode}
-            viewMode={viewMode}
-         />
+      <div className="flex flex-col h-screen bg-background">
+         <div>
+            <TopNavigation
+               currentTab={currentTab}
+               onTabChange={onTabChange}
+               onViewModeToggle={setViewMode}
+               viewMode={viewMode}
+            />
+         </div>
          <AnimatePresence mode="wait">
             <motion.div
                key={currentTab}
@@ -60,6 +62,7 @@ export default function AdminAssetsPage() {
                animate={{ opacity: 1 }}
                exit={{ opacity: 0 }}
                transition={{ duration: 0.3 }}
+               className="flex flex-1"
             >
                {tabComponents[currentTab] || <div>Not implemented yet</div>}
             </motion.div>

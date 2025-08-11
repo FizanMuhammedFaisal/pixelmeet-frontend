@@ -17,24 +17,19 @@ const containerVariants = {
    },
 }
 
-const itemVariants = {
-   hidden: { y: 10, opacity: 0 },
-   visible: { y: 0, opacity: 1 },
-}
-
 export default function MapsList() {
    const limit = 10
    const [currentPage, setCurrentPage] = useState(1)
    const [maps, setMaps] = useState<Map[]>([])
    const { data, isLoading } = useGetMaps({ limit, page: currentPage })
    const totalPage = data?.data.data.totalPages
+   const navigate = useNavigate()
    useEffect(() => {
       if (data && !isLoading) {
-         console.log(data)
-         console.log('data')
          setMaps(data.data.data.maps)
       }
    }, [data, isLoading])
+
    if (isLoading || !maps) {
       return (
          <div className="fixed inset-0 flex items-center justify-center z-50 ">
@@ -42,7 +37,7 @@ export default function MapsList() {
          </div>
       )
    }
-   const navigate = useNavigate()
+
    const handleCreateMap = () => {
       navigate('/dashboard/maps/create')
    }
@@ -56,21 +51,15 @@ export default function MapsList() {
          </div>
 
          <motion.div
-            className="grid auto-rows-min gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            className="grid auto-rows-min mt-10 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
          >
             {maps.length &&
                maps.map((map: Map) => (
-                  <motion.div
-                     key={map.id}
-                     variants={itemVariants}
-                     whileHover={{ scale: 1.01 }}
-                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                     className="h-full"
-                  >
-                     <Card className="h-full flex flex-col overflow-hidden rounded-xl shadow-lg transition-all duration-300 hover:border-primary hover:ring-2 hover:ring-primary/50">
+                  <div className="h-full" key={map.id}>
+                     <Card className="h-full flex flex-col hover:shadow-md hover:scale-[1.02] overflow-hidden rounded-xl shadow-lg transition-all duration-300 s">
                         <CardHeader className="p-5 pb-0">
                            <CardTitle className="text-xl font-bold leading-tight">
                               {map.name}
@@ -135,7 +124,7 @@ export default function MapsList() {
                            </div>
                         </CardContent>
                      </Card>
-                  </motion.div>
+                  </div>
                ))}
          </motion.div>
          {totalPage !== undefined && totalPage > 1 && (
