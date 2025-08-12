@@ -37,10 +37,12 @@ type GenericEventHandler<Events extends Record<EventType, unknown>> =
 export class Emitter<Events extends Record<EventType, unknown>> implements IEmitter<Events> {
    private map: EventHandlerMap<Events> = new Map()
 
-   on<Key extends keyof Events>(type: Key, handler: GenericEventHandler<Events>): void {
+   on<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void
+   on(type: '*', handler: WildcardHandler<Events>): void
+   on(type: keyof Events | '*', handler: unknown): void {
       const handlers: Array<GenericEventHandler<Events>> | undefined = this.map.get(type)
       if (handlers) {
-         handlers.push(handler)
+         handlers.push(handler as GenericEventHandler<Events>)
       } else {
          this.map.set(type, [handler] as EventHandlerList<Events[keyof Events]>)
       }

@@ -11,6 +11,7 @@ import emitter from '../utils/EventEmitter'
 import * as PIXI from 'pixi.js'
 import gsap from 'gsap'
 import { PixiPlugin } from 'gsap/PixiPlugin'
+import ToolControls from './toolbars/ToolControls'
 gsap.registerPlugin(PixiPlugin)
 
 PixiPlugin.registerPIXI(PIXI)
@@ -34,6 +35,7 @@ export default function Editor() {
             <PixiEditor className="absolute inset-0" />
             <SideBar layers={layers} className="absolute top-0 right-0 h-full shadow-lg" />
          </div>
+         <ToolControls />
       </div>
    )
 }

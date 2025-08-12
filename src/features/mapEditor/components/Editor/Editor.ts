@@ -1,24 +1,26 @@
 import * as PIXI from 'pixi.js'
-import type { ThemeType } from '../../types/types'
+import type { ControlTools, ThemeType } from '../../types/types'
 import emitter from '../../utils/EventEmitter'
 import { App } from './App'
 import gsap from 'gsap'
+import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
 export class Editor extends App {
-   gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
-   themeMode: ThemeType = 'dark'
+   private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
+   // public selectedTool: ControlTools = 'select'
+   private canvasLocked: boolean = false
+
    //layers
-   //tools
-   //selectedTool
    //selectedTile -- from which image might need the selected palleter
    //selected Pallette
    //scale
    //
 
-   public async init() {
+   public async init(theme: ThemeType) {
       await this.loadAssetsNeeded()
-      await super.init()
+      await super.init(theme)
       await this.setUpGridLines()
       this.setUpEmitterListners()
+      this.setUpZustantListners()
    }
    setUpEmitterListners = () => {
       emitter.on('switchTheme', this.handleThemeSwitch)
@@ -48,7 +50,7 @@ export class Editor extends App {
             height: this.app.screen.height,
             alpha: 0.2,
          })
-         this.app.stage.addChild(this.gridLines)
+         this.viewport.addChild(this.gridLines)
       }
    }
    setUpGridLines = async () => {
@@ -58,11 +60,24 @@ export class Editor extends App {
                ? '/images/tile-outline-white.png'
                : '/images/tile-outline-dark.png',
          ),
-         width: this.app.screen.width,
-         height: this.app.screen.height,
+         width: this.viewport.worldWidth,
+         height: this.viewport.worldHeight,
          alpha: 0.2,
       })
-      this.app.stage.addChild(this.gridLines)
+      this.viewport.addChild(this.gridLines)
+   }
+   setUpZustantListners = () => {
+      useMapEditorStore.subscribe((state) => state.tool, this.changeTool)
+   }
+   changeTool = (tool: ControlTools) => {
+      this.canvasLocked = false
+      if (tool === 'lock') {
+         this.canvasLocked = true
+      }
+      if (tool === this.selectedTool) return
+   }
+   get selectedTool() {
+      return useMapEditorStore.getState().tool
    }
    loadAssetsNeeded = async () => {
       await Promise.all([
