@@ -1,3 +1,5 @@
+import type { FederatedPointerEvent, Point } from 'pixi.js'
+
 export interface Layer {
    id: string
    name: string
@@ -12,12 +14,18 @@ export type ControlTools =
    | 'select'
    | 'hand'
    | 'fill'
-   | 'rectangle-fill'
+   | 'rectanglefill'
    | 'eraser'
-   | 'zoom-in'
-   | 'zoom-out'
+   | 'zoomin'
+   | 'zoomout'
 
 export type EmitterType = {
    switchTheme: { theme: ThemeType }
    changeTool: { tool: ControlTools }
+}
+
+export type ToolHandler = {
+   onDown?: (pos: Point, e: FederatedPointerEvent) => void
+   onMove?: (pos: Point, e: FederatedPointerEvent) => void
+   onUp?: (pos: Point, e: FederatedPointerEvent) => void
 }

@@ -9,20 +9,19 @@ import {
    SquareDashed,
    Grid2X2,
 } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
 import type { ControlTools } from '../../types/types'
-import emitter from '../../utils/EventEmitter'
 
 const tools = [
    { id: 'lock', icon: Lock, label: 'Lock' },
    { id: 'select', icon: MousePointer2, label: 'Select' },
    { id: 'hand', icon: Hand, label: 'Hand' },
    { id: 'fill', icon: SquareDashed, label: 'Fill' },
-   { id: 'rectangle-fill', icon: Grid2X2, label: 'Rectangle Fill' },
+   { id: 'rectanglefill', icon: Grid2X2, label: 'Rectangle Fill' },
    { id: 'eraser', icon: EraserIcon, label: 'Eraser' },
-   { id: 'zoom-in', icon: ZoomIn, label: 'Zoom In' },
-   { id: 'zoom-out', icon: ZoomOut, label: 'Zoom Out' },
+   { id: 'zoomin', icon: ZoomIn, label: 'Zoom In' },
+   { id: 'zoomout', icon: ZoomOut, label: 'Zoom Out' },
 ]
 
 function ToolControls() {

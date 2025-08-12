@@ -1,9 +1,19 @@
 import * as PIXI from 'pixi.js'
-import type { ControlTools, ThemeType } from '../../types/types'
+import type { ControlTools, ThemeType, ToolHandler } from '../../types/types'
 import emitter from '../../utils/EventEmitter'
 import { App } from './App'
 import gsap from 'gsap'
 import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
+import {
+   makeEraserTool,
+   makeFillTool,
+   makeHandTool,
+   makeLockTool,
+   makeRectangleFillTool,
+   makeSelectTool,
+   makeZoomInTool,
+   makeZoomOutTool,
+} from './ToolControls'
 export class Editor extends App {
    private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
    // public selectedTool: ControlTools = 'select'
@@ -21,6 +31,7 @@ export class Editor extends App {
       await this.setUpGridLines()
       this.setUpEmitterListners()
       this.setUpZustantListners()
+      this.setUpInteractions()
    }
    setUpEmitterListners = () => {
       emitter.on('switchTheme', this.handleThemeSwitch)
@@ -79,10 +90,29 @@ export class Editor extends App {
    get selectedTool() {
       return useMapEditorStore.getState().tool
    }
+   setUpInteractions = () => {
+      const toolMap = this.buildToolMap()
+      this.viewport
+         .on('pointerdown', (e) => toolMap[this.selectedTool].onDown?.(e.global, e))
+         .on('pointermove', (e) => toolMap[this.selectedTool].onMove?.(e.global, e))
+         .on('pointerup', (e) => toolMap[this.selectedTool].onUp?.(e.global, e))
+   }
    loadAssetsNeeded = async () => {
       await Promise.all([
          PIXI.Assets.load('/images/tile-outline-white.png'),
          PIXI.Assets.load('/images/tile-outline-dark.png'),
       ])
+   }
+   private buildToolMap(): Record<ControlTools, ToolHandler> {
+      return {
+         fill: makeFillTool(this),
+         zoomin: makeZoomInTool(this),
+         zoomout: makeZoomOutTool(this),
+         select: makeSelectTool(this),
+         eraser: makeEraserTool(this),
+         hand: makeHandTool(this),
+         lock: makeLockTool(this),
+         rectanglefill: makeRectangleFillTool(this),
+      }
    }
 }

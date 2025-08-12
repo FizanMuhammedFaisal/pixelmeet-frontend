@@ -6,7 +6,7 @@ export class App {
    protected isInitialized: boolean = false
    protected backgroundColor: string = '#000000'
    protected themeMode: ThemeType = 'dark'
-   protected viewport!: Viewport
+   public viewport!: Viewport
    public async init(theme: ThemeType) {
       const container = document.getElementById('map-editor')
       if (!container) {
