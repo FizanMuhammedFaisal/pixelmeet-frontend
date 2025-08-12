@@ -6,53 +6,49 @@ import { AnimatePresence, motion } from 'motion/react'
 
 type AnimationVariant = 'circle' | 'circle-blur' | 'gif' | 'polygon'
 
-type StartPosition =
-  | 'center'
-  | 'top-left'
-  | 'top-right'
-  | 'bottom-left'
-  | 'bottom-right'
+type StartPosition = 'center' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
 
 export interface ThemeToggleButtonProps {
-  theme?: 'light' | 'dark'
-  showLabel?: boolean
-  variant?: AnimationVariant
-  start?: StartPosition
-  url?: string // For gif variant
-  className?: string
-  onClick?: () => void
+   theme?: 'light' | 'dark'
+   showLabel?: boolean
+   variant?: AnimationVariant
+   start?: StartPosition
+   url?: string // For gif variant
+   className?: string
+   onClick?: () => void
+   speed?: number
 }
 
 export const ThemeToggleButton = ({
-  theme = 'light',
-  showLabel = false,
-  variant = 'circle',
-  start = 'center',
-  url,
-  className,
-  onClick
+   theme = 'light',
+   showLabel = false,
+   variant = 'circle',
+   start = 'center',
+   url,
+   className,
+   onClick,
+   speed = 0.9,
 }: ThemeToggleButtonProps) => {
-  const handleClick = useCallback(() => {
-    // Inject animation styles for this specific transition
-    const styleId = `theme-transition-${Date.now()}`
-    const style = document.createElement('style')
-    style.id = styleId
+   const handleClick = useCallback(() => {
+      // Inject animation styles for this specific transition
+      const styleId = `theme-transition-${Date.now()}`
+      const style = document.createElement('style')
+      style.id = styleId
 
-    // Generate animation CSS based on variant
-    let css = ''
-    const positions = {
-      center: 'center',
-      'top-left': 'top left',
-      'top-right': 'top right',
-      'bottom-left': 'bottom left',
-      'bottom-right': 'bottom right'
-    }
+      // Generate animation CSS based on variant
+      let css = ''
+      const positions = {
+         center: 'center',
+         'top-left': 'top left',
+         'top-right': 'top right',
+         'bottom-left': 'bottom left',
+         'bottom-right': 'bottom right',
+      }
 
-    if (variant === 'circle') {
-      const cx =
-        start === 'center' ? '50' : start.includes('left') ? '0' : '100'
-      const cy = start === 'center' ? '50' : start.includes('top') ? '0' : '100'
-      css = `
+      if (variant === 'circle') {
+         const cx = start === 'center' ? '50' : start.includes('left') ? '0' : '100'
+         const cy = start === 'center' ? '50' : start.includes('top') ? '0' : '100'
+         css = `
         @supports (view-transition-name: root) {
           ::view-transition-old(root) { 
             animation: none;
@@ -71,17 +67,16 @@ export const ThemeToggleButton = ({
           }
         }
       `
-    } else if (variant === 'circle-blur') {
-      const cx =
-        start === 'center' ? '50' : start.includes('left') ? '0' : '100'
-      const cy = start === 'center' ? '50' : start.includes('top') ? '0' : '100'
-      css = `
+      } else if (variant === 'circle-blur') {
+         const cx = start === 'center' ? '50' : start.includes('left') ? '0' : '100'
+         const cy = start === 'center' ? '50' : start.includes('top') ? '0' : '100'
+         css = `
         @supports (view-transition-name: root) {
           ::view-transition-old(root) { 
             animation: none;
           }
           ::view-transition-new(root) {
-            animation: circle-blur-expand 0.9s cubic-bezier(0.46, -0.14, 0.11, 1);
+            animation: circle-blur-expand ${speed}s cubic-bezier(0.46, -0.14, 0.11, 1);
             transform-origin: ${positions[start]};
             filter: blur(0);
           }
@@ -97,8 +92,8 @@ export const ThemeToggleButton = ({
           }
         }
       `
-    } else if (variant === 'gif' && url) {
-      css = `
+      } else if (variant === 'gif' && url) {
+         css = `
         @supports (view-transition-name: root) {
           ::view-transition-old(root) {
             animation: fade-out 0.4s ease-out;
@@ -131,16 +126,14 @@ export const ThemeToggleButton = ({
           }
         }
       `
-    } else if (variant === 'polygon') {
-      css = `
+      } else if (variant === 'polygon') {
+         css = `
         @supports (view-transition-name: root) {
           ::view-transition-old(root) {
             animation: none;
           }
           ::view-transition-new(root) {
-            animation: ${
-              theme === 'light' ? 'wipe-in-dark' : 'wipe-in-light'
-            } 0.4s ease-out;
+            animation: ${theme === 'light' ? 'wipe-in-dark' : 'wipe-in-light'} 0.4s ease-out;
           }
           @keyframes wipe-in-dark {
             from {
@@ -160,69 +153,69 @@ export const ThemeToggleButton = ({
           }
         }
       `
-    }
+      }
 
-    if (css) {
-      style.textContent = css
-      document.head.appendChild(style)
+      if (css) {
+         style.textContent = css
+         document.head.appendChild(style)
 
-      // Clean up animation styles after transition
-      setTimeout(() => {
-        const styleEl = document.getElementById(styleId)
-        if (styleEl) {
-          styleEl.remove()
-        }
-      }, 3000)
-    }
+         // Clean up animation styles after transition
+         setTimeout(() => {
+            const styleEl = document.getElementById(styleId)
+            if (styleEl) {
+               styleEl.remove()
+            }
+         }, 3000)
+      }
 
-    // Call the onClick handler if provided
-    onClick?.()
-  }, [onClick, variant, start, url, theme])
-  const MotionButton = motion.create(Button)
-  const MotionSun = motion.create(Sun)
-  const MotionMoon = motion.create(Moon)
-  return (
-    <MotionButton
-      variant='outline'
-      size={showLabel ? 'default' : 'icon'}
-      onClick={handleClick}
-      className={cn(
-        'relative overflow-hidden transition-all',
-        showLabel ? 'gap-2 px-4' : 'px-0',
-        className
-      )}
-      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
-      whileTap={{ scale: 0.95 }}
-      whileHover={{ scale: 1.02 }}
-    >
-      <AnimatePresence mode='wait' initial={false}>
-        {theme === 'light' ? (
-          <MotionSun
-            key='sun-icon'
-            initial={{ rotate: -90, opacity: 0 }}
-            animate={{ rotate: 0, opacity: 1 }}
-            exit={{ rotate: 90, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className={cn(
-              'h-[1.2rem] w-[1.2rem]',
-              showLabel ? 'relative' : 'absolute inset-0 m-auto'
+      // Call the onClick handler if provided
+      onClick?.()
+   }, [onClick, variant, start, url, theme])
+   const MotionButton = motion.create(Button)
+   const MotionSun = motion.create(Sun)
+   const MotionMoon = motion.create(Moon)
+   return (
+      <MotionButton
+         variant="outline"
+         size={showLabel ? 'default' : 'icon'}
+         onClick={handleClick}
+         className={cn(
+            'relative overflow-hidden transition-all',
+            showLabel ? 'gap-2 px-4' : 'px-0',
+            className,
+         )}
+         aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+         whileTap={{ scale: 0.95 }}
+         whileHover={{ scale: 1.02 }}
+      >
+         <AnimatePresence mode="wait" initial={false}>
+            {theme === 'light' ? (
+               <MotionSun
+                  key="sun-icon"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className={cn(
+                     'h-[1.2rem] w-[1.2rem]',
+                     showLabel ? 'relative' : 'absolute inset-0 m-auto',
+                  )}
+               />
+            ) : (
+               <MotionMoon
+                  key="moon-icon"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className={cn(
+                     'h-[1.2rem] w-[1.2rem]',
+                     showLabel ? 'relative' : 'absolute inset-0 m-auto',
+                  )}
+               />
             )}
-          />
-        ) : (
-          <MotionMoon
-            key='moon-icon'
-            initial={{ rotate: 90, opacity: 0 }}
-            animate={{ rotate: 0, opacity: 1 }}
-            exit={{ rotate: -90, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className={cn(
-              'h-[1.2rem] w-[1.2rem]',
-              showLabel ? 'relative' : 'absolute inset-0 m-auto'
-            )}
-          />
-        )}
-      </AnimatePresence>
-      {/* {showLabel && (
+         </AnimatePresence>
+         {/* {showLabel && (
         <AnimatePresence mode='wait' initial={false}>
           <motion.span
             key={theme === 'light' ? 'light-label' : 'dark-label'}
@@ -236,19 +229,19 @@ export const ThemeToggleButton = ({
           </motion.span>
         </AnimatePresence>
       )} */}
-    </MotionButton>
-  )
+      </MotionButton>
+   )
 }
 
 // Export a helper hook for using with View Transitions API
 export const useThemeTransition = () => {
-  const startTransition = useCallback((updateFn: () => void) => {
-    if ('startViewTransition' in document) {
-      ;(document as any).startViewTransition(updateFn)
-    } else {
-      updateFn()
-    }
-  }, [])
+   const startTransition = useCallback((updateFn: () => void) => {
+      if ('startViewTransition' in document) {
+         ;(document as any).startViewTransition(updateFn)
+      } else {
+         updateFn()
+      }
+   }, [])
 
-  return { startTransition }
+   return { startTransition }
 }

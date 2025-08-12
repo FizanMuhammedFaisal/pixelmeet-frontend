@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import * as PIXI from 'pixi.js'
 import { Editor } from './Editor/Editor'
 
 type props = {
@@ -18,9 +17,15 @@ export default function PixiEditor({ className }: props) {
       if (!appRef.current) {
          mount()
       }
+      // const handleGlobalScroll = (e: Event) => {
+      //    e.preventDefault()
+      // }
+      // window.addEventListener('wheel', handleGlobalScroll, { passive: false })
 
-      return () => {}
+      // return () => {
+      //    window.removeEventListener('wheel', handleGlobalScroll)
+      // }
    }, [])
 
-   return <div id="map-editor" className={`bg-amber-200 h-full w-full  ${className}`}></div>
+   return <div id="map-editor" className={` h-full w-full   ${className}`}></div>
 }
