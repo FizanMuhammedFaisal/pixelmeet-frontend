@@ -14,11 +14,12 @@ import {
    makeZoomInTool,
    makeZoomOutTool,
 } from './ToolControls'
+import { TILE_SIZE } from '../../types/config'
 export class Editor extends App {
    private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
    private canvasLocked: boolean = false
    public worldContainer: PIXI.Container = new PIXI.Container()
-
+   public ghostSprite: PIXI.Container | null = null
    //layers
    //selectedTile -- from which image might need the selected palleter
    //selected Pallette
@@ -79,7 +80,8 @@ export class Editor extends App {
       this.viewport.addChild(this.gridLines)
    }
    setUpZustantListners = () => {
-      useMapEditorStore.subscribe((state) => state.tool, this.changeTool)
+      useMapEditorStore.subscribe((state) => state.selectedTool, this.changeTool)
+      useMapEditorStore.subscribe((state) => state.selectedTiles, this.tileSelectionChanged)
    }
    changeTool = (tool: ControlTools) => {
       this.canvasLocked = false
@@ -87,6 +89,10 @@ export class Editor extends App {
          this.canvasLocked = true
       }
       if (tool === this.selectedTool) return
+   }
+   tileSelectionChanged = () => {
+      this.ghostSprite?.destroy()
+      this.ghostSprite = null
    }
    get selectedTool() {
       return useMapEditorStore.getState().selectedTool
@@ -108,6 +114,15 @@ export class Editor extends App {
          PIXI.Assets.load('/images/tile-outline-white.png'),
          PIXI.Assets.load('/images/tile-outline-dark.png'),
       ])
+   }
+   snapToGrid(x: number, y: number): PIXI.Point {
+      const col = Math.floor(x / TILE_SIZE)
+      const row = Math.floor(y / TILE_SIZE)
+
+      const snapx = col * TILE_SIZE
+      const snapy = row * TILE_SIZE
+
+      return new PIXI.Point(snapx, snapy)
    }
    private buildToolMap(): Record<ControlTools, ToolHandler> {
       return {

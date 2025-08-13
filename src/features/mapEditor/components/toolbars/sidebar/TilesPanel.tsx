@@ -10,7 +10,7 @@ function TilesPanel() {
    const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null)
    const containerRef = useRef<HTMLDivElement>(null)
    const imageRef = useRef<HTMLImageElement>(null)
-   const { setSelectedTiles, selectedTiles } = useMapEditorStore()
+   const { selectedTiles, setSelectedTiles } = useMapEditorStore()
    const TILE_SIZE = 32
 
    useEffect(() => {
@@ -38,7 +38,13 @@ function TilesPanel() {
 
       if (x >= 0 && x < tilesX && y >= 0 && y < tilesY) {
          setDragStart({ x, y })
-         setSelectedTiles({ selectedImage: imageUrl, startX: x, startY: y, endX: x, endY: y })
+         setSelectedTiles({
+            selectedImage: imageUrl,
+            startX: x,
+            startY: y,
+            endX: x + 1,
+            endY: y + 1,
+         })
          setIsSelecting(true)
       }
    }
@@ -58,8 +64,8 @@ function TilesPanel() {
             selectedImage: imageUrl,
             startX: Math.min(dragStart.x, x),
             startY: Math.min(dragStart.y, y),
-            endX: Math.max(dragStart.x, x),
-            endY: Math.max(dragStart.y, y),
+            endX: Math.max(dragStart.x, x) + 1,
+            endY: Math.max(dragStart.y, y) + 1,
          })
       }
    }
@@ -99,7 +105,7 @@ function TilesPanel() {
          </div>
       )
    }
-
+   console.log(selectedTiles)
    return (
       <div className="h-full flex flex-col">
          <div className="p-2 border-b bg-muted/10">
@@ -162,8 +168,8 @@ function TilesPanel() {
                      style={{
                         left: selectedTiles.startX * TILE_SIZE,
                         top: selectedTiles.startY * TILE_SIZE,
-                        width: (selectedTiles.endX - selectedTiles.startX + 1) * TILE_SIZE,
-                        height: (selectedTiles.endY - selectedTiles.startY + 1) * TILE_SIZE,
+                        width: (selectedTiles.endX - selectedTiles.startX) * TILE_SIZE,
+                        height: (selectedTiles.endY - selectedTiles.startY) * TILE_SIZE,
                      }}
                   />
                )}

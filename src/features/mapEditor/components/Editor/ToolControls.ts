@@ -10,7 +10,12 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
          const tileset = await Assets.load(data.selectedImage)
          const tileTex = new Texture({
             source: tileset,
-            frame: new Rectangle(data.startX, data.startY, 32, 32),
+            frame: new Rectangle(
+               data.startX * 32,
+               data.startY * 32,
+               (data.endX - data.startX) * 32,
+               (data.endY - data.startY) * 32,
+            ),
          })
          const sprite = new Sprite({ texture: tileTex })
          const worldPos = editor.viewport.toWorld(pos)
@@ -18,6 +23,32 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
          sprite.zIndex = 1000
          editor.worldContainer.addChild(sprite)
          console.log(editor.worldContainer)
+      }
+   },
+   onMove: async (pos) => {
+      const data = editor.selectedTiles
+      const worldPos = editor.viewport.toWorld(pos)
+      const point = editor.snapToGrid(worldPos.x, worldPos.y)
+      if (data) {
+         if (!editor.ghostSprite) {
+            const tileset = await Assets.load(data.selectedImage)
+            const tileTex = new Texture({
+               source: tileset,
+               frame: new Rectangle(
+                  data.startX * 32,
+                  data.startY * 32,
+                  (data.endX - data.startX) * 32,
+                  (data.endY - data.startY) * 32,
+               ),
+            })
+            editor.ghostSprite = new Sprite({ texture: tileTex })
+
+            editor.ghostSprite.zIndex = 1000
+            editor.ghostSprite.alpha = 0.8
+            editor.worldContainer.addChild(editor.ghostSprite)
+            console.log('added')
+         }
+         editor.ghostSprite.position.copyFrom(point)
       }
    },
 })

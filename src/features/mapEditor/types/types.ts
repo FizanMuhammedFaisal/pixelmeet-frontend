@@ -35,4 +35,5 @@ export type ToolHandler = {
    onDown?: (pos: Point, e: FederatedPointerEvent) => void
    onMove?: (pos: Point, e: FederatedPointerEvent) => void
    onUp?: (pos: Point, e: FederatedPointerEvent) => void
+   onLeave?: (pos: Point, e: FederatedPointerEvent) => void
 }
