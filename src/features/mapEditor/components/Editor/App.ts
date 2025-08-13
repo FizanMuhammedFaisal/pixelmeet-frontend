@@ -33,11 +33,11 @@ export class App {
       })
          .drag()
          .pinch({ percent: 3 })
-         .wheel({})
+         .wheel()
          .decelerate()
          .clampZoom({
             minScale: 0.5,
-            maxScale: 4,
+            maxScale: 8,
          })
 
       this.viewport = viewport

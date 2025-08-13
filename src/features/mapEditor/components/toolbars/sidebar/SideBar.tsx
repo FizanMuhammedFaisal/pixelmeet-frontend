@@ -29,7 +29,7 @@ export default function SideBar({ layers, className }: props) {
          return
       }
       const delta = sidebarXRef.current - e.clientX
-      const value = Math.max(300, Math.min(600, delta + startWidthRef.current))
+      const value = Math.max(200, Math.min(600, delta + startWidthRef.current))
       setWidth(value)
    }
    const hanldeMouseUp = () => {

@@ -7,9 +7,12 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
       const data = editor.selectedTiles
       console.log(data)
       if (data) {
-         const tileset = await Assets.load(data.selectedImage)
+         const tileset = await Assets.load({
+            src: data.selectedImage,
+         })
          const tileTex = new Texture({
             source: tileset,
+
             frame: new Rectangle(
                data.startX * 32,
                data.startY * 32,
@@ -17,9 +20,11 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
                (data.endY - data.startY) * 32,
             ),
          })
+
          const sprite = new Sprite({ texture: tileTex })
          const worldPos = editor.viewport.toWorld(pos)
-         sprite.position.copyFrom(worldPos)
+         const point = editor.snapToGrid(worldPos.x, worldPos.y)
+         sprite.position.copyFrom(point)
          sprite.zIndex = 1000
          editor.worldContainer.addChild(sprite)
          console.log(editor.worldContainer)

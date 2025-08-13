@@ -15,6 +15,8 @@ import {
    makeZoomOutTool,
 } from './ToolControls'
 import { TILE_SIZE } from '../../types/config'
+PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
+
 export class Editor extends App {
    private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
    private canvasLocked: boolean = false
@@ -88,6 +90,7 @@ export class Editor extends App {
       if (tool === 'lock') {
          this.canvasLocked = true
       }
+      this.tileSelectionChanged()
       if (tool === this.selectedTool) return
    }
    tileSelectionChanged = () => {
