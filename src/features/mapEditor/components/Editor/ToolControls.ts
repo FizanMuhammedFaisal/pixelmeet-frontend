@@ -1,7 +1,26 @@
+import { Assets, Rectangle, Sprite, Texture } from 'pixi.js'
 import type { ToolHandler } from '../../types/types'
 import { Editor } from './Editor'
 
-export const makeFillTool = (editor: Editor): ToolHandler => ({})
+export const makeFillTool = (editor: Editor): ToolHandler => ({
+   onDown: async (pos, e) => {
+      const data = editor.selectedTiles
+      console.log(data)
+      if (data) {
+         const tileset = await Assets.load(data.selectedImage)
+         const tileTex = new Texture({
+            source: tileset,
+            frame: new Rectangle(data.startX, data.startY, 32, 32),
+         })
+         const sprite = new Sprite({ texture: tileTex })
+         const worldPos = editor.viewport.toWorld(pos)
+         sprite.position.copyFrom(worldPos)
+         sprite.zIndex = 1000
+         editor.worldContainer.addChild(sprite)
+         console.log(editor.worldContainer)
+      }
+   },
+})
 
 export const makeZoomInTool = (editor: Editor): ToolHandler => ({
    onDown: (pos) => {

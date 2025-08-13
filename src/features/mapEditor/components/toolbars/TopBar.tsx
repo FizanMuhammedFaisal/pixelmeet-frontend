@@ -14,8 +14,7 @@ function TopBar({ className, setTheme }: props) {
       }
    }
    return (
-      <div className={`dark:bg-muted bg-white flex z-10 w-full justify-between ${className}`}>
-         <div>asdfasdf</div>
+      <div className={`dark:bg-muted bg-white flex z-10 w-full justify-end ${className}`}>
          <ThemeToggle onThemeChange={handleOnThemeChange} speed={0.5} />
       </div>
    )

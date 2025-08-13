@@ -23,6 +23,13 @@ export type EmitterType = {
    switchTheme: { theme: ThemeType }
    changeTool: { tool: ControlTools }
 }
+export type selectedTiles = {
+   selectedImage: string
+   startX: number
+   startY: number
+   endX: number
+   endY: number
+}
 
 export type ToolHandler = {
    onDown?: (pos: Point, e: FederatedPointerEvent) => void

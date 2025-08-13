@@ -1,23 +1,16 @@
+import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
 import { Button } from '@/components/ui/button'
 import { Upload } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
-interface TileSelection {
-   startX: number
-   startY: number
-   endX: number
-   endY: number
-}
-
 function TilesPanel() {
    const [imageUrl, setImageUrl] = useState<string>('/m.png')
    const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 })
-   const [selectedTiles, setSelectedTiles] = useState<TileSelection | null>(null)
    const [isSelecting, setIsSelecting] = useState(false)
    const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null)
    const containerRef = useRef<HTMLDivElement>(null)
    const imageRef = useRef<HTMLImageElement>(null)
-
+   const { setSelectedTiles, selectedTiles } = useMapEditorStore()
    const TILE_SIZE = 32
 
    useEffect(() => {
@@ -45,7 +38,7 @@ function TilesPanel() {
 
       if (x >= 0 && x < tilesX && y >= 0 && y < tilesY) {
          setDragStart({ x, y })
-         setSelectedTiles({ startX: x, startY: y, endX: x, endY: y })
+         setSelectedTiles({ selectedImage: imageUrl, startX: x, startY: y, endX: x, endY: y })
          setIsSelecting(true)
       }
    }
@@ -62,6 +55,7 @@ function TilesPanel() {
 
       if (x >= 0 && x < tilesX && y >= 0 && y < tilesY) {
          setSelectedTiles({
+            selectedImage: imageUrl,
             startX: Math.min(dragStart.x, x),
             startY: Math.min(dragStart.y, y),
             endX: Math.max(dragStart.x, x),
@@ -174,7 +168,7 @@ function TilesPanel() {
                   />
                )}
 
-               <div
+               {/* <div
                   className="absolute inset-0 grid pointer-events-none"
                   style={{
                      gridTemplateColumns: `repeat(${tilesX}, ${TILE_SIZE}px)`,
@@ -192,7 +186,7 @@ function TilesPanel() {
                         />
                      )
                   })}
-               </div>
+               </div> */}
             </div>
          </div>
 

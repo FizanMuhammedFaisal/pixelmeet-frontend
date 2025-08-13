@@ -25,7 +25,7 @@ const tools = [
 ]
 
 function ToolControls() {
-   const activeTool = useMapEditorStore((s) => s.tool)
+   const activeTool = useMapEditorStore((s) => s.selectedTool)
    const { setTool } = useMapEditorStore()
    const [hoveredTool, setHoveredTool] = useState<string | null>(null)
    const hoverTimeRef = useRef<NodeJS.Timeout | null>(null)
@@ -89,7 +89,7 @@ function ToolControls() {
                         <motion.div
                            initial={{ rotate: 0 }}
                            animate={{
-                              y: isHovered ? [0, -3, 0] : 0,
+                              y: !isActive && isHovered ? [0, -3, 0] : 0,
                            }}
                            transition={{
                               duration: 0.8,

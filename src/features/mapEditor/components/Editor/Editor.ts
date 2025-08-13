@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import type { ControlTools, ThemeType, ToolHandler } from '../../types/types'
+import type { ControlTools, selectedTiles, ThemeType, ToolHandler } from '../../types/types'
 import emitter from '../../utils/EventEmitter'
 import { App } from './App'
 import gsap from 'gsap'
@@ -16,8 +16,8 @@ import {
 } from './ToolControls'
 export class Editor extends App {
    private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
-   // public selectedTool: ControlTools = 'select'
    private canvasLocked: boolean = false
+   public worldContainer: PIXI.Container = new PIXI.Container()
 
    //layers
    //selectedTile -- from which image might need the selected palleter
@@ -28,6 +28,7 @@ export class Editor extends App {
    public async init(theme: ThemeType) {
       await this.loadAssetsNeeded()
       await super.init(theme)
+      this.viewport.addChild(this.worldContainer)
       await this.setUpGridLines()
       this.setUpEmitterListners()
       this.setUpZustantListners()
@@ -88,11 +89,16 @@ export class Editor extends App {
       if (tool === this.selectedTool) return
    }
    get selectedTool() {
-      return useMapEditorStore.getState().tool
+      return useMapEditorStore.getState().selectedTool
+   }
+   get selectedTiles(): selectedTiles | null {
+      return useMapEditorStore.getState().selectedTiles
    }
    setUpInteractions = () => {
       const toolMap = this.buildToolMap()
+
       this.viewport
+
          .on('pointerdown', (e) => toolMap[this.selectedTool].onDown?.(e.global, e))
          .on('pointermove', (e) => toolMap[this.selectedTool].onMove?.(e.global, e))
          .on('pointerup', (e) => toolMap[this.selectedTool].onUp?.(e.global, e))

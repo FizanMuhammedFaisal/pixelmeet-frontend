@@ -1,27 +1,38 @@
 import type { Editor } from '@/features/mapEditor/components/Editor/Editor'
-import type { ControlTools } from '@/features/mapEditor/types/types'
+import type { ControlTools, selectedTiles } from '@/features/mapEditor/types/types'
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
+
 interface useMapEditorStore {
    editor: Editor | null
-   tool: ControlTools
+   selectedTool: ControlTools
+   selectedTiles: selectedTiles | null
    setEditor: (editor: Editor) => void
    setTool: (tool: ControlTools) => void
+   setSelectedTiles: (selected: selectedTiles) => void
 }
 
 export const useMapEditorStore = create<useMapEditorStore>()(
    subscribeWithSelector((set, get) => ({
       editor: null,
-      tool: 'select',
+      selectedTool: 'select',
+      selectedTiles: null,
+
       setEditor: (editor) => {
          set(() => ({
             editor,
          }))
       },
-      setTool: (tool) => {
+      setTool: (selectedTool) => {
          set((state) => ({
             ...state,
-            tool,
+            selectedTool,
+         }))
+      },
+      setSelectedTiles: (selected) => {
+         set((state) => ({
+            ...state,
+            selectedTiles: selected,
          }))
       },
    })),
