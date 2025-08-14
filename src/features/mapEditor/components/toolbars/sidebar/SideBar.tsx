@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import type { Layer } from '../../../types/types'
-import SideBarLayers from './Layers'
-import AssetPanel from './AssetPanel'
+import SideBarLayers from './layers/Layers'
+import AssetPanel from './panels/AssetPanelTabs'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 
 type props = {

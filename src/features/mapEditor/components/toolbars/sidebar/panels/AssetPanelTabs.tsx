@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import TilesPanel from './TilesPanel'
+import TilesPanel from './TilesPanle/TilesPanel'
 import ObjectPanel from './ObjectPanel'
 import AudioPanel from './AudioPanel'
 // Tiles      │  │  Objects     │  │   Audio

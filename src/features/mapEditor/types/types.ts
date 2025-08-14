@@ -37,3 +37,11 @@ export type ToolHandler = {
    onUp?: (pos: Point, e: FederatedPointerEvent) => void
    onLeave?: (pos: Point, e: FederatedPointerEvent) => void
 }
+
+export type TilesetType = {
+   id: string
+   image: string
+   name: string
+   width: number
+   height: number
+}

@@ -32,6 +32,8 @@ export class Editor extends App {
       await this.loadAssetsNeeded()
       await super.init(theme)
       this.viewport.addChild(this.worldContainer)
+      this.worldContainer.width = this.viewport.worldWidth
+      this.worldContainer.height = this.viewport.worldHeight
       await this.setUpGridLines()
       this.setUpEmitterListners()
       this.setUpZustantListners()

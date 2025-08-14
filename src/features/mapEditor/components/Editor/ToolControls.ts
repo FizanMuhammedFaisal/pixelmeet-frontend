@@ -7,9 +7,8 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
       const data = editor.selectedTiles
       console.log(data)
       if (data) {
-         const tileset = await Assets.load({
-            src: data.selectedImage,
-         })
+         const tileset = await Assets.load(data.selectedImage)
+         console.log(tileset)
          const tileTex = new Texture({
             source: tileset,
 

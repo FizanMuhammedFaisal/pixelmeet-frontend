@@ -46,9 +46,9 @@ function ToolControls() {
    return (
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
          <motion.div
-            initial={{ y: 90, filter: 'blur(3px)' }}
+            initial={{ y: 100, filter: 'blur(2px)' }}
             animate={{ y: 0, filter: 'blur(0px)' }}
-            transition={{ duration: 1.2, delay: 1, ease: [0.23, 1, 0.32, 1] }}
+            transition={{ duration: 1.5, delay: 1, ease: [0.23, 1, 0.32, 1] }}
             className="flex items-center gap-2 px-2 py-1.5 bg-card/35 backdrop-blur-sm border border-border shadow-lg shadow-black/5 dark:shadow-black/20"
             style={{ borderRadius: 'var(--radius)' }}
             onHoverEnd={() => {
@@ -68,7 +68,7 @@ function ToolControls() {
                   <div key={tool.id} className="relative">
                      <motion.button
                         onHoverStart={() => handleToolHover(tool.id)}
-                        onClick={() => hanldeToolChange(tool.id)}
+                        onClick={() => hanldeToolChange(tool.id as ControlTools)}
                         className={`
                   relative flex items-center justify-center w-9 h-9
                   transition-colors duration-200 ease-out
