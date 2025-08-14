@@ -1,10 +1,9 @@
+import { useEditorActions, useLayers, useSelectedLayerId } from '@/app/store/mapEditor/mapEditor'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import type { Layer, LayerDirection } from '@/features/mapEditor/types/types'
 import {
    ChevronDown,
    ChevronUp,
-   Copy,
    Eye,
    EyeOff,
    Layers,
@@ -15,26 +14,14 @@ import {
    Unlock,
 } from 'lucide-react'
 
-type props = {
-   layers: Layer[]
-   selectedLayer: Layer['id']
-   setSelectedLayer: (layerId: Layer['id']) => void
-   toggleLayerVisibility: (layerId: Layer['id']) => void
-   addLayer: () => void
-   moveLayer: (layerId: Layer['id'], direction: LayerDirection) => void
-   toggleLayerLock: (layerId: Layer['id']) => void
-   deleteLayer: (layerId: Layer['id']) => void
-}
-function SideBarLayers({
-   layers,
-   selectedLayer,
-   setSelectedLayer,
-   toggleLayerVisibility,
-   addLayer,
-   moveLayer,
-   toggleLayerLock,
-   deleteLayer,
-}: props) {
+function SideBarLayers() {
+   const { addLayer, moveLayer, toggleLayerLock, setSelectedLayerId, toggleLayerVisibility } =
+      useEditorActions()
+   const selectedLayerId = useSelectedLayerId()
+   const layers = useLayers()
+   console.log(layers)
+   const deleteLayer = () => {}
+   console.log(selectedLayerId + 'slectedlayer')
    return (
       <div>
          {' '}
@@ -61,9 +48,9 @@ function SideBarLayers({
                      <div
                         key={layer.id}
                         className={`flex items-center gap-2 p-2 rounded hover:bg-accent/50 group cursor-pointer transition-colors ${
-                           selectedLayer === layer.id ? 'bg-accent' : ''
+                           selectedLayerId === layer.id ? 'bg-accent' : ''
                         }`}
-                        onClick={() => setSelectedLayer(layer.id)}
+                        onClick={() => setSelectedLayerId(layer.id)}
                      >
                         <Button
                            variant="ghost"

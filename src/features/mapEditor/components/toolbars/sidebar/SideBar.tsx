@@ -5,10 +5,9 @@ import AssetPanel from './panels/AssetPanelTabs'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 
 type props = {
-   layers: Layer[]
    className?: string
 }
-export default function SideBar({ layers, className }: props) {
+export default function SideBar({ className }: props) {
    const [selectedLayer, setSelectedLayer] = useState('2')
    const [isResizing, setIsResizing] = useState(false)
    const [width, setWidth] = useState(320)
@@ -48,57 +47,6 @@ export default function SideBar({ layers, className }: props) {
       }
    })
 
-   const setLayers = (layer) => {
-      console.log('af')
-   }
-
-   const toggleLayerVisibility = (id: string) => {
-      setLayers(
-         layers.map((layer) => (layer.id === id ? { ...layer, visible: !layer.visible } : layer)),
-      )
-   }
-
-   const toggleLayerLock = (id: string) => {
-      setLayers(
-         layers.map((layer) => (layer.id === id ? { ...layer, locked: !layer.locked } : layer)),
-      )
-   }
-
-   const addLayer = () => {
-      const newLayer: Layer = {
-         id: Date.now().toString(),
-         name: `Layer ${layers.length + 1}`,
-         visible: true,
-         locked: false,
-      }
-      setLayers([...layers, newLayer])
-   }
-
-   const deleteLayer = (id: string) => {
-      if (layers.length > 1) {
-         setLayers(layers.filter((layer) => layer.id !== id))
-         if (selectedLayer === id) {
-            setSelectedLayer(layers.find((l) => l.id !== id)?.id || layers[0].id)
-         }
-      }
-   }
-
-   const moveLayer = (id: string, direction: 'up' | 'down') => {
-      const currentIndex = layers.findIndex((layer) => layer.id === id)
-      if (
-         (direction === 'up' && currentIndex > 0) ||
-         (direction === 'down' && currentIndex < layers.length - 1)
-      ) {
-         const newLayers = [...layers]
-         const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
-         ;[newLayers[currentIndex], newLayers[targetIndex]] = [
-            newLayers[targetIndex],
-            newLayers[currentIndex],
-         ]
-         setLayers(newLayers)
-      }
-   }
-
    return (
       <div className={`h-full bg-card border-l pt-9 flex flex-col z-9 ${className}`}>
          <div
@@ -129,17 +77,7 @@ export default function SideBar({ layers, className }: props) {
                   </ResizableHandle>
 
                   <ResizablePanel defaultSize={35} minSize={25}>
-                     <SideBarLayers
-                        layers={layers}
-                        addLayer={addLayer}
-                        deleteLayer={deleteLayer}
-                        moveLayer={moveLayer}
-                        selectedLayer={selectedLayer}
-                        setSelectedLayer={setSelectedLayer}
-                        toggleLayerLock={toggleLayerLock}
-                        toggleLayerVisibility={toggleLayerVisibility}
-                        key="sidebarlayers"
-                     />
+                     <SideBarLayers key="sidebarlayers" />
                   </ResizablePanel>
                </ResizablePanelGroup>
             </ResizablePanelGroup>

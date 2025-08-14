@@ -4,13 +4,15 @@ import { Editor } from './Editor'
 
 export const makeFillTool = (editor: Editor): ToolHandler => ({
    onDown: async (pos, e) => {
+      const selectedLayerId = editor.selectedLayerId
+      console.log(selectedLayerId)
+      if (selectedLayerId === null) return
       const data = editor.selectedTiles
-      console.log(data)
       if (data) {
          const tileset = await Assets.load(data.selectedImage)
          console.log(tileset)
          const tileTex = new Texture({
-            source: tileset,
+            source: Assets.get(data.selectedImage).source,
 
             frame: new Rectangle(
                data.startX * 32,
@@ -25,8 +27,12 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
          const point = editor.snapToGrid(worldPos.x, worldPos.y)
          sprite.position.copyFrom(point)
          sprite.zIndex = 1000
-         editor.worldContainer.addChild(sprite)
-         console.log(editor.worldContainer)
+         console.log(editor.layerContainers)
+         const container = editor.layerContainers.get(selectedLayerId)
+         if (container) {
+            container.addChild(sprite)
+         }
+         console.log(container)
       }
    },
    onMove: async (pos) => {
@@ -50,7 +56,6 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
             editor.ghostSprite.zIndex = 1000
             editor.ghostSprite.alpha = 0.8
             editor.worldContainer.addChild(editor.ghostSprite)
-            console.log('added')
          }
          editor.ghostSprite.position.copyFrom(point)
       }

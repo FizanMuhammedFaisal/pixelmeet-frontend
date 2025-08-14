@@ -1,9 +1,15 @@
 import * as PIXI from 'pixi.js'
-import type { ControlTools, selectedTiles, ThemeType, ToolHandler } from '../../types/types'
+import type {
+   addLayerType,
+   ControlTools,
+   selectedTiles,
+   ThemeType,
+   ToolHandler,
+} from '../../types/types'
 import emitter from '../../utils/EventEmitter'
 import { App } from './App'
 import gsap from 'gsap'
-import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
+import { useMapEditorStore, useSelectedLayerId } from '@/app/store/mapEditor/mapEditor'
 import {
    makeEraserTool,
    makeFillTool,
@@ -22,6 +28,8 @@ export class Editor extends App {
    private canvasLocked: boolean = false
    public worldContainer: PIXI.Container = new PIXI.Container()
    public ghostSprite: PIXI.Container | null = null
+   public layersContainer: PIXI.Container = new PIXI.Container()
+   public layerContainers: Map<number, PIXI.Container> = new Map()
    //layers
    //selectedTile -- from which image might need the selected palleter
    //selected Pallette
@@ -31,16 +39,17 @@ export class Editor extends App {
    public async init(theme: ThemeType) {
       await this.loadAssetsNeeded()
       await super.init(theme)
-      this.viewport.addChild(this.worldContainer)
-      this.worldContainer.width = this.viewport.worldWidth
-      this.worldContainer.height = this.viewport.worldHeight
+
       await this.setUpGridLines()
+      this.setUpLayers()
       this.setUpEmitterListners()
       this.setUpZustantListners()
       this.setUpInteractions()
    }
    setUpEmitterListners = () => {
       emitter.on('switchTheme', this.handleThemeSwitch)
+      emitter.on('addLayer', this.handleAddLayer)
+      emitter.on('toggleLayerVisibility', this.handleLayerVisibilty)
    }
    handleThemeSwitch = (event: { theme: ThemeType }) => {
       this.backgroundColor = event.theme === 'dark' ? '#000000' : '#ffffff'
@@ -71,22 +80,34 @@ export class Editor extends App {
       }
    }
    setUpGridLines = async () => {
+      console.log(this.viewport.worldHeight)
+      console.log(this.viewport.worldWidth)
       this.gridLines = new PIXI.TilingSprite({
          texture: PIXI.Texture.from(
             this.themeMode === 'dark'
                ? '/images/tile-outline-white.png'
                : '/images/tile-outline-dark.png',
          ),
-         width: this.viewport.worldWidth,
-         height: this.viewport.worldHeight,
+         width: this.viewport.worldWidth * TILE_SIZE,
+         height: this.viewport.worldHeight * TILE_SIZE,
          alpha: 0.2,
       })
       this.viewport.addChild(this.gridLines)
    }
    setUpZustantListners = () => {
       useMapEditorStore.subscribe((state) => state.selectedTool, this.changeTool)
-      useMapEditorStore.subscribe((state) => state.selectedTiles, this.tileSelectionChanged)
+      useMapEditorStore.subscribe((state) => state.selectedTile, this.tileSelectionChanged)
    }
+   setUpLayers = () => {
+      this.viewport.addChild(this.worldContainer)
+      this.worldContainer.width = this.viewport.worldWidth
+      this.worldContainer.height = this.viewport.worldHeight
+      this.viewport.addChild(this.layersContainer)
+      this.layersContainer.width = this.viewport.worldWidth
+      this.layersContainer.height = this.viewport.worldHeight
+   }
+
+   //hanlders
    changeTool = (tool: ControlTools) => {
       this.canvasLocked = false
       if (tool === 'lock') {
@@ -94,6 +115,21 @@ export class Editor extends App {
       }
       this.tileSelectionChanged()
       if (tool === this.selectedTool) return
+   }
+   handleAddLayer = ({ data }: { data: addLayerType }) => {
+      const newLayer = new PIXI.Container()
+      newLayer.width = data.width
+      newLayer.height = data.height
+      newLayer.visible = data.visible
+      newLayer.zIndex = data.zindex
+      this.layersContainer.addChild(newLayer)
+      this.layerContainers.set(data.id, newLayer)
+   }
+   handleLayerVisibilty = ({ id }: { id: number }) => {
+      const container = this.layerContainers.get(id)
+      if (container) {
+         container.visible = !container?.visible
+      }
    }
    tileSelectionChanged = () => {
       this.ghostSprite?.destroy()
@@ -103,11 +139,13 @@ export class Editor extends App {
       return useMapEditorStore.getState().selectedTool
    }
    get selectedTiles(): selectedTiles | null {
-      return useMapEditorStore.getState().selectedTiles
+      return useMapEditorStore.getState().selectedTile
+   }
+   get selectedLayerId() {
+      return useMapEditorStore.getState().selectedLayerId
    }
    setUpInteractions = () => {
       const toolMap = this.buildToolMap()
-
       this.viewport
 
          .on('pointerdown', (e) => toolMap[this.selectedTool].onDown?.(e.global, e))

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Editor } from './Editor/Editor'
-import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
+import { useEditorActions } from '@/app/store/mapEditor/mapEditor'
 import { useAppTheme } from '@/shared/hooks/useAppTheme'
 
 type props = {
@@ -8,7 +8,7 @@ type props = {
 }
 export default function PixiEditor({ className }: props) {
    const appRef = useRef<Editor | null>(null)
-   const { setEditor } = useMapEditorStore()
+   const { setEditor } = useEditorActions()
    const { theme } = useAppTheme()
 
    useEffect(() => {

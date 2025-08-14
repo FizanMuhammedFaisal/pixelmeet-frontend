@@ -1,12 +1,5 @@
 import type { FederatedPointerEvent, Point } from 'pixi.js'
 
-export interface Layer {
-   id: string
-   name: string
-   visible: boolean
-   locked: boolean
-}
-
 export type LayerDirection = 'up' | 'down'
 export type ThemeType = 'light' | 'dark'
 export type ControlTools =
@@ -19,9 +12,12 @@ export type ControlTools =
    | 'zoomin'
    | 'zoomout'
 
+export type addLayerType = Omit<Layer, 'data'>
 export type EmitterType = {
    switchTheme: { theme: ThemeType }
    changeTool: { tool: ControlTools }
+   addLayer: { data: addLayerType }
+   toggleLayerVisibility: { id: number }
 }
 export type selectedTiles = {
    selectedImage: string
@@ -44,4 +40,23 @@ export type TilesetType = {
    name: string
    width: number
    height: number
+}
+
+export type Layer = {
+   height: number
+   width: number
+   id: number
+   visible: boolean
+   name: string
+   zindex: number
+   locked: boolean
+   opacity: number
+   data: Uint16Array
+}
+export type MapData = {
+   width: number
+   height: number
+   tileWidth: number
+   tileHeight: number
+   // nextLayerId: number
 }

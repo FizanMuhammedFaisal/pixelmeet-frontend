@@ -10,7 +10,7 @@ import {
    Grid2X2,
 } from 'lucide-react'
 import { useRef, useState } from 'react'
-import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
+import { useEditorActions, useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
 import type { ControlTools } from '../../types/types'
 
 const tools = [
@@ -26,7 +26,7 @@ const tools = [
 
 function ToolControls() {
    const activeTool = useMapEditorStore((s) => s.selectedTool)
-   const { setTool } = useMapEditorStore()
+   const { setTool } = useEditorActions()
    const [hoveredTool, setHoveredTool] = useState<string | null>(null)
    const hoverTimeRef = useRef<NodeJS.Timeout | null>(null)
    const handleToolHover = (id: string) => {
@@ -68,7 +68,7 @@ function ToolControls() {
                   <div key={tool.id} className="relative">
                      <motion.button
                         onHoverStart={() => handleToolHover(tool.id)}
-                        onClick={() => hanldeToolChange(tool.id as ControlTools)}
+                        onClick={(e) => hanldeToolChange(tool.id as ControlTools, e)}
                         className={`
                   relative flex items-center justify-center w-9 h-9
                   transition-colors duration-200 ease-out

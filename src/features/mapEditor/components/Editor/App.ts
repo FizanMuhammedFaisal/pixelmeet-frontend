@@ -1,6 +1,7 @@
 import { Application } from 'pixi.js'
 import { Viewport } from 'pixi-viewport'
 import type { ThemeType } from '../../types/types'
+import { WORLD_HEIGHT, WORLD_WIDTH } from '../../types/config'
 export class App {
    protected app: Application = new Application()
    protected isInitialized: boolean = false
@@ -24,8 +25,8 @@ export class App {
       this.isInitialized = true
 
       const viewport = new Viewport({
-         worldWidth: 4000,
-         worldHeight: 4000,
+         worldWidth: WORLD_WIDTH,
+         worldHeight: WORLD_HEIGHT,
          screenWidth: window.innerWidth,
          screenHeight: window.innerHeight,
          events: this.app.renderer.events,
@@ -36,8 +37,8 @@ export class App {
          .wheel()
          .decelerate()
          .clampZoom({
-            minScale: 0.5,
-            maxScale: 8,
+            minScale: 0.3,
+            maxScale: 16,
          })
 
       this.viewport = viewport

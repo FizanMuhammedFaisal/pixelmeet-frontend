@@ -1,5 +1,9 @@
 import type React from 'react'
-import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
+import {
+   useEditorActions,
+   useMapEditorStore,
+   useSelectedTile,
+} from '@/app/store/mapEditor/mapEditor'
 import { Files } from 'lucide-react'
 import { useRef, useState } from 'react'
 import type { TilesetType } from '@/features/mapEditor/types/types'
@@ -19,13 +23,14 @@ function TilesPanel() {
    const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null)
    const [isModalOpen, setIsModalOpen] = useState(false)
    const containerRef = useRef<HTMLDivElement>(null)
-   const { selectedTiles, setSelectedTiles } = useMapEditorStore()
-
+   const { setSelectedTiles } = useEditorActions()
+   const selectedTiles = useSelectedTile()
    const TILE_SIZE = 32
 
-   const handleMouseDown = (e: React.MouseEvent, tileset: TilesetType) => {
+   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>, tileset: TilesetType) => {
       if (!containerRef.current) return
-      const rect = containerRef.current.getBoundingClientRect()
+
+      const rect = e.currentTarget.getBoundingClientRect()
       const scrollLeft = containerRef.current.scrollLeft
       const scrollTop = containerRef.current.scrollTop
       const x = Math.floor((e.clientX - rect.left + scrollLeft) / TILE_SIZE)
@@ -47,10 +52,10 @@ function TilesPanel() {
       }
    }
 
-   const handleMouseMove = (e: React.MouseEvent, tileset: TilesetType) => {
+   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>, tileset: TilesetType) => {
       if (!isSelecting || !dragStart || !containerRef.current) return
 
-      const rect = containerRef.current.getBoundingClientRect()
+      const rect = e.currentTarget.getBoundingClientRect()
       const scrollLeft = containerRef.current.scrollLeft
       const scrollTop = containerRef.current.scrollTop
       const x = Math.floor((e.clientX - rect.left + scrollLeft) / TILE_SIZE)
@@ -132,10 +137,6 @@ function TilesPanel() {
                   <div
                      key={tileset.id}
                      style={{ display: activeTileset?.id === tileset.id ? 'block' : 'none' }}
-                     onMouseDown={(e) => handleMouseDown(e, tileset)}
-                     onMouseMove={(e) => handleMouseMove(e, tileset)}
-                     onMouseUp={handleMouseUp}
-                     onMouseLeave={handleMouseUp}
                   >
                      <div className="p-2 border-b bg-muted/10">
                         <div className="text-xs text-muted-foreground">
@@ -151,6 +152,10 @@ function TilesPanel() {
                      <div
                         className="bg-muted/10 relative cursor-crosshair"
                         style={{ touchAction: 'none' }}
+                        onMouseDown={(e) => handleMouseDown(e, tileset)}
+                        onMouseMove={(e) => handleMouseMove(e, tileset)}
+                        onMouseUp={handleMouseUp}
+                        onMouseLeave={handleMouseUp}
                      >
                         <div
                            className="relative"
