@@ -17,7 +17,7 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
          // world position
          const worldPos = editor.viewport.toWorld(pos)
          const point = editor.snapToGrid(worldPos.x, worldPos.y)
-
+         console.log(point + 'point')
          const container = editor.layerContainers.get(selectedLayerId)
          const spriteLayer = editor.layerSpriteMap.get(selectedLayerId)
          if (container === undefined || spriteLayer === undefined) return
@@ -46,6 +46,7 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
                // adding
 
                const index = spritey * WORLD_WIDTH + spritex
+               console.log(index)
                const old = spriteLayer[index]
                if (old) {
                   container.removeChild(old)
@@ -68,6 +69,7 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
       const point = editor.snapToGrid(worldPos.x, worldPos.y)
 
       if (editor.isDragging) {
+         editor.ghostSprite = null
          const width = data.endX - data.startX
          const height = data.endY - data.startY
 
@@ -180,7 +182,28 @@ export const makeSelectTool = (editor: Editor): ToolHandler => ({
       // editor.ghostSprite?.destroy()
    },
 })
-export const makeEraserTool = (editor: Editor): ToolHandler => ({})
+export const makeEraserTool = (editor: Editor): ToolHandler => ({
+   onDown: (pos) => {
+      const worldpos = editor.viewport.toWorld(pos)
+
+      if (editor.selectedLayerId === null) return
+      const spritelayer = editor.layerSpriteMap.get(editor.selectedLayerId)
+
+      if (spritelayer === undefined) return
+      const snappedCor = editor.snapToGrid(worldpos.x, worldpos.y)
+
+      const index = snappedCor.y * WORLD_WIDTH + snappedCor.x
+      const sprite = spritelayer[index]
+
+      if (sprite) {
+         const container = editor.layerContainers.get(editor.selectedLayerId)
+         if (container) {
+            container.removeChild(sprite)
+            sprite.destroy()
+         }
+      }
+   },
+})
 export const makeHandTool = (editor: Editor): ToolHandler => ({
    onDown: () => {
       editor.viewport.cursor = 'grab'
