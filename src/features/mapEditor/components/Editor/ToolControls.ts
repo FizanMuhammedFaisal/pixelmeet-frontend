@@ -1,18 +1,17 @@
-import { Assets, Rectangle, Sprite, Texture } from 'pixi.js'
+import { Assets, Rectangle, Sprite, Texture, TextureSource } from 'pixi.js'
 import type { ToolHandler } from '../../types/types'
 import { Editor } from './Editor'
 
+let ghostPromise: TextureSource | null = null
 export const makeFillTool = (editor: Editor): ToolHandler => ({
    onDown: async (pos, e) => {
       const selectedLayerId = editor.selectedLayerId
       if (selectedLayerId === null) return
       const data = editor.selectedTiles
       if (data) {
-         const tileset = await Assets.load(data.selectedImage)
-         console.log(tileset)
+         const tileset = await Assets.load(data.selectedImage) //load erly
          const tileTex = new Texture({
             source: Assets.get(data.selectedImage).source,
-
             frame: new Rectangle(
                data.startX * 32,
                data.startY * 32,
@@ -26,7 +25,6 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
          const point = editor.snapToGrid(worldPos.x, worldPos.y)
          sprite.position.copyFrom(point)
          sprite.zIndex = 1000
-         console.log(editor.layerContainers)
          editor.isDragging = true
          editor.dragStart = { x: point.x, y: point.y }
          const container = editor.layerContainers.get(selectedLayerId)
@@ -38,12 +36,12 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
    onMove: async (pos) => {
       const data = editor.selectedTiles
       if (!data) return
+      const selectedLayerId = editor.selectedLayerId
+      if (selectedLayerId === null) return
       const worldPos = editor.viewport.toWorld(pos)
       const point = editor.snapToGrid(worldPos.x, worldPos.y)
 
       if (editor.isDragging) {
-         const selectedLayerId = editor.selectedLayerId
-         if (selectedLayerId === null) return
          const tileset = await Assets.load(data.selectedImage)
          console.log(tileset)
          const tileTex = new Texture({
@@ -67,24 +65,37 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
             container.addChild(sprite)
          }
       } else {
-         if (!editor.ghostSprite) {
-            const tileset = await Assets.load(data.selectedImage)
-            const tileTex = new Texture({
-               source: tileset,
-               frame: new Rectangle(
-                  data.startX * 32,
-                  data.startY * 32,
-                  (data.endX - data.startX) * 32,
-                  (data.endY - data.startY) * 32,
-               ),
-            })
-            editor.ghostSprite = new Sprite({ texture: tileTex })
+         console.log('only hovering')
+         if (!editor.ghostSprite && !ghostPromise) {
+            try {
+               ghostPromise = await Assets.load(data.selectedImage)
+               if (!ghostPromise) {
+                  throw 'failed to load texture'
+               }
+               const tileTex = new Texture({
+                  source: ghostPromise,
+                  frame: new Rectangle(
+                     data.startX * 32,
+                     data.startY * 32,
+                     (data.endX - data.startX) * 32,
+                     (data.endY - data.startY) * 32,
+                  ),
+               })
+               editor.ghostSprite = new Sprite({ texture: tileTex })
+               editor.ghostSprite.zIndex = 1000
+               editor.ghostSprite.alpha = 0.8
 
-            editor.ghostSprite.zIndex = 1000
-            editor.ghostSprite.alpha = 0.8
-            editor.worldContainer.addChild(editor.ghostSprite)
+               editor.worldContainer.addChild(editor.ghostSprite)
+               console.log('makde a. ghost')
+            } catch (error) {
+               console.log('failed to make a sprite', error)
+            } finally {
+               ghostPromise = null
+            }
          }
-         editor.ghostSprite.position.copyFrom(point)
+         if (editor.ghostSprite) {
+            editor.ghostSprite.position.copyFrom(point)
+         }
       }
    },
    onUp: () => {

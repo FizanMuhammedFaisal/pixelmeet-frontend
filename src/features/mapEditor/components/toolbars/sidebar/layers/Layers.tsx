@@ -141,6 +141,11 @@ function SideBarLayers() {
                         </div>
                      </div>
                   ))}
+                  {layers.length === 0 && (
+                     <div className=" flex justify-center text-foreground/60">
+                        <p> Make a layer to draw</p>
+                     </div>
+                  )}
                </div>
             </CardContent>
          </Card>

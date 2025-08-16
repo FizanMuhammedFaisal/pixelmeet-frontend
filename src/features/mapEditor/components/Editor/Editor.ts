@@ -56,6 +56,7 @@ export class Editor extends App {
       emitter.on('deleteLayer', this.handleDeleteLayer)
       emitter.on('*', () => {
          console.log(this.layerContainers)
+         console.log(this.viewport)
       })
    }
    handleThemeSwitch = (event: { theme: ThemeType }) => {
