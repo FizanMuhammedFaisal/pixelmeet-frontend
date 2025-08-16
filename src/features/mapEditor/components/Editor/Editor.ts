@@ -20,7 +20,7 @@ import {
    makeZoomInTool,
    makeZoomOutTool,
 } from './ToolControls'
-import { TILE_SIZE } from '../../types/config'
+import { TILE_SIZE, WORLD_HEIGHT, WORLD_WIDTH } from '../../types/config'
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
 
 export class Editor extends App {
@@ -30,6 +30,7 @@ export class Editor extends App {
    public ghostSprite: PIXI.Container | null = null
    public layersContainer: PIXI.Container = new PIXI.Container()
    public layerContainers: Map<number, PIXI.Container> = new Map()
+   public layerSpriteMap = new Map<number, Array<PIXI.Sprite | undefined>>()
    public isDragging: boolean = false
    public dragStart: { x: number; y: number } | null = null
 
@@ -132,6 +133,7 @@ export class Editor extends App {
       if (tool === this.selectedTool) return
    }
    handleAddLayer = ({ data }: { data: addLayerType }) => {
+      //new container
       const newLayer = new PIXI.Container()
       newLayer.width = data.width
       newLayer.height = data.height
@@ -139,6 +141,8 @@ export class Editor extends App {
       newLayer.zIndex = data.zindex
       this.layersContainer.addChild(newLayer)
       this.layerContainers.set(data.id, newLayer)
+      //make the sprite layer tracker
+      this.layerSpriteMap.set(data.id, new Array(WORLD_WIDTH * WORLD_HEIGHT))
    }
    handleLayerVisibilty = ({ id }: { id: number }) => {
       const container = this.layerContainers.get(id)

@@ -9,6 +9,7 @@ import { Plus } from 'lucide-react'
 import type { TilesetType } from '@/features/mapEditor/types/types'
 import { Button } from '@/components/ui/button'
 import { apiClient, apiClientPublic } from '@/api/config/axios'
+import { Assets } from 'pixi.js'
 
 type props = {
    isModalOpen: boolean
@@ -117,9 +118,12 @@ function AddTilesetModal({ isModalOpen, setIsModalOpen, onAdd, selectedAssets }:
    // const totalPages = data?.data.data.totalPages
    const totalPages = 1
 
-   const hanldeOnAdd = (asset: Asset) => {
+   const hanldeOnAdd = async (asset: Asset) => {
       if (asset.type === 'image' && asset.metadata) {
          const img = new Image()
+
+         await Assets.load(asset.metadata.url) //loading the asset for pixi
+
          img.src = asset.metadata.url
          img.onload = () => {
             const width = img.width

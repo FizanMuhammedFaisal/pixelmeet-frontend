@@ -1,7 +1,9 @@
 import { Assets, Graphics, Rectangle, Sprite, Texture, TextureSource } from 'pixi.js'
 import type { ToolHandler } from '../../types/types'
 import { Editor } from './Editor'
+import { TILE_SIZE, WORLD_WIDTH } from '../../types/config'
 
+//we need to split the selected tiles into 32 by 32 pixel tiles
 let ghostPromise: TextureSource | null = null
 export const makeFillTool = (editor: Editor): ToolHandler => ({
    onDown: async (pos, e) => {
@@ -9,28 +11,52 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
       if (selectedLayerId === null) return
       const data = editor.selectedTiles
       if (data) {
-         const tileset = await Assets.load(data.selectedImage) //load erly
-         const tileTex = new Texture({
-            source: Assets.get(data.selectedImage).source,
-            frame: new Rectangle(
-               data.startX * 32,
-               data.startY * 32,
-               (data.endX - data.startX) * 32,
-               (data.endY - data.startY) * 32,
-            ),
-         })
+         const width = data.endX - data.startX
+         const height = data.endY - data.startY
 
-         const sprite = new Sprite({ texture: tileTex })
+         // world position
          const worldPos = editor.viewport.toWorld(pos)
          const point = editor.snapToGrid(worldPos.x, worldPos.y)
-         sprite.position.copyFrom(point)
-         sprite.zIndex = 1000
+
+         const container = editor.layerContainers.get(selectedLayerId)
+         const spriteLayer = editor.layerSpriteMap.get(selectedLayerId)
+         if (container === undefined || spriteLayer === undefined) return
+
+         for (let i = 0; i < height; i++) {
+            for (let j = 0; j < width; j++) {
+               //iterating through each tile
+
+               const tileTex = new Texture({
+                  source: Assets.get(data.selectedImage).source,
+                  frame: new Rectangle(
+                     data.startX * TILE_SIZE + j * TILE_SIZE,
+                     data.startY * TILE_SIZE + i * TILE_SIZE,
+                     TILE_SIZE,
+                     TILE_SIZE,
+                  ),
+               })
+
+               const sprite = new Sprite({ texture: tileTex })
+               const spritex = point.x + j * TILE_SIZE
+               const spritey = point.y + i * TILE_SIZE
+               sprite.position.x = spritex
+               sprite.position.y = spritey
+               sprite.zIndex = 1000
+
+               // adding
+
+               const index = spritey * WORLD_WIDTH + spritex
+               const old = spriteLayer[index]
+               if (old) {
+                  container.removeChild(old)
+                  old.destroy()
+               }
+               spriteLayer[index] = sprite
+               container.addChild(sprite)
+            }
+         }
          editor.isDragging = true
          editor.dragStart = { x: point.x, y: point.y }
-         const container = editor.layerContainers.get(selectedLayerId)
-         if (container) {
-            container.addChild(sprite)
-         }
       }
    },
    onMove: async (pos) => {
@@ -65,7 +91,6 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
             container.addChild(sprite)
          }
       } else {
-         console.log('only hovering')
          if (!editor.ghostSprite && !ghostPromise) {
             try {
                ghostPromise = await Assets.load(data.selectedImage)

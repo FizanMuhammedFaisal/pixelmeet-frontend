@@ -70,4 +70,4 @@ As i have mentioned game part is phaser. How it serialize the data is important
 
 This is how a normal data exported from Tiled looks like
 
-We dont need the image here. Image mentions the src of the image but phaser only read the **name** it require you to load image seperately with same name
+We dont need the image property here. Image mentions the src of the image but phaser only read the **name** it require you to load image sperately with same name.
