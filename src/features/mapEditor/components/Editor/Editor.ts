@@ -11,11 +11,11 @@ import { App } from './App'
 import gsap from 'gsap'
 import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
 import {
+   makeBucketFillTool,
    makeEraserTool,
    makeFillTool,
    makeHandTool,
    makeLockTool,
-   makeRectangleFillTool,
    makeSelectTool,
    makeZoomInTool,
    makeZoomOutTool,
@@ -198,7 +198,7 @@ export class Editor extends App {
          eraser: makeEraserTool(this),
          hand: makeHandTool(this),
          lock: makeLockTool(this),
-         rectanglefill: makeRectangleFillTool(this),
+         buckerfill: makeBucketFillTool(this),
       }
    }
 }

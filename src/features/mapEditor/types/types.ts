@@ -7,7 +7,7 @@ export type ControlTools =
    | 'select'
    | 'hand'
    | 'fill'
-   | 'rectanglefill'
+   | 'buckerfill'
    | 'eraser'
    | 'zoomin'
    | 'zoomout'

@@ -8,6 +8,7 @@ import {
    EraserIcon,
    SquareDashed,
    Grid2X2,
+   PaintBucket,
 } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useEditorActions, useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
@@ -18,7 +19,8 @@ const tools = [
    { id: 'select', icon: MousePointer2, label: 'Select' },
    { id: 'hand', icon: Hand, label: 'Hand' },
    { id: 'fill', icon: SquareDashed, label: 'Fill' },
-   { id: 'rectanglefill', icon: Grid2X2, label: 'Rectangle Fill' },
+   { id: 'buckerfill', icon: PaintBucket, label: 'Bucket Fill' },
+   // { id: 'rectanglefill', icon: Grid2X2, label: 'Rectangle Fill' },
    { id: 'eraser', icon: EraserIcon, label: 'Eraser' },
    { id: 'zoomin', icon: ZoomIn, label: 'Zoom In' },
    { id: 'zoomout', icon: ZoomOut, label: 'Zoom Out' },

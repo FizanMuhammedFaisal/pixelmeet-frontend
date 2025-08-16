@@ -1,4 +1,4 @@
-import { Assets, Rectangle, Sprite, Texture, TextureSource } from 'pixi.js'
+import { Assets, Graphics, Rectangle, Sprite, Texture, TextureSource } from 'pixi.js'
 import type { ToolHandler } from '../../types/types'
 import { Editor } from './Editor'
 
@@ -114,12 +114,23 @@ export const makeZoomOutTool = (editor: Editor): ToolHandler => ({
    },
 })
 export const makeSelectTool = (editor: Editor): ToolHandler => ({
-   onDown: () => {
+   onDown: (pos) => {
       editor.viewport.cursor = 'crosshair'
-      // editor.viewport.plugins.pause('drag')
+
+      // make a reactagle with theme colors as boarder nad fill it, store the x,y of top left point on editor.dragstart
+      //make is draggind true
+
+      // const obj = new Graphics().rect(pos.x, pos.y, 2, 2).fill('red')
+      // editor.ghostSprite = obj
+   },
+   onMove: () => {
+      //upda teh x,y and updaate teh rectagles
+      //
    },
    onUp: () => {
       editor.viewport.cursor = 'auto'
+      //make is draggind false and update the editor.dragstart to null
+      // editor.ghostSprite?.destroy()
    },
 })
 export const makeEraserTool = (editor: Editor): ToolHandler => ({})
@@ -132,4 +143,4 @@ export const makeHandTool = (editor: Editor): ToolHandler => ({
    },
 })
 export const makeLockTool = (editor: Editor): ToolHandler => ({})
-export const makeRectangleFillTool = (editor: Editor): ToolHandler => ({})
+export const makeBucketFillTool = (editor: Editor): ToolHandler => ({})
