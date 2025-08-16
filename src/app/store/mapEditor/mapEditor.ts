@@ -110,7 +110,15 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                }))
                emitter.emit('toggleLayerVisibility', { id })
             },
-            deleteLayer: (id) => {},
+            deleteLayer: (id) => {
+               set((state) => {
+                  const layerIndex = state.layers.findIndex((layer) => layer.id === id)
+                  if (layerIndex !== -1) {
+                     state.layers.splice(layerIndex, 1)
+                  }
+               })
+               emitter.emit('deleteLayer', { id })
+            },
          },
       })),
    ),

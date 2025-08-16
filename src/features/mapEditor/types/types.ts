@@ -18,6 +18,7 @@ export type EmitterType = {
    changeTool: { tool: ControlTools }
    addLayer: { data: addLayerType }
    toggleLayerVisibility: { id: number }
+   deleteLayer: { id: number }
 }
 export type selectedTiles = {
    selectedImage: string

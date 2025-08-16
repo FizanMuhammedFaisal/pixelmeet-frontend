@@ -1,9 +1,5 @@
 import type React from 'react'
-import {
-   useEditorActions,
-   useMapEditorStore,
-   useSelectedTile,
-} from '@/app/store/mapEditor/mapEditor'
+import { useEditorActions, useSelectedTile } from '@/app/store/mapEditor/mapEditor'
 import { Files } from 'lucide-react'
 import { useRef, useState } from 'react'
 import type { TilesetType } from '@/features/mapEditor/types/types'

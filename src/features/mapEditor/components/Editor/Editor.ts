@@ -9,7 +9,7 @@ import type {
 import emitter from '../../utils/EventEmitter'
 import { App } from './App'
 import gsap from 'gsap'
-import { useMapEditorStore, useSelectedLayerId } from '@/app/store/mapEditor/mapEditor'
+import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
 import {
    makeEraserTool,
    makeFillTool,
@@ -30,6 +30,9 @@ export class Editor extends App {
    public ghostSprite: PIXI.Container | null = null
    public layersContainer: PIXI.Container = new PIXI.Container()
    public layerContainers: Map<number, PIXI.Container> = new Map()
+   public isDragging: boolean = false
+   public dragStart: { x: number; y: number } | null = null
+
    //layers
    //selectedTile -- from which image might need the selected palleter
    //selected Pallette
@@ -50,6 +53,11 @@ export class Editor extends App {
       emitter.on('switchTheme', this.handleThemeSwitch)
       emitter.on('addLayer', this.handleAddLayer)
       emitter.on('toggleLayerVisibility', this.handleLayerVisibilty)
+      emitter.on('deleteLayer', this.handleDeleteLayer)
+      emitter.on('*', () => {
+         console.log(this.layerContainers)
+         console.log(this.viewport)
+      })
    }
    handleThemeSwitch = (event: { theme: ThemeType }) => {
       this.backgroundColor = event.theme === 'dark' ? '#000000' : '#ffffff'
@@ -102,6 +110,7 @@ export class Editor extends App {
       this.viewport.addChild(this.worldContainer)
       this.worldContainer.width = this.viewport.worldWidth
       this.worldContainer.height = this.viewport.worldHeight
+      this.worldContainer.zIndex = 100
       this.viewport.addChild(this.layersContainer)
       this.layersContainer.width = this.viewport.worldWidth
       this.layersContainer.height = this.viewport.worldHeight
@@ -112,6 +121,12 @@ export class Editor extends App {
       this.canvasLocked = false
       if (tool === 'lock') {
          this.canvasLocked = true
+      }
+      if (tool === 'fill') {
+         this.viewport.plugins.pause('drag')
+      }
+      if (tool === 'hand') {
+         this.viewport.plugins.resume('drag')
       }
       this.tileSelectionChanged()
       if (tool === this.selectedTool) return
@@ -129,6 +144,13 @@ export class Editor extends App {
       const container = this.layerContainers.get(id)
       if (container) {
          container.visible = !container?.visible
+      }
+   }
+   handleDeleteLayer = ({ id }: { id: number }) => {
+      const container = this.layerContainers.get(id)
+      if (container) {
+         container.destroy()
+         console.log('container destoryed')
       }
    }
    tileSelectionChanged = () => {
