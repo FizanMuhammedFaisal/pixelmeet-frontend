@@ -33,11 +33,11 @@ export class App {
          disableOnContextMenu: true,
       })
          .drag()
-         .pinch({ percent: 3 })
+         .pinch({ percent: 1 })
          .wheel()
          .decelerate()
          .clampZoom({
-            minScale: 0.3,
+            minScale: 0.1,
             maxScale: 16,
          })
 

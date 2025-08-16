@@ -5,7 +5,6 @@ import { Editor } from './Editor'
 export const makeFillTool = (editor: Editor): ToolHandler => ({
    onDown: async (pos, e) => {
       const selectedLayerId = editor.selectedLayerId
-      console.log(selectedLayerId)
       if (selectedLayerId === null) return
       const data = editor.selectedTiles
       if (data) {
@@ -28,18 +27,46 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
          sprite.position.copyFrom(point)
          sprite.zIndex = 1000
          console.log(editor.layerContainers)
+         editor.isDragging = true
+         editor.dragStart = { x: point.x, y: point.y }
          const container = editor.layerContainers.get(selectedLayerId)
          if (container) {
             container.addChild(sprite)
          }
-         console.log(container)
       }
    },
    onMove: async (pos) => {
       const data = editor.selectedTiles
+      if (!data) return
       const worldPos = editor.viewport.toWorld(pos)
       const point = editor.snapToGrid(worldPos.x, worldPos.y)
-      if (data) {
+
+      if (editor.isDragging) {
+         const selectedLayerId = editor.selectedLayerId
+         if (selectedLayerId === null) return
+         const tileset = await Assets.load(data.selectedImage)
+         console.log(tileset)
+         const tileTex = new Texture({
+            source: Assets.get(data.selectedImage).source,
+
+            frame: new Rectangle(
+               data.startX * 32,
+               data.startY * 32,
+               (data.endX - data.startX) * 32,
+               (data.endY - data.startY) * 32,
+            ),
+         })
+
+         const sprite = new Sprite({ texture: tileTex })
+
+         sprite.position.copyFrom(point)
+         sprite.zIndex = 1000
+         console.log(editor.layerContainers)
+         const container = editor.layerContainers.get(selectedLayerId)
+         if (container) {
+            container.addChild(sprite)
+         }
+      } else {
          if (!editor.ghostSprite) {
             const tileset = await Assets.load(data.selectedImage)
             const tileTex = new Texture({
@@ -59,6 +86,9 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
          }
          editor.ghostSprite.position.copyFrom(point)
       }
+   },
+   onUp: () => {
+      editor.isDragging = false
    },
 })
 

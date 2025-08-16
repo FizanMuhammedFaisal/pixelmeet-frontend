@@ -15,13 +15,18 @@ import {
 } from 'lucide-react'
 
 function SideBarLayers() {
-   const { addLayer, moveLayer, toggleLayerLock, setSelectedLayerId, toggleLayerVisibility } =
-      useEditorActions()
+   const {
+      addLayer,
+      moveLayer,
+      toggleLayerLock,
+      setSelectedLayerId,
+      toggleLayerVisibility,
+      deleteLayer,
+   } = useEditorActions()
    const selectedLayerId = useSelectedLayerId()
    const layers = useLayers()
    console.log(layers)
-   const deleteLayer = () => {}
-   console.log(selectedLayerId + 'slectedlayer')
+
    return (
       <div>
          {' '}
