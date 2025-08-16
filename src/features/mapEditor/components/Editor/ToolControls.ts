@@ -68,27 +68,49 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
       const point = editor.snapToGrid(worldPos.x, worldPos.y)
 
       if (editor.isDragging) {
-         const tileset = await Assets.load(data.selectedImage)
-         console.log(tileset)
-         const tileTex = new Texture({
-            source: Assets.get(data.selectedImage).source,
+         const width = data.endX - data.startX
+         const height = data.endY - data.startY
 
-            frame: new Rectangle(
-               data.startX * 32,
-               data.startY * 32,
-               (data.endX - data.startX) * 32,
-               (data.endY - data.startY) * 32,
-            ),
-         })
+         // world position
+         const worldPos = editor.viewport.toWorld(pos)
+         const point = editor.snapToGrid(worldPos.x, worldPos.y)
 
-         const sprite = new Sprite({ texture: tileTex })
-
-         sprite.position.copyFrom(point)
-         sprite.zIndex = 1000
-         console.log(editor.layerContainers)
          const container = editor.layerContainers.get(selectedLayerId)
-         if (container) {
-            container.addChild(sprite)
+         const spriteLayer = editor.layerSpriteMap.get(selectedLayerId)
+         if (container === undefined || spriteLayer === undefined) return
+
+         for (let i = 0; i < height; i++) {
+            for (let j = 0; j < width; j++) {
+               //iterating through each tile
+
+               const tileTex = new Texture({
+                  source: Assets.get(data.selectedImage).source,
+                  frame: new Rectangle(
+                     data.startX * TILE_SIZE + j * TILE_SIZE,
+                     data.startY * TILE_SIZE + i * TILE_SIZE,
+                     TILE_SIZE,
+                     TILE_SIZE,
+                  ),
+               })
+
+               const sprite = new Sprite({ texture: tileTex })
+               const spritex = point.x + j * TILE_SIZE
+               const spritey = point.y + i * TILE_SIZE
+               sprite.position.x = spritex
+               sprite.position.y = spritey
+               sprite.zIndex = 1000
+
+               // adding
+
+               const index = spritey * WORLD_WIDTH + spritex
+               const old = spriteLayer[index]
+               if (old) {
+                  container.removeChild(old)
+                  old.destroy()
+               }
+               spriteLayer[index] = sprite
+               container.addChild(sprite)
+            }
          }
       } else {
          if (!editor.ghostSprite && !ghostPromise) {
