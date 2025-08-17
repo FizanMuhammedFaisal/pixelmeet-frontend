@@ -9,7 +9,7 @@ import type {
 import emitter from '../../utils/EventEmitter'
 import { App } from './App'
 import gsap from 'gsap'
-import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
+import { useEditorActions, useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
 import {
    makeBucketFillTool,
    makeEraserTool,
@@ -54,12 +54,14 @@ export class Editor extends App {
       emitter.on('switchTheme', this.handleThemeSwitch)
       emitter.on('addLayer', this.handleAddLayer)
       emitter.on('toggleLayerVisibility', this.handleLayerVisibilty)
+
       emitter.on('deleteLayer', this.handleDeleteLayer)
       emitter.on('*', () => {
          console.log(this.layerContainers)
          console.log(this.viewport)
       })
    }
+
    handleThemeSwitch = (event: { theme: ThemeType }) => {
       this.backgroundColor = event.theme === 'dark' ? '#000000' : '#ffffff'
       this.themeMode = event.theme
@@ -123,7 +125,7 @@ export class Editor extends App {
       if (tool === 'lock') {
          this.canvasLocked = true
       }
-      if (tool === 'fill') {
+      if (tool === 'fill' || tool === 'eraser') {
          this.viewport.plugins.pause('drag')
       }
       if (tool === 'hand') {
@@ -194,8 +196,9 @@ export class Editor extends App {
       return new PIXI.Point(snapx, snapy)
    }
    private buildToolMap(): Record<ControlTools, ToolHandler> {
+      const draw = useMapEditorStore.getState().actions.drawTileset
       return {
-         fill: makeFillTool(this),
+         fill: makeFillTool(this, draw),
          zoomin: makeZoomInTool(this),
          zoomout: makeZoomOutTool(this),
          select: makeSelectTool(this),

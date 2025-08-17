@@ -26,13 +26,13 @@ export type selectedTiles = {
    startY: number
    endX: number
    endY: number
+   name: string
 }
 
 export type ToolHandler = {
    onDown?: (pos: Point, e: FederatedPointerEvent) => void
    onMove?: (pos: Point, e: FederatedPointerEvent) => void
    onUp?: (pos: Point, e: FederatedPointerEvent) => void
-   onLeave?: (pos: Point, e: FederatedPointerEvent) => void
 }
 
 export type TilesetType = {
@@ -42,7 +42,7 @@ export type TilesetType = {
    width: number
    height: number
 }
-
+//data is inaccordance with tiled format so naming convention may differ
 export type Layer = {
    height: number
    width: number
@@ -53,6 +53,14 @@ export type Layer = {
    locked: boolean
    opacity: number
    data: Uint32Array
+}
+
+export type TileSet = {
+   firstgid: number
+   imageheight: number
+   imagewidth: number
+   name: string
+   columns: number
 }
 export type MapData = {
    width: number

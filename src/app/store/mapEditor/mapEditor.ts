@@ -1,6 +1,17 @@
 import type { Editor } from '@/features/mapEditor/components/Editor/Editor'
-import { LAYERS_LIMIT, WORLD_HEIGHT, WORLD_WIDTH } from '@/features/mapEditor/types/config'
-import type { ControlTools, Layer, MapData, selectedTiles } from '@/features/mapEditor/types/types'
+import {
+   LAYERS_LIMIT,
+   TILE_SIZE,
+   WORLD_HEIGHT,
+   WORLD_WIDTH,
+} from '@/features/mapEditor/types/config'
+import type {
+   ControlTools,
+   Layer,
+   MapData,
+   selectedTiles,
+   TileSet,
+} from '@/features/mapEditor/types/types'
 import emitter from '@/features/mapEditor/utils/EventEmitter'
 import { toast } from 'sonner'
 import { create } from 'zustand'
@@ -17,6 +28,7 @@ interface useMapEditorStore {
    selectedTile: selectedTiles | null
    mapData: MapData | null
    layers: Layer[]
+   tilesets: TileSet[]
    selectedLayerId: number | null
    layersOrder: number[]
    actions: MapEditorAction
@@ -31,6 +43,8 @@ type MapEditorAction = {
    toggleLayerLock: (id: number) => void
    toggleLayerVisibility: (id: number) => void
    deleteLayer: (id: number) => void
+   addTilesets: (name: string, width: number, height: number, coloums: number) => void
+   drawTileset: (xposition: number, yposition: number, gid: number) => void
 }
 
 export const useMapEditorStore = create<useMapEditorStore>()(
@@ -42,6 +56,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
          selectedLayerId: null,
          mapData: null,
          layers: [],
+         tilesets: [],
          layersOrder: [],
 
          actions: {
@@ -87,6 +102,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                      width: WORLD_WIDTH,
                      height: WORLD_HEIGHT,
                   }
+
                   state.layers.push({
                      ...newLayer,
                      data: new Uint32Array(WORLD_HEIGHT * WORLD_WIDTH),
@@ -118,6 +134,33 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                   }
                })
                emitter.emit('deleteLayer', { id })
+            },
+            addTilesets: (name, width, height, coloums) => {
+               console.log(name, width, height, coloums)
+               set((state) => {
+                  const lastMap = state.tilesets[state.tilesets.length - 1]
+                  const tilecount = lastMap
+                     ? Math.floor(lastMap.imagewidth / TILE_SIZE) *
+                       Math.floor(lastMap.imageheight / TILE_SIZE)
+                     : 1
+                  const lastGid = lastMap ? lastMap.firstgid : 0
+                  state.tilesets.push({
+                     firstgid: lastGid + tilecount,
+                     imageheight: height,
+                     imagewidth: width,
+                     name: name,
+                     columns: coloums,
+                  })
+               })
+            },
+            drawTileset: (tx, ty, gid) => {
+               set((state) => {
+                  const index = ty * WORLD_WIDTH + tx
+                  if (state.selectedLayerId !== null) {
+                     console.log(state.selectedTile)
+                     state.layers[state.selectedLayerId].data[index] = gid
+                  }
+               })
             },
          },
       })),

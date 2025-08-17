@@ -13,6 +13,7 @@ import {
 
 function TilesPanel() {
    const { setTilesets, updateTilesets, setActiveTileset } = useTileSetPanelAction()
+   const { addTilesets } = useEditorActions()
    const tilesets = useTilsets()
    const activeTileset = useActiveTileset()
    const [isSelecting, setIsSelecting] = useState(false)
@@ -43,6 +44,7 @@ function TilesPanel() {
             startY: y,
             endX: x + 1,
             endY: y + 1,
+            name: tileset.name,
          })
          setIsSelecting(true)
       }
@@ -67,6 +69,7 @@ function TilesPanel() {
             startY: Math.min(dragStart.y, y),
             endX: Math.max(dragStart.x, x) + 1,
             endY: Math.max(dragStart.y, y) + 1,
+            name: tileset.name,
          })
       }
    }
@@ -90,6 +93,7 @@ function TilesPanel() {
       updateTilesets([data])
       if (!activeTileset) {
          setActiveTileset(data)
+         addTilesets(data.name, data.width, data.height, Math.floor(data.width / TILE_SIZE))
       }
    }
 
