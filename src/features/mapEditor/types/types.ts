@@ -7,7 +7,7 @@ export type ControlTools =
    | 'select'
    | 'hand'
    | 'fill'
-   | 'rectanglefill'
+   | 'buckerfill'
    | 'eraser'
    | 'zoomin'
    | 'zoomout'
@@ -52,7 +52,7 @@ export type Layer = {
    zindex: number
    locked: boolean
    opacity: number
-   data: Uint16Array
+   data: Uint32Array
 }
 export type MapData = {
    width: number

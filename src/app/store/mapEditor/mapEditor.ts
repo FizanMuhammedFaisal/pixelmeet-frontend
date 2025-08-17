@@ -89,7 +89,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                   }
                   state.layers.push({
                      ...newLayer,
-                     data: new Uint16Array(WORLD_HEIGHT * WORLD_WIDTH),
+                     data: new Uint32Array(WORLD_HEIGHT * WORLD_WIDTH),
                   })
                   state.layersOrder.unshift(newLayerId)
                   state.selectedLayerId = newLayerId
