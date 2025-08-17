@@ -44,18 +44,19 @@ export const makeFillTool = (
                })
 
                const sprite = new Sprite({ texture: tileTex })
-               // const spritex = point.x + j * TILE_SIZE  and again divide by TILE_SIZE for making it in tile tile coordinates
-               // const spritey = point.y + i * TILE_SIZE
-               const spritex = point.x + j
-               const spritey = point.y + i
-               sprite.position.x = spritex
 
+               const spritex = point.x + j * TILE_SIZE
+               const spritey = point.y + i * TILE_SIZE
+               //here currently spritex is on raw x and y we need ot make it to tilesize's x and y
+               // for that we need to divide by tilesize so both of them cancels out
+               const tilespritex = point.x + j
+               const tilespritey = point.y + i
+               sprite.position.x = spritex
                sprite.position.y = spritey
                sprite.zIndex = 1000
 
                // adding
-               const index = spritey * WORLD_WIDTH + spritex
-               console.log(index + 'spirte index')
+               const index = tilespritey * WORLD_WIDTH + tilespritex
                const old = spriteLayer[index]
                if (old) {
                   container.removeChild(old)
@@ -67,7 +68,7 @@ export const makeFillTool = (
                   ImageDetails.columns * (i + data.startY) +
                   (j + data.startX) +
                   ImageDetails.firstgid
-               drawTileset(spritex, spritey, gid)
+               drawTileset(tilespritex, tilespritey, gid)
             }
          }
          editor.isDragging = true
@@ -102,7 +103,10 @@ export const makeFillTool = (
          console.log(container)
          const spriteLayer = editor.layerSpriteMap.get(selectedLayerId)
          if (container === undefined || spriteLayer === undefined) return
-
+         const ImageDetails = useMapEditorStore.getState().tilesets.find((curr) => {
+            return curr.name === data.name
+         })
+         if (!ImageDetails) return
          for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
                //iterating through each tile
@@ -120,13 +124,15 @@ export const makeFillTool = (
                const sprite = new Sprite({ texture: tileTex })
                const spritex = point.x + j * TILE_SIZE
                const spritey = point.y + i * TILE_SIZE
+               const tilespritex = point.x + j
+               const tilespritey = point.y + i
                sprite.position.x = spritex
                sprite.position.y = spritey
                sprite.zIndex = 1000
 
                // adding
 
-               const index = spritey * WORLD_WIDTH + spritex
+               const index = tilespritey * WORLD_WIDTH + tilespritex
                const old = spriteLayer[index]
                if (old) {
                   container.removeChild(old)
@@ -134,6 +140,11 @@ export const makeFillTool = (
                }
                spriteLayer[index] = sprite
                container.addChild(sprite)
+               const gid =
+                  ImageDetails.columns * (i + data.startY) +
+                  (j + data.startX) +
+                  ImageDetails.firstgid
+               drawTileset(tilespritex, tilespritey, gid)
             }
          }
       } else {
@@ -203,7 +214,10 @@ export const makeSelectTool = (editor: Editor): ToolHandler => ({
       // editor.ghostSprite?.destroy()
    },
 })
-export const makeEraserTool = (editor: Editor): ToolHandler => ({
+export const makeEraserTool = (
+   editor: Editor,
+   drawTileset: (x: number, y: number, gid: number) => void,
+): ToolHandler => ({
    onDown: (pos) => {
       editor.isDragging = true
       const worldpos = editor.viewport.toWorld(pos)
@@ -222,6 +236,11 @@ export const makeEraserTool = (editor: Editor): ToolHandler => ({
          if (container) {
             container.removeChild(sprite)
             sprite.destroy()
+
+            const tilespritex = snappedCor.x / TILE_SIZE
+            const tilespritey = snappedCor.y / TILE_SIZE
+
+            drawTileset(tilespritex, tilespritey, 0)
          }
       }
    },

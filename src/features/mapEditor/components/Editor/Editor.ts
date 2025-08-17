@@ -202,7 +202,7 @@ export class Editor extends App {
          zoomin: makeZoomInTool(this),
          zoomout: makeZoomOutTool(this),
          select: makeSelectTool(this),
-         eraser: makeEraserTool(this),
+         eraser: makeEraserTool(this, draw),
          hand: makeHandTool(this),
          lock: makeLockTool(this),
          buckerfill: makeBucketFillTool(this),
