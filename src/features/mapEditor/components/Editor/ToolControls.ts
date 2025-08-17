@@ -47,10 +47,9 @@ export const makeFillTool = (
 
                const spritex = point.x + j * TILE_SIZE
                const spritey = point.y + i * TILE_SIZE
-               //here currently spritex is on raw x and y we need ot make it to tilesize's x and y
-               // for that we need to divide by tilesize so both of them cancels out
-               const tilespritex = point.x + j
-               const tilespritey = point.y + i
+
+               const tilespritex = Math.floor(point.x / TILE_SIZE) + j
+               const tilespritey = Math.floor(point.y / TILE_SIZE) + i
                sprite.position.x = spritex
                sprite.position.y = spritey
                sprite.zIndex = 1000
@@ -68,6 +67,9 @@ export const makeFillTool = (
                   ImageDetails.columns * (i + data.startY) +
                   (j + data.startX) +
                   ImageDetails.firstgid
+
+               console.log(tilespritex, tilespritey)
+               console.log(sprite.uid)
                drawTileset(tilespritex, tilespritey, gid)
             }
          }
@@ -124,8 +126,8 @@ export const makeFillTool = (
                const sprite = new Sprite({ texture: tileTex })
                const spritex = point.x + j * TILE_SIZE
                const spritey = point.y + i * TILE_SIZE
-               const tilespritex = point.x + j
-               const tilespritey = point.y + i
+               const tilespritex = Math.floor(point.x / TILE_SIZE) + j
+               const tilespritey = Math.floor(point.y / TILE_SIZE) + i
                sprite.position.x = spritex
                sprite.position.y = spritey
                sprite.zIndex = 1000
@@ -223,23 +225,27 @@ export const makeEraserTool = (
       const worldpos = editor.viewport.toWorld(pos)
 
       if (editor.selectedLayerId === null) return
+      console.log('dfd')
       const spritelayer = editor.layerSpriteMap.get(editor.selectedLayerId)
 
       if (spritelayer === undefined) return
+      console.log('dd')
       const snappedCor = editor.snapToGrid(worldpos.x, worldpos.y)
-
-      const index = snappedCor.y * WORLD_WIDTH + snappedCor.x
+      const tilespritex = snappedCor.x / TILE_SIZE
+      const tilespritey = snappedCor.y / TILE_SIZE
+      const index = tilespritey * WORLD_WIDTH + tilespritex
       const sprite = spritelayer[index]
-
+      console.log(tilespritex, tilespritey)
       if (sprite) {
          const container = editor.layerContainers.get(editor.selectedLayerId)
          if (container) {
+            console.log(sprite)
+            console.log(container)
+            console.log(sprite.uid)
             container.removeChild(sprite)
             sprite.destroy()
 
-            const tilespritex = snappedCor.x / TILE_SIZE
-            const tilespritey = snappedCor.y / TILE_SIZE
-
+            console.log(tilespritex, tilespritey)
             drawTileset(tilespritex, tilespritey, 0)
          }
       }
@@ -253,8 +259,9 @@ export const makeEraserTool = (
 
       if (spritelayer === undefined) return
       const snappedCor = editor.snapToGrid(worldpos.x, worldpos.y)
-
-      const index = snappedCor.y * WORLD_WIDTH + snappedCor.x
+      const tilespritex = Math.floor(snappedCor.x / TILE_SIZE)
+      const tilespritey = Math.floor(snappedCor.y / TILE_SIZE)
+      const index = tilespritey * WORLD_WIDTH + tilespritex
       const sprite = spritelayer[index]
 
       if (sprite) {
@@ -262,6 +269,8 @@ export const makeEraserTool = (
          if (container) {
             container.removeChild(sprite)
             sprite.destroy()
+
+            drawTileset(tilespritex, tilespritey, 0)
          }
       }
    },

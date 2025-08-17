@@ -155,11 +155,8 @@ export const useMapEditorStore = create<useMapEditorStore>()(
             },
             drawTileset: (tx, ty, gid) => {
                set((state) => {
-                  console.log(state.layers)
-
                   const index = ty * WORLD_WIDTH + tx
-                  console.log(index)
-                  console.log(gid)
+
                   if (state.selectedLayerId !== null) {
                      state.layers[state.selectedLayerId].data[index] = gid
                   }
