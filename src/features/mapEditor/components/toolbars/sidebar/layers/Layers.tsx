@@ -1,16 +1,25 @@
 import { useEditorActions, useLayers, useSelectedLayerId } from '@/app/store/mapEditor/mapEditor'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+   DropdownMenu,
+   DropdownMenuContent,
+   DropdownMenuItem,
+   DropdownMenuSeparator,
+   DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import type { Layer } from '@/features/mapEditor/types/types'
 import {
    ChevronDown,
    ChevronUp,
+   Edit3,
    Eye,
    EyeOff,
    Layers,
    Lock,
    MoreHorizontal,
+   MousePointer,
    Plus,
    Trash2,
    Unlock,
@@ -49,19 +58,14 @@ function SideBarLayers() {
       setEditingName('')
    }
    const handleKeyDown = (e: React.KeyboardEvent) => {
-      console.log('asdf')
       if (e.key === 'Enter') {
-         console.log('enter')
          handleSubmitEdit()
       } else if (e.key === 'Escape') {
          handleCancelEdit()
       }
    }
    const handleSubmitEdit = () => {
-      console.log(editingLayerId)
-      console.log(editingName.trim())
       if (editingLayerId !== null && editingName.trim()) {
-         console.log('submittting')
          renameLayer(editingLayerId, editingName.trim())
       }
       setEditingLayerId(null)
@@ -96,6 +100,10 @@ function SideBarLayers() {
                            selectedLayerId === layer.id ? 'bg-accent' : ''
                         }`}
                         onClick={() => setSelectedLayerId(layer.id)}
+                        onDoubleClick={(e) => {
+                           e.stopPropagation()
+                           handleDoubleClick(layer)
+                        }}
                      >
                         <Button
                            variant="ghost"
@@ -120,19 +128,11 @@ function SideBarLayers() {
                               onChange={(e) => setEditingName(e.target.value)}
                               onBlur={handleSubmitEdit}
                               onKeyDown={handleKeyDown}
-                              className="flex-1 h-6 text-xs font-medium px-1 py-0"
+                              className="flex-1 h-6 text-xs font-bold px-1 py-0 bg border-input"
                               onClick={(e) => e.stopPropagation()}
                            />
                         ) : (
-                           <div
-                              className="flex-1 text-xs font-medium"
-                              onDoubleClick={(e) => {
-                                 e.stopPropagation()
-                                 handleDoubleClick(layer)
-                              }}
-                           >
-                              {layer.name}
-                           </div>
+                           <div className="flex-1 text-xs font-medium">{layer.name}</div>
                         )}
 
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -198,6 +198,23 @@ function SideBarLayers() {
                            >
                               <Trash2 className="h-3 w-3" />
                            </Button>
+                           <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                 <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                                    <MoreHorizontal className="h-3 w-3" />
+                                 </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-48">
+                                 <DropdownMenuItem onClick={() => handleDoubleClick(layer)}>
+                                    <Edit3 className="h-4 w-4 mr-2" />
+                                    Rename Layer
+                                 </DropdownMenuItem>
+                                 <DropdownMenuItem onClick={() => setSelectedLayerId(layer.id)}>
+                                    <MousePointer className="h-4 w-4 mr-2" />
+                                    Select Layer
+                                 </DropdownMenuItem>
+                              </DropdownMenuContent>
+                           </DropdownMenu>
                         </div>
                      </div>
                   ))}
