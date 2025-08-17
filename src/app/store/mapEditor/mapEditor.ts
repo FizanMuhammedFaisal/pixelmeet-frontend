@@ -7,6 +7,9 @@ import {
 } from '@/features/mapEditor/types/config'
 import type {
    ControlTools,
+   FinalMapLayerType,
+   FinalMapType,
+   FinalTilesetType,
    Layer,
    MapData,
    selectedTiles,
@@ -45,6 +48,10 @@ type MapEditorAction = {
    deleteLayer: (id: number) => void
    addTilesets: (name: string, width: number, height: number, coloums: number) => void
    drawTileset: (xposition: number, yposition: number, gid: number) => void
+
+   // main funtions
+
+   exportMap: () => FinalMapType
 }
 
 export const useMapEditorStore = create<useMapEditorStore>()(
@@ -161,6 +168,49 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                      state.layers[state.selectedLayerId].data[index] = gid
                   }
                })
+            },
+
+            //
+            exportMap: () => {
+               //regards with tiled map editor format ther might be many additional preconfigured propertied ading here
+               const mappedLayers: FinalMapLayerType[] = get().layers.map((curr) => {
+                  const newLayer = {
+                     height: curr.height,
+                     width: curr.width,
+                     data: Array.from(curr.data),
+                     id: curr.id,
+                     visible: curr.visible,
+                     name: curr.name,
+                     opacity: curr.opacity,
+                     x: 0,
+                     y: 0,
+                  }
+                  return newLayer
+               })
+               const mappedTilesets: FinalTilesetType[] = get().tilesets.map((curr) => {
+                  const newLayer = {
+                     ...curr,
+                     spacing: 0,
+                     tileheight: TILE_SIZE,
+                     tilewidth: TILE_SIZE,
+                  }
+                  return newLayer
+               })
+               const FinalMap: FinalMapType = {
+                  compressionlevel: -1,
+                  height: WORLD_HEIGHT,
+                  width: WORLD_WIDTH,
+                  infinite: false,
+                  layers: mappedLayers,
+                  orientation: 'orthogonal',
+                  renderorder: 'right-down',
+                  tileheight: TILE_SIZE,
+                  tilewidth: TILE_SIZE,
+                  tilesets: mappedTilesets,
+                  type: 'map',
+                  version: '1',
+               }
+               return FinalMap
             },
          },
       })),

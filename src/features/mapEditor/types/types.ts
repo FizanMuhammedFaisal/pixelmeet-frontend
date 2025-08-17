@@ -69,3 +69,29 @@ export type MapData = {
    tileHeight: number
    // nextLayerId: number
 }
+
+//final export type that phaser anticipate
+export type FinalMapLayerType = Omit<Layer, 'zindex' | 'locked' | 'data'> & {
+   x: number
+   y: number
+   data: number[]
+}
+export type FinalTilesetType = TileSet & {
+   spacing: number
+   tileheight: number
+   tilewidth: number
+}
+export type FinalMapType = {
+   compressionlevel: -1
+   height: number
+   infinite: false
+   layers: FinalMapLayerType[]
+   orientation: 'orthogonal'
+   renderorder: 'right-down'
+   tileheight: number
+   tilewidth: number
+   tilesets: FinalTilesetType[]
+   type: 'map'
+   version: string
+   width: number
+}
