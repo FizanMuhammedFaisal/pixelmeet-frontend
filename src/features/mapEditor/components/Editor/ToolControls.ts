@@ -1,4 +1,4 @@
-import { Assets, Rectangle, Sprite, Texture, TextureSource } from 'pixi.js'
+import { Assets, Graphics, Rectangle, Sprite, Texture, TextureSource } from 'pixi.js'
 import type { ToolHandler } from '../../types/types'
 import { Editor } from './Editor'
 import { TILE_SIZE, WORLD_WIDTH } from '../../types/config'
@@ -202,18 +202,45 @@ export const makeSelectTool = (editor: Editor): ToolHandler => ({
 
       // make a reactagle with theme colors as boarder nad fill it, store the x,y of top left point on editor.dragstart
       //make is draggind true
+      const worldPos = editor.viewport.toWorld(pos)
+      editor.dragStart = { x: worldPos.x, y: worldPos.y }
 
-      // const obj = new Graphics().rect(pos.x, pos.y, 2, 2).fill('red')
-      // editor.ghostSprite = obj
+      editor.selectionGraphic = new Graphics()
+         .rect(worldPos.x, worldPos.y, 0, 0)
+         .fill({ color: editor.accentColor, alpha: 0.9 })
+         .stroke({ color: editor.accentColor, width: 1 })
+
+      editor.worldContainer.addChild(editor.selectionGraphic)
+      console.log(editor.selectionGraphic)
    },
-   onMove: () => {
+   onMove: (pos) => {
       //upda teh x,y and updaate teh rectagles
       //
+      if (!editor.selectionGraphic || !editor.dragStart) return
+      const worldPos = editor.viewport.toWorld(pos)
+      const sx = editor.dragStart.x
+      const sy = editor.dragStart.y
+      const startx = Math.min(worldPos.x, sx)
+      const starty = Math.min(worldPos.y, sy)
+      const width = Math.max(worldPos.x, sx)
+      const height = Math.max(worldPos.y, sy)
+
+      const w = width - startx
+      const h = height - starty
+
+      editor.selectionGraphic
+         .clear()
+         .rect(startx, starty, w, h)
+         .fill({ color: editor.accentColor, alpha: 0.2 })
+         .stroke({ color: editor.accentColor, width: 1 })
+
+      // keep top-left fixed, grow right & down
    },
    onUp: () => {
       editor.viewport.cursor = 'auto'
       //make is draggind false and update the editor.dragstart to null
-      // editor.ghostSprite?.destroy()
+      editor.selectionGraphic?.destroy()
+      editor.selectionGraphic = null
    },
 })
 export const makeEraserTool = (

@@ -28,6 +28,7 @@ export class Editor extends App {
    private canvasLocked: boolean = false
    public worldContainer: PIXI.Container = new PIXI.Container()
    public ghostSprite: PIXI.Container | null = null
+   public selectionGraphic: PIXI.Graphics | null = null
    public layersContainer: PIXI.Container = new PIXI.Container()
    public layerContainers: Map<number, PIXI.Container> = new Map()
    public layerSpriteMap = new Map<number, Array<PIXI.Sprite | undefined>>()
@@ -64,6 +65,7 @@ export class Editor extends App {
 
    handleThemeSwitch = (event: { theme: ThemeType }) => {
       this.backgroundColor = event.theme === 'dark' ? '#000000' : '#ffffff'
+      this.accentColor = event.theme == 'dark' ? '#E5BEB0' : '#573022'
       this.themeMode = event.theme
       gsap.to(this.app.renderer.background, {
          duration: 0.5,
@@ -125,7 +127,7 @@ export class Editor extends App {
       if (tool === 'lock') {
          this.canvasLocked = true
       }
-      if (tool === 'fill' || tool === 'eraser') {
+      if (tool === 'fill' || tool === 'eraser' || tool === 'select') {
          this.viewport.plugins.pause('drag')
       }
       if (tool === 'hand') {
@@ -179,6 +181,8 @@ export class Editor extends App {
          .on('pointerdown', (e) => toolMap[this.selectedTool].onDown?.(e.global, e))
          .on('pointermove', (e) => toolMap[this.selectedTool].onMove?.(e.global, e))
          .on('pointerup', (e) => toolMap[this.selectedTool].onUp?.(e.global, e))
+
+      this.changeTool('select')
    }
    loadAssetsNeeded = async () => {
       await Promise.all([

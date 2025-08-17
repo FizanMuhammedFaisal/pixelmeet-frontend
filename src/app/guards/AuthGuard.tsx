@@ -3,13 +3,13 @@ import { Navigate, Outlet } from 'react-router'
 import UserLayout from '../../shared/layout/route/UserLayout'
 
 export default function AuthWrapper() {
-  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+   // const isAuthenticated = useAuthStore(state => state.isAuthenticated)
 
-  if (!isAuthenticated) return <Navigate to={'login'} />
+   //  if (!isAuthenticated) return <Navigate to={'login'} />
 
-  return (
-    <UserLayout>
-      <Outlet />
-    </UserLayout>
-  )
+   return (
+      <UserLayout>
+         <Outlet />
+      </UserLayout>
+   )
 }

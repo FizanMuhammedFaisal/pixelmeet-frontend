@@ -6,6 +6,7 @@ export class App {
    protected app: Application = new Application()
    protected isInitialized: boolean = false
    protected backgroundColor: string = '#000000'
+   public accentColor: string = '#E5BEB0'
    protected themeMode: ThemeType = 'dark'
    public viewport!: Viewport
    public async init(theme: ThemeType) {
@@ -15,6 +16,7 @@ export class App {
       }
       this.themeMode = theme
       this.backgroundColor = this.themeMode == 'dark' ? '#000000' : '#ffffff'
+      this.accentColor = this.themeMode == 'dark' ? '#E5BEB0' : '#573022'
 
       await this.app.init({
          resizeTo: container,
