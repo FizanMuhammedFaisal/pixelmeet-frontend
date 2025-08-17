@@ -12,9 +12,11 @@ export const makeFillTool = (
 ): ToolHandler => ({
    onDown: async (pos, e) => {
       const selectedLayerId = editor.selectedLayerId
+      console.log(selectedLayerId)
       if (selectedLayerId === null) return
       const data = editor.selectedTiles
       if (data) {
+         console.log(data)
          const width = data.endX - data.startX
          const height = data.endY - data.startY
 
@@ -28,6 +30,8 @@ export const makeFillTool = (
          const ImageDetails = useMapEditorStore.getState().tilesets.find((curr) => {
             return curr.name === data.name
          })
+         console.log(useMapEditorStore.getState())
+         console.log(ImageDetails)
          if (!ImageDetails) return
          for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
