@@ -1,6 +1,8 @@
 import { useEditorActions, useLayers, useSelectedLayerId } from '@/app/store/mapEditor/mapEditor'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import type { Layer } from '@/features/mapEditor/types/types'
 import {
    ChevronDown,
    ChevronUp,
@@ -13,6 +15,7 @@ import {
    Trash2,
    Unlock,
 } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 
 function SideBarLayers() {
    const {
@@ -22,11 +25,48 @@ function SideBarLayers() {
       setSelectedLayerId,
       toggleLayerVisibility,
       deleteLayer,
+      renameLayer,
    } = useEditorActions()
    const selectedLayerId = useSelectedLayerId()
    const layers = useLayers()
-   console.log(layers)
 
+   const [editingLayerId, setEditingLayerId] = useState<number | null>(null)
+   const [editingName, setEditingName] = useState('')
+   const inputRef = useRef<HTMLInputElement>(null)
+   useEffect(() => {
+      if (editingLayerId && inputRef.current) {
+         inputRef.current.focus()
+         inputRef.current.select()
+      }
+   }, [editingLayerId])
+   const handleDoubleClick = (layer: Layer) => {
+      setEditingLayerId(layer.id)
+      setEditingName(layer.name)
+   }
+
+   const handleCancelEdit = () => {
+      setEditingLayerId(null)
+      setEditingName('')
+   }
+   const handleKeyDown = (e: React.KeyboardEvent) => {
+      console.log('asdf')
+      if (e.key === 'Enter') {
+         console.log('enter')
+         handleSubmitEdit()
+      } else if (e.key === 'Escape') {
+         handleCancelEdit()
+      }
+   }
+   const handleSubmitEdit = () => {
+      console.log(editingLayerId)
+      console.log(editingName.trim())
+      if (editingLayerId !== null && editingName.trim()) {
+         console.log('submittting')
+         renameLayer(editingLayerId, editingName.trim())
+      }
+      setEditingLayerId(null)
+      setEditingName('')
+   }
    return (
       <div>
          {' '}
@@ -73,7 +113,27 @@ function SideBarLayers() {
                            )}
                         </Button>
 
-                        <div className="flex-1 text-xs font-medium">{layer.name}</div>
+                        {editingLayerId === layer.id ? (
+                           <Input
+                              ref={inputRef}
+                              value={editingName}
+                              onChange={(e) => setEditingName(e.target.value)}
+                              onBlur={handleSubmitEdit}
+                              onKeyDown={handleKeyDown}
+                              className="flex-1 h-6 text-xs font-medium px-1 py-0"
+                              onClick={(e) => e.stopPropagation()}
+                           />
+                        ) : (
+                           <div
+                              className="flex-1 text-xs font-medium"
+                              onDoubleClick={(e) => {
+                                 e.stopPropagation()
+                                 handleDoubleClick(layer)
+                              }}
+                           >
+                              {layer.name}
+                           </div>
+                        )}
 
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                            <Button

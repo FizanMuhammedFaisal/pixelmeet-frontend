@@ -42,6 +42,7 @@ type MapEditorAction = {
    setSelectedTiles: (selected: selectedTiles) => void
    setSelectedLayerId: (selected: number) => void
    addLayer: () => void
+   renameLayer: (id: number, name: string) => void
    moveLayer: (id: number, pos: number) => void
    toggleLayerLock: (id: number) => void
    toggleLayerVisibility: (id: number) => void
@@ -76,6 +77,16 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                set(() => ({
                   selectedTool,
                }))
+            },
+            renameLayer: (id, name) => {
+               console.log(id, name)
+               set((state) => {
+                  const index = state.layers.findIndex((curr) => curr.id === id)
+                  console.log(index)
+                  if (index !== null) {
+                     state.layers[index].name = name
+                  }
+               })
             },
             setSelectedTiles: (selected) => {
                set(() => ({
