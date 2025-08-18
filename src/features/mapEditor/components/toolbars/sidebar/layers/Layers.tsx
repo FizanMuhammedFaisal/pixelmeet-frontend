@@ -6,6 +6,24 @@ import type { Layer } from '@/features/mapEditor/types/types'
 import { Layers, MoreHorizontal, Plus } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import LayerList from './Layer'
+import {
+   closestCenter,
+   DndContext,
+   KeyboardSensor,
+   PointerSensor,
+   useSensor,
+   useSensors,
+} from '@dnd-kit/core'
+import {
+   SortableContext,
+   sortableKeyboardCoordinates,
+   verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers'
+{
+   /* read about sensors and collition detection algoritms
+               https://docs.dndkit.com/api-documentation/context-provider/collision-detection-algorithms */
+}
 
 function SideBarLayers() {
    const {
@@ -52,6 +70,13 @@ function SideBarLayers() {
       setEditingLayerId(null)
       setEditingName('')
    }
+
+   const sensors = useSensors(
+      useSensor(PointerSensor),
+      useSensor(KeyboardSensor, {
+         coordinateGetter: sortableKeyboardCoordinates,
+      }),
+   )
    return (
       <div>
          {' '}
@@ -72,35 +97,46 @@ function SideBarLayers() {
                   </div>
                </CardTitle>
             </CardHeader>
-            <CardContent className="pt-0 px-3 pb-2 flex-1 overflow-auto">
-               <div className="space-y-1">
-                  {layers.map((layer, index) => (
-                     <LayerList
-                        layer={layer}
-                        total={layers.length}
-                        deleteLayer={deleteLayer}
-                        editingLayerId={editingLayerId}
-                        editingName={editingName}
-                        handleDoubleClick={handleDoubleClick}
-                        handleKeyDown={handleKeyDown}
-                        handleSubmitEdit={handleSubmitEdit}
-                        moveLayer={moveLayer}
-                        selectedLayerId={selectedLayerId}
-                        setEditingName={setEditingName}
-                        setSelectedLayerId={setSelectedLayerId}
-                        toggleLayerLock={toggleLayerLock}
-                        toggleLayerVisibility={toggleLayerVisibility}
-                        key={index}
-                        ref={inputRef}
-                     />
-                  ))}
-                  {layers.length === 0 && (
-                     <div className=" flex justify-center text-foreground/60">
-                        <p> Make a layer to draw</p>
+            <DndContext
+               sensors={sensors}
+               collisionDetection={closestCenter}
+               modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+            >
+               <CardContent className="pt-0 px-3 pb-2 flex-1 overflow-auto">
+                  <SortableContext
+                     items={layers.map((curr) => curr.id)}
+                     strategy={verticalListSortingStrategy}
+                  >
+                     <div className="space-y-1">
+                        {layers.map((layer, index) => (
+                           <LayerList
+                              layer={layer}
+                              total={layers.length}
+                              deleteLayer={deleteLayer}
+                              editingLayerId={editingLayerId}
+                              editingName={editingName}
+                              handleDoubleClick={handleDoubleClick}
+                              handleKeyDown={handleKeyDown}
+                              handleSubmitEdit={handleSubmitEdit}
+                              moveLayer={moveLayer}
+                              selectedLayerId={selectedLayerId}
+                              setEditingName={setEditingName}
+                              setSelectedLayerId={setSelectedLayerId}
+                              toggleLayerLock={toggleLayerLock}
+                              toggleLayerVisibility={toggleLayerVisibility}
+                              key={index}
+                              ref={inputRef}
+                           />
+                        ))}
+                        {layers.length === 0 && (
+                           <div className=" flex justify-center text-foreground/60">
+                              <p> Make a layer to draw</p>
+                           </div>
+                        )}
                      </div>
-                  )}
-               </div>
-            </CardContent>
+                  </SortableContext>
+               </CardContent>
+            </DndContext>
          </Card>
       </div>
    )

@@ -1,6 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import type { Layer } from '@/features/mapEditor/types/types'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import {
    DropdownMenu,
    DropdownMenuContent,
@@ -55,14 +57,26 @@ function Layer(
       toggleLayerLock,
       deleteLayer,
    }: prop,
-   ref,
+   ref: HTMLInputElement,
 ) {
+   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+      id: layer.id,
+   })
+
+   const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+      zIndex: isDragging ? 999 : 'auto',
+   }
    return (
       <div
+         ref={setNodeRef}
+         style={style}
+         {...attributes}
          key={layer.id}
          className={`flex items-center gap-2 p-2  hover:bg-accent/50 group cursor-pointer transition-colors ${
             selectedLayerId === layer.id ? 'bg-primary/20 hover:bg-primary/25' : ''
-         }`}
+         } `}
          onClick={() => setSelectedLayerId(layer.id)}
          onDoubleClick={(e) => {
             e.stopPropagation()
@@ -109,6 +123,7 @@ function Layer(
                   moveLayer(layer.id, 'down')
                }}
                disabled={total <= 1}
+               {...listeners}
             >
                <GripVertical className="h-3 w-3" />
             </Button>
