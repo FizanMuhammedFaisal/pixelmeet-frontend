@@ -9,7 +9,7 @@ import type {
 import emitter from '../../utils/EventEmitter'
 import { App } from './App'
 import gsap from 'gsap'
-import { useEditorActions, useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
+import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
 import {
    makeBucketFillTool,
    makeEraserTool,
