@@ -16,6 +16,7 @@ import {
    Edit3,
    Eye,
    EyeOff,
+   GripVertical,
    Layers,
    Lock,
    MoreHorizontal,
@@ -74,7 +75,7 @@ function SideBarLayers() {
    return (
       <div>
          {' '}
-         <Card className="h-full rounded-none border-0 border-t">
+         <Card className="h-full  border-0 border-t">
             <CardHeader className="pb-2 px-3 py-2">
                <CardTitle className="text-sm flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -96,8 +97,8 @@ function SideBarLayers() {
                   {layers.map((layer, index) => (
                      <div
                         key={layer.id}
-                        className={`flex items-center gap-2 p-2 rounded hover:bg-accent/50 group cursor-pointer transition-colors ${
-                           selectedLayerId === layer.id ? 'bg-accent' : ''
+                        className={`flex items-center gap-2 p-2  hover:bg-accent/50 group cursor-pointer transition-colors ${
+                           selectedLayerId === layer.id ? 'bg-primary/20 hover:bg-primary/25' : ''
                         }`}
                         onClick={() => setSelectedLayerId(layer.id)}
                         onDoubleClick={(e) => {
@@ -135,30 +136,18 @@ function SideBarLayers() {
                            <div className="flex-1 text-xs font-medium">{layer.name}</div>
                         )}
 
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                            <Button
                               variant="ghost"
                               size="sm"
-                              className="h-5 w-5 p-0"
-                              onClick={(e) => {
-                                 e.stopPropagation()
-                                 moveLayer(layer.id, 'up')
-                              }}
-                              disabled={index === 0}
-                           >
-                              <ChevronUp className="h-3 w-3" />
-                           </Button>
-                           <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-5 w-5 p-0"
+                              className="h-6 w-6 p-0 "
                               onClick={(e) => {
                                  e.stopPropagation()
                                  moveLayer(layer.id, 'down')
                               }}
                               disabled={index === layers.length - 1}
                            >
-                              <ChevronDown className="h-3 w-3" />
+                              <GripVertical className="h-3 w-3" />
                            </Button>
                            {/* <Button
                               variant="ghost"
@@ -174,7 +163,7 @@ function SideBarLayers() {
                            <Button
                               variant="ghost"
                               size="sm"
-                              className="h-5 w-5 p-0"
+                              className="h-6 w-6 p-0"
                               onClick={(e) => {
                                  e.stopPropagation()
                                  toggleLayerLock(layer.id)
@@ -189,7 +178,7 @@ function SideBarLayers() {
                            <Button
                               variant="ghost"
                               size="sm"
-                              className="h-5 w-5 p-0 text-destructive hover:text-destructive"
+                              className="h-6 w-6 p-0 text-destructive hover:text-destructive"
                               onClick={(e) => {
                                  e.stopPropagation()
                                  deleteLayer(layer.id)

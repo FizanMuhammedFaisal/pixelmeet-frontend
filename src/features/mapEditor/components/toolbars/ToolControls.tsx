@@ -47,9 +47,14 @@ function ToolControls() {
    return (
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
          <motion.div
-            initial={{ y: 100, opacity: 0, filter: 'blur(8px)', scale: 0.9 }}
+            initial={{ y: 100, opacity: 0, filter: 'blur(10px)', scale: 0.9 }}
             animate={{ y: 0, opacity: 1, filter: 'blur(0px)', scale: 1 }}
-            transition={{ duration: 1, delay: 1, ease: [0.16, 1, 0.3, 1], staggerChildren: 0.05 }}
+            transition={{
+               duration: 1,
+               delay: 1,
+               ease: [0.175, 0.885, 0.32, 1.275],
+               staggerChildren: 0.05,
+            }}
             className="flex items-center gap-2.5 px-2 py-2 bg-card/35 backdrop-blur-sm border border-border shadow-lg shadow-black/5 dark:shadow-black/20"
             style={{
                borderRadius: 'calc(var(--radius) - 4px)',
@@ -97,7 +102,7 @@ function ToolControls() {
                            transition={{
                               duration: 0.8,
                               ease: 'easeInOut',
-                              repeat: isHovered ? Infinity : 0,
+                              repeat: !isActive && isHovered ? Infinity : 0,
                            }}
                         >
                            <Icon size={18} strokeWidth={isActive ? 2 : 1.5} />
@@ -110,9 +115,8 @@ function ToolControls() {
                               style={{ borderRadius: 'var(--radius)' }}
                               initial={false}
                               transition={{
-                                 type: 'spring',
-                                 stiffness: 500,
-                                 damping: 35,
+                                 duration: 0.3,
+                                 ease: [0.215, 0.61, 0.355, 1],
                               }}
                            />
                         )}
@@ -134,9 +138,9 @@ function ToolControls() {
                            initial={{ opacity: 0, y: 10, scale: 0.8 }}
                            animate={{ opacity: 1, y: 0, scale: 1 }}
                            exit={{ opacity: 0, y: 10, scale: 0.8 }}
-                           className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2.5 py-0.5 backdrop-blur-md bg-popover/60 border border-border shadow-md z-50"
+                           className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2.5 py-0.5 backdrop-blur-md bg-popover/80 border border-border shadow-md z-50"
                            style={{ borderRadius: 'var(--radius)' }}
-                           transition={{ duration: 0.15 }}
+                           transition={{ duration: 0.15, ease: [0.78, 0.41, 0.46, 1.17] }}
                         >
                            <span className="text-xs font-medium text-popover-foreground whitespace-nowrap">
                               {tool.label}

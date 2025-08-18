@@ -65,7 +65,7 @@ export class Editor extends App {
 
    handleThemeSwitch = (event: { theme: ThemeType }) => {
       this.backgroundColor = event.theme === 'dark' ? '#000000' : '#ffffff'
-      this.accentColor = event.theme == 'dark' ? '#E5BEB0' : '#573022'
+      this.accentColor = event.theme == 'dark' ? this.resolvedDark : this.resolvedLight
       this.themeMode = event.theme
       gsap.to(this.app.renderer.background, {
          duration: 0.5,

@@ -28,13 +28,13 @@ function AssetPanel() {
 
    return (
       <div className="h-full flex flex-col bg-muted/30">
-         <div className="relative flex p-1 bg-muted/50 border-b border-border/50">
+         <div className="relative flex p-2 bg-muted/50 border-b border-border/50">
             {tabs.map((tab, index) => (
                <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`
-              relative flex-1 px-4 py-2 mx-0.5 text-sm font-medium rounded-md
+              relative flex-1 px-1 py-1.5 mx-0.5 text-sm font-medium rounded-md
               transition-all duration-200 ease-out
               hover:scale-[1.02] active:scale-[0.98]
               ${activeTab === tab.id ? 'text-foreground z-10' : 'text-muted-foreground hover:text-foreground'}
@@ -43,7 +43,7 @@ function AssetPanel() {
                   {activeTab === tab.id && (
                      <motion.div
                         layoutId="activeTab"
-                        className="absolute inset-0 bg-primary/10 border border-border/50 rounded-md shadow-sm"
+                        className="absolute inset-0 bg-primary/20 border border-border/50 rounded-md shadow-sm"
                         initial={false}
                         transition={{
                            type: 'spring',

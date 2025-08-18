@@ -237,8 +237,6 @@ export const makeSelectTool = (editor: Editor): ToolHandler => ({
          .rect(startx, starty, w, h)
          .fill({ color: editor.accentColor, alpha: 0.2 })
          .stroke({ color: editor.accentColor, width: 1 })
-
-      // keep top-left fixed, grow right & down
    },
    onUp: () => {
       editor.viewport.cursor = 'auto'
@@ -256,11 +254,10 @@ export const makeEraserTool = (
       const worldpos = editor.viewport.toWorld(pos)
 
       if (editor.selectedLayerId === null) return
-      console.log('dfd')
       const spritelayer = editor.layerSpriteMap.get(editor.selectedLayerId)
 
       if (spritelayer === undefined) return
-      console.log('dd')
+
       const snappedCor = editor.snapToGrid(worldpos.x, worldpos.y)
       const tilespritex = snappedCor.x / TILE_SIZE
       const tilespritey = snappedCor.y / TILE_SIZE

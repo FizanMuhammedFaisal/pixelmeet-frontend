@@ -7,6 +7,8 @@ export class App {
    protected isInitialized: boolean = false
    protected backgroundColor: string = '#000000'
    public accentColor: string = '#E5BEB0'
+   protected resolvedDark: string = '#E5BEB0'
+   protected resolvedLight: string = '#573022'
    protected themeMode: ThemeType = 'dark'
    public viewport!: Viewport
    public async init(theme: ThemeType) {
@@ -16,8 +18,16 @@ export class App {
       }
       this.themeMode = theme
       this.backgroundColor = this.themeMode == 'dark' ? '#000000' : '#ffffff'
-      this.accentColor = this.themeMode == 'dark' ? '#E5BEB0' : '#573022'
+      this.resolvedDark =
+         getComputedStyle(document.documentElement)
+            .getPropertyValue('--editor-select-dark')
+            .trim() ?? '#E5BEB0'
 
+      this.resolvedLight =
+         getComputedStyle(document.documentElement)
+            .getPropertyValue('--editor-select-light')
+            .trim() ?? '#573022'
+      this.accentColor = this.themeMode == 'dark' ? this.resolvedDark : this.resolvedLight
       await this.app.init({
          resizeTo: container,
          backgroundColor: this.backgroundColor,
