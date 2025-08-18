@@ -1,31 +1,11 @@
 import { useEditorActions, useLayers, useSelectedLayerId } from '@/app/store/mapEditor/mapEditor'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-   DropdownMenu,
-   DropdownMenuContent,
-   DropdownMenuItem,
-   DropdownMenuSeparator,
-   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
+
 import type { Layer } from '@/features/mapEditor/types/types'
-import {
-   ChevronDown,
-   ChevronUp,
-   Edit3,
-   Eye,
-   EyeOff,
-   GripVertical,
-   Layers,
-   Lock,
-   MoreHorizontal,
-   MousePointer,
-   Plus,
-   Trash2,
-   Unlock,
-} from 'lucide-react'
+import { Layers, MoreHorizontal, Plus } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import LayerList from './Layer'
 
 function SideBarLayers() {
    const {
@@ -95,117 +75,24 @@ function SideBarLayers() {
             <CardContent className="pt-0 px-3 pb-2 flex-1 overflow-auto">
                <div className="space-y-1">
                   {layers.map((layer, index) => (
-                     <div
-                        key={layer.id}
-                        className={`flex items-center gap-2 p-2  hover:bg-accent/50 group cursor-pointer transition-colors ${
-                           selectedLayerId === layer.id ? 'bg-primary/20 hover:bg-primary/25' : ''
-                        }`}
-                        onClick={() => setSelectedLayerId(layer.id)}
-                        onDoubleClick={(e) => {
-                           e.stopPropagation()
-                           handleDoubleClick(layer)
-                        }}
-                     >
-                        <Button
-                           variant="ghost"
-                           size="sm"
-                           className="h-5 w-5 p-0"
-                           onClick={(e) => {
-                              e.stopPropagation()
-                              toggleLayerVisibility(layer.id)
-                           }}
-                        >
-                           {layer.visible ? (
-                              <Eye className="h-3 w-3" />
-                           ) : (
-                              <EyeOff className="h-3 w-3 text-muted-foreground" />
-                           )}
-                        </Button>
-
-                        {editingLayerId === layer.id ? (
-                           <Input
-                              ref={inputRef}
-                              value={editingName}
-                              onChange={(e) => setEditingName(e.target.value)}
-                              onBlur={handleSubmitEdit}
-                              onKeyDown={handleKeyDown}
-                              className="flex-1 h-6 text-xs font-bold px-1 py-0 bg border-input"
-                              onClick={(e) => e.stopPropagation()}
-                           />
-                        ) : (
-                           <div className="flex-1 text-xs font-medium">{layer.name}</div>
-                        )}
-
-                        <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                           <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-6 w-6 p-0 "
-                              onClick={(e) => {
-                                 e.stopPropagation()
-                                 moveLayer(layer.id, 'down')
-                              }}
-                              disabled={index === layers.length - 1}
-                           >
-                              <GripVertical className="h-3 w-3" />
-                           </Button>
-                           {/* <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-5 w-5 p-0"
-                              onClick={(e) => {
-                                 e.stopPropagation()
-                                 duplicateLayer(layer.id)
-                              }}
-                           >
-                              <Copy className="h-3 w-3" />
-                           </Button> */}
-                           <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-6 w-6 p-0"
-                              onClick={(e) => {
-                                 e.stopPropagation()
-                                 toggleLayerLock(layer.id)
-                              }}
-                           >
-                              {layer.locked ? (
-                                 <Lock className="h-3 w-3" />
-                              ) : (
-                                 <Unlock className="h-3 w-3" />
-                              )}
-                           </Button>
-                           <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-6 w-6 p-0 text-destructive hover:text-destructive"
-                              onClick={(e) => {
-                                 e.stopPropagation()
-                                 deleteLayer(layer.id)
-                              }}
-                              disabled={layers.length <= 1}
-                           >
-                              <Trash2 className="h-3 w-3" />
-                           </Button>
-                           <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                 <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                                    <MoreHorizontal className="h-3 w-3" />
-                                 </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end" className="w-48">
-                                 <DropdownMenuItem onClick={() => handleDoubleClick(layer)}>
-                                    <Edit3 className="h-4 w-4 mr-2" />
-                                    Rename Layer
-                                 </DropdownMenuItem>
-                                 <DropdownMenuItem onClick={() => setSelectedLayerId(layer.id)}>
-                                    <MousePointer className="h-4 w-4 mr-2" />
-                                    Select Layer
-                                 </DropdownMenuItem>
-                              </DropdownMenuContent>
-                           </DropdownMenu>
-                        </div>
-                     </div>
+                     <LayerList
+                        layer={layer}
+                        total={layers.length}
+                        deleteLayer={deleteLayer}
+                        editingLayerId={editingLayerId}
+                        editingName={editingName}
+                        handleDoubleClick={handleDoubleClick}
+                        handleKeyDown={handleKeyDown}
+                        handleSubmitEdit={handleSubmitEdit}
+                        moveLayer={moveLayer}
+                        selectedLayerId={selectedLayerId}
+                        setEditingName={setEditingName}
+                        setSelectedLayerId={setSelectedLayerId}
+                        toggleLayerLock={toggleLayerLock}
+                        toggleLayerVisibility={toggleLayerVisibility}
+                        key={index}
+                        ref={inputRef}
+                     />
                   ))}
                   {layers.length === 0 && (
                      <div className=" flex justify-center text-foreground/60">

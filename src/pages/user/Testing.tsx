@@ -6,6 +6,7 @@ import {
    PointerSensor,
    useSensor,
    useSensors,
+   type DragEndEvent,
 } from '@dnd-kit/core'
 import {
    arrayMove,
@@ -35,7 +36,7 @@ function App() {
       </DndContext>
    )
 
-   function handleDragEnd(event) {
+   function handleDragEnd(event: DragEndEvent) {
       const { active, over } = event
 
       if (active.id !== over.id) {
