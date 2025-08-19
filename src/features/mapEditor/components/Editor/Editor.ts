@@ -55,7 +55,6 @@ export class Editor extends App {
       emitter.on('switchTheme', this.handleThemeSwitch)
       emitter.on('addLayer', this.handleAddLayer)
       emitter.on('toggleLayerVisibility', this.handleLayerVisibilty)
-
       emitter.on('deleteLayer', this.handleDeleteLayer)
       emitter.on('moveLayer', this.handleMoveLayer)
       emitter.on('*', () => {
@@ -169,6 +168,7 @@ export class Editor extends App {
          layer.zIndex = neworder.length - i
       }
    }
+
    tileSelectionChanged = () => {
       this.ghostSprite?.destroy()
       this.ghostSprite = null
@@ -180,7 +180,11 @@ export class Editor extends App {
       return useMapEditorStore.getState().selectedTile
    }
    get selectedLayerId() {
-      return useMapEditorStore.getState().selectedLayer?.id
+      return useMapEditorStore.getState().selectedLayer?.id ?? null
+   }
+   get selectedLayer() {
+      console.log(useMapEditorStore.getState().selectedLayer)
+      return useMapEditorStore.getState().selectedLayer
    }
    setUpInteractions = () => {
       const toolMap = this.buildToolMap()

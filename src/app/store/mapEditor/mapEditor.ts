@@ -108,7 +108,6 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                   }
 
                   const newLayerId = state.layers.length + 1
-
                   const newLayerName = `Layer ${newLayerId}`
                   const newLayer = {
                      id: newLayerId,
@@ -120,14 +119,13 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                      width: WORLD_WIDTH,
                      height: WORLD_HEIGHT,
                   }
-
-                  state.layers.unshift({
+                  const layer = {
                      ...newLayer,
                      data: new Uint32Array(WORLD_HEIGHT * WORLD_WIDTH),
-                  })
-
+                  }
+                  state.layers.unshift(layer)
+                  state.selectedLayer = layer
                   state.layersOrder.unshift(newLayerId)
-                  // state.selectedLayer =state.layers[state.l]
                   emitter.emit('addLayer', { data: newLayer })
                })
             },
@@ -139,30 +137,42 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                set((state) => {
                   const newLayers = []
 
-                  console.log(neworder)
                   for (let i = 0; i < neworder.length; i++) {
                      const layer = state.layers.find((curr) => curr.id === neworder[i])
-                     console.log(layer, i)
+
                      if (!layer) continue
                      layer.zindex = neworder.length - 1
 
                      newLayers.push(layer)
                   }
-                  console.log(newLayers)
 
                   state.layers = newLayers
                })
                emitter.emit('moveLayer', { neworder })
             },
-            toggleLayerLock: () => {
-               console.log('togle layer lock')
+            toggleLayerLock: (id) => {
+               set((state) => {
+                  const index = state.layers.findIndex((curr) => curr.id === id)
+                  if (index !== null) {
+                     const layer = state.layers[index]
+                     layer.locked = !layer.locked
+                     if (state.selectedLayer && state.selectedLayer.id === id) {
+                        state.selectedLayer = layer
+                     }
+                  }
+               })
             },
             toggleLayerVisibility: (id) => {
-               set((state) => ({
-                  layers: state.layers.map((curr) =>
-                     curr.id === id ? { ...curr, visible: !curr.visible } : curr,
-                  ),
-               }))
+               set((state) => {
+                  const index = state.layers.findIndex((curr) => curr.id === id)
+                  if (index !== null) {
+                     const layer = state.layers[index]
+                     layer.visible = !layer.visible
+                     if (state.selectedLayer && state.selectedLayer.id === id) {
+                        state.selectedLayer = layer
+                     }
+                  }
+               })
                emitter.emit('toggleLayerVisibility', { id })
             },
             deleteLayer: (id) => {

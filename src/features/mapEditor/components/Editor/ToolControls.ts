@@ -12,11 +12,12 @@ export const makeFillTool = (
 ): ToolHandler => ({
    onDown: async (pos, e) => {
       const selectedLayerId = editor.selectedLayerId
-      console.log(selectedLayerId)
       if (selectedLayerId === null) return
+
+      console.log(editor.selectedLayer?.locked)
+      if (editor.selectedLayer?.locked) return
       const data = editor.selectedTiles
       if (data) {
-         console.log(data)
          const width = data.endX - data.startX
          const height = data.endY - data.startY
 
@@ -87,6 +88,7 @@ export const makeFillTool = (
       if (!data) return
       const selectedLayerId = editor.selectedLayerId
       if (selectedLayerId === null) return
+      if (editor.selectedLayer?.locked) return
       const worldPos = editor.viewport.toWorld(pos)
       const point = editor.snapToGrid(worldPos.x, worldPos.y)
 

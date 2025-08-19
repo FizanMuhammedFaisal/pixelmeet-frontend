@@ -140,7 +140,6 @@ function SideBarLayers() {
                               handleDoubleClick={handleDoubleClick}
                               handleKeyDown={handleKeyDown}
                               handleSubmitEdit={handleSubmitEdit}
-                              moveLayer={moveLayer}
                               selectedLayerId={selectedLayerId}
                               setEditingName={setEditingName}
                               setSelectedLayer={setSelectedLayer}

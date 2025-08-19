@@ -35,7 +35,6 @@ type prop = {
    setEditingName: (name: string) => void
    handleSubmitEdit: (event: FocusEvent<HTMLInputElement>) => void
    handleKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void
-   moveLayer: (id: number, pox: number) => void
    toggleLayerLock: (id: number) => void
    deleteLayer: (id: number) => void
 }
@@ -53,7 +52,7 @@ function Layer(
       setEditingName,
       handleSubmitEdit,
       handleKeyDown,
-      moveLayer,
+
       toggleLayerLock,
       deleteLayer,
    }: prop,
@@ -117,10 +116,6 @@ function Layer(
                variant="ghost"
                size="sm"
                className="h-6 w-6 p-0 "
-               onClick={(e) => {
-                  e.stopPropagation()
-                  moveLayer(layer.id, 'down')
-               }}
                disabled={total <= 1}
                {...listeners}
             >
