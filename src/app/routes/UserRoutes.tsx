@@ -9,6 +9,7 @@ import ForgotPasswordPage from '@/pages/user/ForgotPassword'
 import AuthWrapper from '../guards/AuthGuard'
 import SpacesPage from '@/pages/user/Spaces'
 import AdminMapEditor from '@/pages/admin/MapEditor'
+import TestingPage from '@/pages/user/Testing'
 
 const UserRouter: RouteObject[] = [
    {
@@ -46,6 +47,10 @@ const UserRouter: RouteObject[] = [
                {
                   path: '/map-editor',
                   element: <AdminMapEditor />,
+               },
+               {
+                  path: '/testing',
+                  element: <TestingPage />,
                },
             ],
          },

@@ -19,6 +19,7 @@ export type EmitterType = {
    addLayer: { data: addLayerType }
    toggleLayerVisibility: { id: number }
    deleteLayer: { id: number }
+   moveLayer: { neworder: number[] }
 }
 export type selectedTiles = {
    selectedImage: string

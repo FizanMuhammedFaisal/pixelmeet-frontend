@@ -32,7 +32,7 @@ interface useMapEditorStore {
    mapData: MapData | null
    layers: Layer[]
    tilesets: TileSet[]
-   selectedLayerId: number | null
+   selectedLayer: Layer | null
    layersOrder: number[]
    actions: MapEditorAction
 }
@@ -40,10 +40,10 @@ type MapEditorAction = {
    setEditor: (editor: Editor) => void
    setTool: (tool: ControlTools) => void
    setSelectedTiles: (selected: selectedTiles) => void
-   setSelectedLayerId: (selected: number) => void
+   setSelectedLayer: (selected: Layer) => void
    addLayer: () => void
    renameLayer: (id: number, name: string) => void
-   moveLayer: (id: number, pos: number) => void
+   moveLayer: (newlayerOrder: number[]) => void
    toggleLayerLock: (id: number) => void
    toggleLayerVisibility: (id: number) => void
    deleteLayer: (id: number) => void
@@ -61,7 +61,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
          editor: null,
          selectedTool: 'select',
          selectedTile: null,
-         selectedLayerId: null,
+         selectedLayer: null,
          mapData: null,
          layers: [],
          tilesets: [],
@@ -93,22 +93,22 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                   selectedTile: selected,
                }))
             },
-            setSelectedLayerId: (selected) => {
-               set(() => ({
-                  selectedLayerId: selected,
-               }))
+            setSelectedLayer: (selected) => {
+               set((state) => {
+                  state.selectedLayer = selected
+               })
             },
             addLayer: () => {
                set((state) => {
-                  if (state.layers.length > LAYERS_LIMIT) {
+                  if (state.layers.length >= LAYERS_LIMIT) {
                      toast.info(
                         `Limit of ${LAYERS_LIMIT} Layers is imposed for decreasing map loading time`,
                      )
                      return
                   }
 
-                  const lastLayer = state.layers[state.layers.length - 1]
-                  const newLayerId = lastLayer ? lastLayer.id + 1 : 0
+                  const newLayerId = state.layers.length + 1
+
                   const newLayerName = `Layer ${newLayerId}`
                   const newLayer = {
                      id: newLayerId,
@@ -126,12 +126,32 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                      data: new Uint32Array(WORLD_HEIGHT * WORLD_WIDTH),
                   })
                   state.layersOrder.unshift(newLayerId)
-                  state.selectedLayerId = newLayerId
+                  // state.selectedLayer =state.layers[state.l]
                   emitter.emit('addLayer', { data: newLayer })
                })
             },
-            moveLayer: () => {
-               console.log('move')
+            moveLayer: (neworder) => {
+               set((state) => {
+                  state.layersOrder = neworder
+               })
+
+               set((state) => {
+                  const newLayers = []
+
+                  console.log(neworder)
+                  for (let i = 0; i < neworder.length; i++) {
+                     const layer = state.layers.find((curr) => curr.id === neworder[i])
+                     console.log(layer, i)
+                     if (!layer) continue
+                     layer.zindex = i
+
+                     newLayers.push(layer)
+                  }
+                  console.log(newLayers)
+
+                  state.layers = newLayers
+               })
+               emitter.emit('moveLayer', { neworder })
             },
             toggleLayerLock: () => {
                console.log('togle layer lock')
@@ -175,8 +195,8 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                set((state) => {
                   const index = ty * WORLD_WIDTH + tx
 
-                  if (state.selectedLayerId !== null) {
-                     state.layers[state.selectedLayerId].data[index] = gid
+                  if (state.selectedLayer) {
+                     state.selectedLayer.data[index] = gid
                   }
                })
             },
@@ -230,5 +250,6 @@ export const useMapEditorStore = create<useMapEditorStore>()(
 
 export const useEditorActions = () => useMapEditorStore((state) => state.actions)
 export const useSelectedTile = () => useMapEditorStore((state) => state.selectedTile)
-export const useSelectedLayerId = () => useMapEditorStore((state) => state.selectedLayerId)
+export const useSelectedLayer = () => useMapEditorStore((state) => state.selectedLayer)
 export const useLayers = () => useMapEditorStore((state) => state.layers)
+export const useLayerOrder = () => useMapEditorStore((state) => state.layersOrder)

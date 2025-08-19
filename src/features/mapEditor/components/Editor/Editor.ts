@@ -9,7 +9,7 @@ import type {
 import emitter from '../../utils/EventEmitter'
 import { App } from './App'
 import gsap from 'gsap'
-import { useEditorActions, useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
+import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
 import {
    makeBucketFillTool,
    makeEraserTool,
@@ -57,6 +57,7 @@ export class Editor extends App {
       emitter.on('toggleLayerVisibility', this.handleLayerVisibilty)
 
       emitter.on('deleteLayer', this.handleDeleteLayer)
+      emitter.on('moveLayer', this.handleMoveLayer)
       emitter.on('*', () => {
          console.log(this.layerContainers)
          console.log(this.viewport)
@@ -161,6 +162,13 @@ export class Editor extends App {
          console.log('container destoryed')
       }
    }
+   handleMoveLayer = ({ neworder }: { neworder: number[] }) => {
+      for (let i = 0; i < neworder.length; i++) {
+         const layer = this.layerContainers.get(neworder[i])
+         if (!layer) continue
+         layer.zIndex = i
+      }
+   }
    tileSelectionChanged = () => {
       this.ghostSprite?.destroy()
       this.ghostSprite = null
@@ -172,7 +180,7 @@ export class Editor extends App {
       return useMapEditorStore.getState().selectedTile
    }
    get selectedLayerId() {
-      return useMapEditorStore.getState().selectedLayerId
+      return useMapEditorStore.getState().selectedLayer?.id
    }
    setUpInteractions = () => {
       const toolMap = this.buildToolMap()
