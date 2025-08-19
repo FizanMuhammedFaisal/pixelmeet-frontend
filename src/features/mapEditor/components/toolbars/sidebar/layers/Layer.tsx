@@ -8,7 +8,7 @@ import {
    DropdownMenuContent,
    DropdownMenuItem,
    DropdownMenuTrigger,
-} from '@radix-ui/react-dropdown-menu'
+} from '@/components/ui/dropdown-menu'
 import {
    Eye,
    EyeOff,
@@ -29,7 +29,7 @@ type prop = {
    total: number
    editingName: string
 
-   setSelectedLayerId: (id: number) => void
+   setSelectedLayer: (layer: Layer) => void
    handleDoubleClick: (layer: Layer) => void
    toggleLayerVisibility: (id: number) => void
    setEditingName: (name: string) => void
@@ -44,7 +44,7 @@ function Layer(
    {
       layer,
       selectedLayerId,
-      setSelectedLayerId,
+      setSelectedLayer,
       total,
       handleDoubleClick,
       toggleLayerVisibility,
@@ -62,7 +62,6 @@ function Layer(
    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
       id: layer.id,
    })
-
    const style = {
       transform: CSS.Transform.toString(transform),
       transition,
@@ -77,7 +76,7 @@ function Layer(
          className={`flex items-center gap-2 p-2  hover:bg-accent/50 group cursor-pointer transition-colors ${
             selectedLayerId === layer.id ? 'bg-primary/20 hover:bg-primary/25' : ''
          } `}
-         onClick={() => setSelectedLayerId(layer.id)}
+         onClick={() => setSelectedLayer(layer)}
          onDoubleClick={(e) => {
             e.stopPropagation()
             handleDoubleClick(layer)
@@ -172,7 +171,7 @@ function Layer(
                      <Edit3 className="h-4 w-4 mr-2" />
                      Rename Layer
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSelectedLayerId(layer.id)}>
+                  <DropdownMenuItem onClick={() => setSelectedLayer(layer)}>
                      <MousePointer className="h-4 w-4 mr-2" />
                      Select Layer
                   </DropdownMenuItem>

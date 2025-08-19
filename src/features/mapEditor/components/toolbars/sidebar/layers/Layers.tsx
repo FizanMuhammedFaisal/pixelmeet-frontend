@@ -1,4 +1,9 @@
-import { useEditorActions, useLayers, useSelectedLayerId } from '@/app/store/mapEditor/mapEditor'
+import {
+   useEditorActions,
+   useLayerOrder,
+   useLayers,
+   useSelectedLayer,
+} from '@/app/store/mapEditor/mapEditor'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
@@ -13,8 +18,10 @@ import {
    PointerSensor,
    useSensor,
    useSensors,
+   type DragEndEvent,
 } from '@dnd-kit/core'
 import {
+   arrayMove,
    SortableContext,
    sortableKeyboardCoordinates,
    verticalListSortingStrategy,
@@ -30,13 +37,14 @@ function SideBarLayers() {
       addLayer,
       moveLayer,
       toggleLayerLock,
-      setSelectedLayerId,
+      setSelectedLayer,
       toggleLayerVisibility,
       deleteLayer,
       renameLayer,
    } = useEditorActions()
-   const selectedLayerId = useSelectedLayerId()
+   const selectedLayer = useSelectedLayer()
    const layers = useLayers()
+   const layerOrder = useLayerOrder()
 
    const [editingLayerId, setEditingLayerId] = useState<number | null>(null)
    const [editingName, setEditingName] = useState('')
@@ -77,6 +85,19 @@ function SideBarLayers() {
          coordinateGetter: sortableKeyboardCoordinates,
       }),
    )
+   const handleDragEng = (event: DragEndEvent) => {
+      const { active, over } = event
+      if (!over) return
+      const oldIndex = layerOrder.indexOf(Number(active.id))
+      const newIndex = layerOrder.indexOf(Number(over.id))
+
+      const res = arrayMove(layerOrder, oldIndex, newIndex)
+      console.log(res)
+      moveLayer(res)
+   }
+   console.log(layers)
+
+   const selectedLayerId = selectedLayer?.id ?? null
    return (
       <div>
          {' '}
@@ -101,6 +122,7 @@ function SideBarLayers() {
                sensors={sensors}
                collisionDetection={closestCenter}
                modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+               onDragEnd={handleDragEng}
             >
                <CardContent className="pt-0 px-3 pb-2 flex-1 overflow-auto">
                   <SortableContext
@@ -121,7 +143,7 @@ function SideBarLayers() {
                               moveLayer={moveLayer}
                               selectedLayerId={selectedLayerId}
                               setEditingName={setEditingName}
-                              setSelectedLayerId={setSelectedLayerId}
+                              setSelectedLayer={setSelectedLayer}
                               toggleLayerLock={toggleLayerLock}
                               toggleLayerVisibility={toggleLayerVisibility}
                               key={index}
