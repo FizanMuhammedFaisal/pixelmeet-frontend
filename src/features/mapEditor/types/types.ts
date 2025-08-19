@@ -64,6 +64,7 @@ export type TileSet = {
    imageheight: number
    imagewidth: number
    name: string
+   image: string
    columns: number
 }
 export type MapData = {

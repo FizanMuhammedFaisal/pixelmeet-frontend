@@ -3,6 +3,8 @@ import type { ToolHandler } from '../../types/types'
 import { Editor } from './Editor'
 import { TILE_SIZE, WORLD_WIDTH } from '../../types/config'
 import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
+import { FlootFillDFS } from '../../utils/floodfill'
+import { buildGlobalGIDLUT, rebuildLayerFromData } from '../../utils/deserializeJson'
 
 //we need to split the selected tiles into 32 by 32 pixel tiles
 let ghostPromise: TextureSource | null = null
@@ -30,8 +32,6 @@ export const makeFillTool = (
          const ImageDetails = useMapEditorStore.getState().tilesets.find((curr) => {
             return curr.name === data.name
          })
-         console.log(useMapEditorStore.getState())
-         console.log(ImageDetails)
          if (!ImageDetails) return
          for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
@@ -72,8 +72,6 @@ export const makeFillTool = (
                   (j + data.startX) +
                   ImageDetails.firstgid
 
-               console.log(tilespritex, tilespritey)
-               console.log(sprite.uid)
                drawTileset(tilespritex, tilespritey, gid)
             }
          }
@@ -318,4 +316,31 @@ export const makeHandTool = (editor: Editor): ToolHandler => ({
 })
 
 export const makeLockTool = (editor: Editor): ToolHandler => ({})
-export const makeBucketFillTool = (editor: Editor): ToolHandler => ({})
+export const makeBucketFillTool = (editor: Editor): ToolHandler => ({
+   onDown: (pos) => {
+      const world = editor.viewport.toWorld(pos)
+      const snapped = editor.snapToGrid(world.x, world.y)
+      const selectedLayer = editor.selectedLayer
+      if (selectedLayer === null) return
+      const data = editor.selectedTiles
+      if (!data) return
+      const ImageDetails = useMapEditorStore.getState().tilesets.find((curr) => {
+         return curr.name === data.name
+      })
+      if (!ImageDetails) return
+      const container = editor.layerContainers.get(selectedLayer.id)
+      if (!container) return
+
+      const array = selectedLayer.data
+
+      const targetgid = data.startY * ImageDetails.columns + data.startX + ImageDetails.firstgid
+      console.log(targetgid)
+
+      FlootFillDFS(array, { x: snapped.x, y: snapped.y }, targetgid)
+      console.log(selectedLayer.data)
+      const tilesets = useMapEditorStore.getState().tilesets
+      const globalGid = buildGlobalGIDLUT(tilesets)
+      console.log(globalGid)
+      rebuildLayerFromData(container, Array.from(selectedLayer.data), globalGid)
+   },
+})
