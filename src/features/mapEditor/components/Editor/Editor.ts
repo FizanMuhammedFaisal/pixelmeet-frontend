@@ -166,7 +166,7 @@ export class Editor extends App {
       for (let i = 0; i < neworder.length; i++) {
          const layer = this.layerContainers.get(neworder[i])
          if (!layer) continue
-         layer.zIndex = i
+         layer.zIndex = neworder.length - i
       }
    }
    tileSelectionChanged = () => {

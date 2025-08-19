@@ -121,10 +121,11 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                      height: WORLD_HEIGHT,
                   }
 
-                  state.layers.push({
+                  state.layers.unshift({
                      ...newLayer,
                      data: new Uint32Array(WORLD_HEIGHT * WORLD_WIDTH),
                   })
+
                   state.layersOrder.unshift(newLayerId)
                   // state.selectedLayer =state.layers[state.l]
                   emitter.emit('addLayer', { data: newLayer })
@@ -143,7 +144,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                      const layer = state.layers.find((curr) => curr.id === neworder[i])
                      console.log(layer, i)
                      if (!layer) continue
-                     layer.zindex = i
+                     layer.zindex = neworder.length - 1
 
                      newLayers.push(layer)
                   }
