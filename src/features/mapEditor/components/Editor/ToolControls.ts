@@ -14,7 +14,6 @@ export const makeFillTool = (
       const selectedLayerId = editor.selectedLayerId
       if (selectedLayerId === null) return
 
-      console.log(editor.selectedLayer?.locked)
       if (editor.selectedLayer?.locked) return
       const data = editor.selectedTiles
       if (data) {

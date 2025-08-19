@@ -110,10 +110,10 @@ function SideBarLayers() {
                   </div>
                   <div className="flex items-center gap-1">
                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={addLayer}>
-                        <Plus className="h-3 w-3" />
+                        <Plus className="h-4 w-4 " />
                      </Button>
                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                        <MoreHorizontal className="h-3 w-3" />
+                        <MoreHorizontal className="h-4 w-4" />
                      </Button>
                   </div>
                </CardTitle>

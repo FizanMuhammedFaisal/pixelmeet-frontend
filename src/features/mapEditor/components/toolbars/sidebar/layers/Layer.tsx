@@ -84,17 +84,13 @@ function Layer(
          <Button
             variant="ghost"
             size="sm"
-            className="h-5 w-5 p-0"
+            className="h-7 w-7 p-0 "
             onClick={(e) => {
                e.stopPropagation()
                toggleLayerVisibility(layer.id)
             }}
          >
-            {layer.visible ? (
-               <Eye className="h-3 w-3" />
-            ) : (
-               <EyeOff className="h-3 w-3 text-muted-foreground" />
-            )}
+            {layer.visible ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3 " />}
          </Button>
 
          {editingLayerId === layer.id ? (

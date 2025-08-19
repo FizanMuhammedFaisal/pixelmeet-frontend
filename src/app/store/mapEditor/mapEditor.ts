@@ -12,6 +12,7 @@ import type {
    FinalTilesetType,
    Layer,
    MapData,
+   MouseCoordinatesType,
    selectedTiles,
    TileSet,
 } from '@/features/mapEditor/types/types'
@@ -34,6 +35,7 @@ interface useMapEditorStore {
    tilesets: TileSet[]
    selectedLayer: Layer | null
    layersOrder: number[]
+   mouseCoordinates: MouseCoordinatesType
    actions: MapEditorAction
 }
 type MapEditorAction = {
@@ -49,6 +51,7 @@ type MapEditorAction = {
    deleteLayer: (id: number) => void
    addTilesets: (name: string, width: number, height: number, coloums: number) => void
    drawTileset: (xposition: number, yposition: number, gid: number) => void
+   setCoordinates: (coord: MouseCoordinatesType) => void
 
    // main funtions
 
@@ -66,6 +69,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
          layers: [],
          tilesets: [],
          layersOrder: [],
+         mouseCoordinates: { x: 0, y: 0 },
 
          actions: {
             setEditor: (editor) => {
@@ -77,6 +81,11 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                set(() => ({
                   selectedTool,
                }))
+            },
+            setCoordinates: (coor) => {
+               set((state) => {
+                  state.mouseCoordinates = coor
+               })
             },
             renameLayer: (id, name) => {
                console.log(id, name)
@@ -264,3 +273,4 @@ export const useSelectedTile = () => useMapEditorStore((state) => state.selected
 export const useSelectedLayer = () => useMapEditorStore((state) => state.selectedLayer)
 export const useLayers = () => useMapEditorStore((state) => state.layers)
 export const useLayerOrder = () => useMapEditorStore((state) => state.layersOrder)
+export const useMouseCoordinates = () => useMapEditorStore((state) => state.mouseCoordinates)

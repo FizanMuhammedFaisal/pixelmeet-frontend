@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 import type {
    addLayerType,
    ControlTools,
+   MouseCoordinatesType,
    selectedTiles,
    ThemeType,
    ToolHandler,
@@ -34,7 +35,7 @@ export class Editor extends App {
    public layerSpriteMap = new Map<number, Array<PIXI.Sprite | undefined>>()
    public isDragging: boolean = false
    public dragStart: { x: number; y: number } | null = null
-
+   private setCoordinates?: (coor: MouseCoordinatesType) => void
    //layers
    //selectedTile -- from which image might need the selected palleter
    //selected Pallette
@@ -50,6 +51,7 @@ export class Editor extends App {
       this.setUpEmitterListners()
       this.setUpZustantListners()
       this.setUpInteractions()
+      this.setUpStaticMethods()
    }
    setUpEmitterListners = () => {
       emitter.on('switchTheme', this.handleThemeSwitch)
@@ -91,6 +93,9 @@ export class Editor extends App {
          })
          this.viewport.addChild(this.gridLines)
       }
+   }
+   setUpStaticMethods = () => {
+      this.setCoordinates = useMapEditorStore.getState().actions.setCoordinates
    }
    setUpGridLines = async () => {
       console.log(this.viewport.worldHeight)
@@ -168,6 +173,10 @@ export class Editor extends App {
          layer.zIndex = neworder.length - i
       }
    }
+   updateCoordinates = (e: PIXI.FederatedPointerEvent) => {
+      const w = this.viewport.toWorld(e)
+      this.setCoordinates!({ x: w.x, y: w.y })
+   }
 
    tileSelectionChanged = () => {
       this.ghostSprite?.destroy()
@@ -191,7 +200,10 @@ export class Editor extends App {
       this.viewport
 
          .on('pointerdown', (e) => toolMap[this.selectedTool].onDown?.(e.global, e))
-         .on('pointermove', (e) => toolMap[this.selectedTool].onMove?.(e.global, e))
+         .on('pointermove', (e) => {
+            toolMap[this.selectedTool].onMove?.(e.global, e)
+            this.updateCoordinates(e)
+         })
          .on('pointerup', (e) => toolMap[this.selectedTool].onUp?.(e.global, e))
 
       this.changeTool('select')

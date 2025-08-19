@@ -35,7 +35,10 @@ export type ToolHandler = {
    onMove?: (pos: Point, e: FederatedPointerEvent) => void
    onUp?: (pos: Point, e: FederatedPointerEvent) => void
 }
-
+export type MouseCoordinatesType = {
+   x: number
+   y: number
+}
 export type TilesetType = {
    id: string
    image: string
