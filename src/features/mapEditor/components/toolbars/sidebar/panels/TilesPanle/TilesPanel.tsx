@@ -91,7 +91,13 @@ function TilesPanel() {
 
    const hanldeTilsetAdded = (data: TilesetType) => {
       updateTilesets([data])
-      addTilesets(data.name, data.width, data.height, Math.floor(data.width / TILE_SIZE))
+      addTilesets(
+         data.name,
+         data.width,
+         data.height,
+         Math.floor(data.width / TILE_SIZE),
+         data.image,
+      )
       if (!activeTileset) {
          setActiveTileset(data)
       }

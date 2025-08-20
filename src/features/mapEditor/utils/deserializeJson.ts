@@ -18,10 +18,9 @@ export function rebuildLayerFromData(
    array: number[],
    textures: (PIXI.Texture | undefined)[],
 ) {
-   console.log(textures)
    container.removeChildren()
-   for (let x = 0; x < WORLD_HEIGHT; x++) {
-      for (let y = 0; y < WORLD_WIDTH; y++) {
+   for (let x = 0; x < WORLD_WIDTH; x++) {
+      for (let y = 0; y < WORLD_HEIGHT; y++) {
          const i = WORLD_WIDTH * y + x
          const texture = textures[array[i]]
          if (!texture) continue
@@ -43,7 +42,8 @@ export function rebuildLayerFromData(
 export function buildGlobalGIDLUT(tilesets: TileSet[]): (PIXI.Texture | undefined)[] {
    const gidTextureLUT: (PIXI.Texture | undefined)[] = []
    for (const tileset of tilesets) {
-      const source = PIXI.Assets.get(constructImageUrl(tileset.image))
+      //need to construct image and make it dynamic
+      const source = PIXI.Assets.get(tileset.image)
       const total =
          Math.floor(tileset.imageheight / TILE_SIZE) * Math.floor(tileset.imagewidth / TILE_SIZE)
       const cols = tileset.columns

@@ -12,34 +12,53 @@ import { WORLD_HEIGHT, WORLD_WIDTH } from '../types/config'
 const W = WORLD_WIDTH
 const H = WORLD_HEIGHT
 const SIZE = W * H
-export function FlootFillDFS(data: Uint32Array, clicked: { x: number; y: number }, target: number) {
-   console.log(data, clicked, target)
+export function FloodFillDFS(data: Uint32Array, clicked: { x: number; y: number }, target: number) {
    const index = getIndex(clicked.x, clicked.y)
-   if (data[index] === target) return
    const current = data[index]
-   const stack = new Uint32Array(W * H)
+   if (current === target) return
+   console.log('NEW code running')
+   console.assert(
+      clicked.x >= 0 && clicked.x < WORLD_WIDTH && clicked.y >= 0 && clicked.y < WORLD_HEIGHT,
+      'click out of bounds',
+      clicked,
+   )
+   const visited = new Uint8Array(SIZE)
+   const stack = new Uint32Array(SIZE)
    let top = 0
-   console.log(index)
+
    stack[top++] = index
+   visited[index] = 1
 
    while (top > 0) {
       const id = stack[--top]
       console.log(id)
-      if (data[id] === current) {
-         data[id] = target
-         if (id % W < W - 1 && data[id + 1] === current) {
-            stack[top++] = id + 1
-         }
+      if (data[id] !== current) continue
+      data[id] = target
 
-         if (id % W > 0 && data[id - 1] === current) {
-            stack[top++] = id - 1
-         }
-         if (id >= W && data[id - W] === current) {
-            stack[top++] = id - W
-         }
-         if (id < SIZE - W && data[id + W] === current) {
-            stack[top++] = id + W
-         }
+      const x = id % W
+
+      const r = id + 1
+      if (x < W - 1 && data[r] === current && !visited[r]) {
+         visited[r] = 1
+         stack[top++] = r
+      }
+
+      const l = id - 1
+      if (x > 0 && data[l] === current && !visited[l]) {
+         visited[l] = 1
+         stack[top++] = l
+      }
+
+      const u = id - W
+      if (id >= W && data[u] === current && !visited[u]) {
+         visited[u] = 1
+         stack[top++] = u
+      }
+
+      const d = id + W
+      if (id < SIZE - W && data[d] === current && !visited[d]) {
+         visited[d] = 1
+         stack[top++] = d
       }
    }
 }

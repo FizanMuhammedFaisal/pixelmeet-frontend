@@ -49,7 +49,13 @@ type MapEditorAction = {
    toggleLayerLock: (id: number) => void
    toggleLayerVisibility: (id: number) => void
    deleteLayer: (id: number) => void
-   addTilesets: (name: string, width: number, height: number, coloums: number) => void
+   addTilesets: (
+      name: string,
+      width: number,
+      height: number,
+      coloums: number,
+      image: string,
+   ) => void
    drawTileset: (xposition: number, yposition: number, gid: number) => void
    setCoordinates: (coord: MouseCoordinatesType) => void
 
@@ -193,7 +199,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                })
                emitter.emit('deleteLayer', { id })
             },
-            addTilesets: (name, width, height, coloums) => {
+            addTilesets: (name, width, height, coloums, image) => {
                console.log(name, width, height, coloums)
                set((state) => {
                   const lastMap = state.tilesets[state.tilesets.length - 1]
@@ -208,6 +214,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                      imagewidth: width,
                      name: name,
                      columns: coloums,
+                     image: image,
                   })
                })
             },
