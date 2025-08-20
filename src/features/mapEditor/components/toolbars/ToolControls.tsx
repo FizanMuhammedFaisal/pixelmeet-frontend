@@ -30,6 +30,7 @@ function ToolControls() {
    const { setTool } = useEditorActions()
    const [hoveredTool, setHoveredTool] = useState<string | null>(null)
    const hoverTimeRef = useRef<NodeJS.Timeout | null>(null)
+
    const handleToolHover = (id: string) => {
       if (hoverTimeRef.current) {
          clearTimeout(hoverTimeRef.current)
@@ -44,6 +45,7 @@ function ToolControls() {
    const hanldeToolChange = (tool: ControlTools) => {
       setTool(tool)
    }
+
    return (
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
          <motion.div
@@ -76,7 +78,7 @@ function ToolControls() {
                   <div key={tool.id} className="relative">
                      <motion.button
                         onHoverStart={() => handleToolHover(tool.id)}
-                        onClick={(e) => hanldeToolChange(tool.id as ControlTools, e)}
+                        onClick={() => hanldeToolChange(tool.id as ControlTools)}
                         className={`
                   relative flex items-center justify-center w-9 h-9
                   transition-colors duration-200 ease-out

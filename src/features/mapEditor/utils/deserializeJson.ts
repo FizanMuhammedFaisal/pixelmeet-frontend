@@ -17,6 +17,7 @@ export function rebuildLayerFromData(
    container: PIXI.Container,
    array: number[],
    textures: (PIXI.Texture | undefined)[],
+   spriteLayer: (PIXI.Sprite | undefined)[],
 ) {
    container.removeChildren()
    for (let x = 0; x < WORLD_WIDTH; x++) {
@@ -28,6 +29,13 @@ export function rebuildLayerFromData(
          sprite.position.x = x * TILE_SIZE
          sprite.position.y = y * TILE_SIZE
          sprite.zIndex = 1000
+
+         const old = spriteLayer[i]
+         if (old) {
+            container.removeChild(old)
+            old.destroy()
+         }
+         spriteLayer[i] = sprite
          container.addChild(sprite)
       }
    }

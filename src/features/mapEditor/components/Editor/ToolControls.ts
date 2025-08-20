@@ -3,8 +3,8 @@ import type { ToolHandler } from '../../types/types'
 import { Editor } from './Editor'
 import { TILE_SIZE, WORLD_WIDTH } from '../../types/config'
 import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
-import { FloodFillDFS } from '../../utils/floodfill'
 import { buildGlobalGIDLUT, rebuildLayerFromData } from '../../utils/deserializeJson'
+import { FloodFillDFS } from '../../utils/floodFill'
 
 //we need to split the selected tiles into 32 by 32 pixel tiles
 let ghostPromise: TextureSource | null = null
@@ -335,6 +335,8 @@ export const makeBucketFillTool = (editor: Editor): ToolHandler => ({
       if (!ImageDetails) return
       const container = editor.layerContainers.get(selectedLayer.id)
       if (!container) return
+      const spriteLayer = editor.layerSpriteMap.get(selectedLayer.id)
+      if (!spriteLayer) return
 
       const array = selectedLayer.data
 
@@ -349,6 +351,6 @@ export const makeBucketFillTool = (editor: Editor): ToolHandler => ({
       const tilesets = useMapEditorStore.getState().tilesets
       const globalGid = buildGlobalGIDLUT(tilesets)
       console.log(globalGid)
-      rebuildLayerFromData(container, Array.from(selectedLayer.data), globalGid)
+      rebuildLayerFromData(container, Array.from(selectedLayer.data), globalGid, spriteLayer)
    },
 })
