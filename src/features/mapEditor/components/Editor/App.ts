@@ -29,9 +29,9 @@ export class App {
             .trim() ?? '#573022'
       this.accentColor = this.themeMode == 'dark' ? this.resolvedDark : this.resolvedLight
       await this.app.init({
+         antialias: false,
          resizeTo: container,
          backgroundColor: this.backgroundColor,
-
          roundPixels: true,
       })
       this.isInitialized = true

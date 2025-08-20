@@ -148,8 +148,10 @@ export class Editor extends App {
       newLayer.height = data.height
       newLayer.visible = data.visible
       newLayer.zIndex = data.zindex
+
       this.layersContainer.addChild(newLayer)
       this.layerContainers.set(data.id, newLayer)
+
       //make the sprite layer tracker
       this.layerSpriteMap.set(data.id, new Array(WORLD_WIDTH * WORLD_HEIGHT))
    }
