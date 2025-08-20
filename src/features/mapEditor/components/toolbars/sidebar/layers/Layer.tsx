@@ -35,7 +35,6 @@ type prop = {
    setEditingName: (name: string) => void
    handleSubmitEdit: (event: FocusEvent<HTMLInputElement>) => void
    handleKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void
-   moveLayer: (id: number, pox: number) => void
    toggleLayerLock: (id: number) => void
    deleteLayer: (id: number) => void
 }
@@ -53,7 +52,7 @@ function Layer(
       setEditingName,
       handleSubmitEdit,
       handleKeyDown,
-      moveLayer,
+
       toggleLayerLock,
       deleteLayer,
    }: prop,
@@ -85,17 +84,13 @@ function Layer(
          <Button
             variant="ghost"
             size="sm"
-            className="h-5 w-5 p-0"
+            className="h-7 w-7 p-0 "
             onClick={(e) => {
                e.stopPropagation()
                toggleLayerVisibility(layer.id)
             }}
          >
-            {layer.visible ? (
-               <Eye className="h-3 w-3" />
-            ) : (
-               <EyeOff className="h-3 w-3 text-muted-foreground" />
-            )}
+            {layer.visible ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3 " />}
          </Button>
 
          {editingLayerId === layer.id ? (
@@ -117,10 +112,6 @@ function Layer(
                variant="ghost"
                size="sm"
                className="h-6 w-6 p-0 "
-               onClick={(e) => {
-                  e.stopPropagation()
-                  moveLayer(layer.id, 'down')
-               }}
                disabled={total <= 1}
                {...listeners}
             >

@@ -1,22 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useMouseCoordinates } from '@/app/store/mapEditor/mapEditor'
 
 function CoordinatesDisplay() {
-   const [coordinates, setCoordinates] = useState({ x: 0, y: 0 })
+   const coordinates = useMouseCoordinates()
 
-   useEffect(() => {
-      const handleMouseMove = (event: MouseEvent) => {
-         setCoordinates({ x: event.clientX, y: event.clientY })
-      }
-
-      window.addEventListener('mousemove', handleMouseMove)
-      return () => window.removeEventListener('mousemove', handleMouseMove)
-   }, [])
-   //need to updat to world coordinates
    return (
       <div className="fixed bottom-4 left-4 bg-card/20 backdrop-blur-md border rounded px-2 py-1 z-10 text-xs font-mono shadow-sm">
          <div className="flex gap-3">
-            <span>X: {coordinates.x}</span>
-            <span>Y: {coordinates.y}</span>
+            <span>X: {coordinates.x.toFixed(0)}</span>
+            <span>Y: {coordinates.y.toFixed(0)}</span>
          </div>
       </div>
    )

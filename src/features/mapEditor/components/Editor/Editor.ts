@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 import type {
    addLayerType,
    ControlTools,
+   MouseCoordinatesType,
    selectedTiles,
    ThemeType,
    ToolHandler,
@@ -34,7 +35,7 @@ export class Editor extends App {
    public layerSpriteMap = new Map<number, Array<PIXI.Sprite | undefined>>()
    public isDragging: boolean = false
    public dragStart: { x: number; y: number } | null = null
-
+   private setCoordinates?: (coor: MouseCoordinatesType) => void
    //layers
    //selectedTile -- from which image might need the selected palleter
    //selected Pallette
@@ -50,12 +51,12 @@ export class Editor extends App {
       this.setUpEmitterListners()
       this.setUpZustantListners()
       this.setUpInteractions()
+      this.setUpStaticMethods()
    }
    setUpEmitterListners = () => {
       emitter.on('switchTheme', this.handleThemeSwitch)
       emitter.on('addLayer', this.handleAddLayer)
       emitter.on('toggleLayerVisibility', this.handleLayerVisibilty)
-
       emitter.on('deleteLayer', this.handleDeleteLayer)
       emitter.on('moveLayer', this.handleMoveLayer)
       emitter.on('*', () => {
@@ -92,6 +93,9 @@ export class Editor extends App {
          })
          this.viewport.addChild(this.gridLines)
       }
+   }
+   setUpStaticMethods = () => {
+      this.setCoordinates = useMapEditorStore.getState().actions.setCoordinates
    }
    setUpGridLines = async () => {
       console.log(this.viewport.worldHeight)
@@ -144,8 +148,10 @@ export class Editor extends App {
       newLayer.height = data.height
       newLayer.visible = data.visible
       newLayer.zIndex = data.zindex
+
       this.layersContainer.addChild(newLayer)
       this.layerContainers.set(data.id, newLayer)
+
       //make the sprite layer tracker
       this.layerSpriteMap.set(data.id, new Array(WORLD_WIDTH * WORLD_HEIGHT))
    }
@@ -166,9 +172,14 @@ export class Editor extends App {
       for (let i = 0; i < neworder.length; i++) {
          const layer = this.layerContainers.get(neworder[i])
          if (!layer) continue
-         layer.zIndex = i
+         layer.zIndex = neworder.length - i
       }
    }
+   updateCoordinates = (e: PIXI.FederatedPointerEvent) => {
+      const w = this.viewport.toWorld(e)
+      this.setCoordinates!({ x: w.x, y: w.y })
+   }
+
    tileSelectionChanged = () => {
       this.ghostSprite?.destroy()
       this.ghostSprite = null
@@ -180,14 +191,21 @@ export class Editor extends App {
       return useMapEditorStore.getState().selectedTile
    }
    get selectedLayerId() {
-      return useMapEditorStore.getState().selectedLayer?.id
+      return useMapEditorStore.getState().selectedLayer?.id ?? null
+   }
+   get selectedLayer() {
+      console.log(useMapEditorStore.getState().selectedLayer)
+      return useMapEditorStore.getState().selectedLayer
    }
    setUpInteractions = () => {
       const toolMap = this.buildToolMap()
       this.viewport
 
          .on('pointerdown', (e) => toolMap[this.selectedTool].onDown?.(e.global, e))
-         .on('pointermove', (e) => toolMap[this.selectedTool].onMove?.(e.global, e))
+         .on('pointermove', (e) => {
+            toolMap[this.selectedTool].onMove?.(e.global, e)
+            this.updateCoordinates(e)
+         })
          .on('pointerup', (e) => toolMap[this.selectedTool].onUp?.(e.global, e))
 
       this.changeTool('select')

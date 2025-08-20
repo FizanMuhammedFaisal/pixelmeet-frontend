@@ -3,6 +3,8 @@ import type { ToolHandler } from '../../types/types'
 import { Editor } from './Editor'
 import { TILE_SIZE, WORLD_WIDTH } from '../../types/config'
 import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
+import { FloodFillDFS } from '../../utils/floodfill'
+import { buildGlobalGIDLUT, rebuildLayerFromData } from '../../utils/deserializeJson'
 
 //we need to split the selected tiles into 32 by 32 pixel tiles
 let ghostPromise: TextureSource | null = null
@@ -12,11 +14,11 @@ export const makeFillTool = (
 ): ToolHandler => ({
    onDown: async (pos, e) => {
       const selectedLayerId = editor.selectedLayerId
-      console.log(selectedLayerId)
       if (selectedLayerId === null) return
+
+      if (editor.selectedLayer?.locked) return
       const data = editor.selectedTiles
       if (data) {
-         console.log(data)
          const width = data.endX - data.startX
          const height = data.endY - data.startY
 
@@ -30,8 +32,6 @@ export const makeFillTool = (
          const ImageDetails = useMapEditorStore.getState().tilesets.find((curr) => {
             return curr.name === data.name
          })
-         console.log(useMapEditorStore.getState())
-         console.log(ImageDetails)
          if (!ImageDetails) return
          for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
@@ -72,8 +72,6 @@ export const makeFillTool = (
                   (j + data.startX) +
                   ImageDetails.firstgid
 
-               console.log(tilespritex, tilespritey)
-               console.log(sprite.uid)
                drawTileset(tilespritex, tilespritey, gid)
             }
          }
@@ -87,6 +85,7 @@ export const makeFillTool = (
       if (!data) return
       const selectedLayerId = editor.selectedLayerId
       if (selectedLayerId === null) return
+      if (editor.selectedLayer?.locked) return
       const worldPos = editor.viewport.toWorld(pos)
       const point = editor.snapToGrid(worldPos.x, worldPos.y)
 
@@ -316,5 +315,40 @@ export const makeHandTool = (editor: Editor): ToolHandler => ({
    },
 })
 
-export const makeLockTool = (editor: Editor): ToolHandler => ({})
-export const makeBucketFillTool = (editor: Editor): ToolHandler => ({})
+export const makeLockTool = (editor: Editor): ToolHandler => ({
+   onDown: () => {
+      console.log(editor.layerContainers)
+      console.log(useMapEditorStore.getState().layers)
+   },
+})
+export const makeBucketFillTool = (editor: Editor): ToolHandler => ({
+   onDown: (pos) => {
+      const world = editor.viewport.toWorld(pos)
+      const snapped = editor.snapToGrid(world.x, world.y)
+      const selectedLayer = editor.selectedLayer
+      if (selectedLayer === null) return
+      const data = editor.selectedTiles
+      if (!data) return
+      const ImageDetails = useMapEditorStore.getState().tilesets.find((curr) => {
+         return curr.name === data.name
+      })
+      if (!ImageDetails) return
+      const container = editor.layerContainers.get(selectedLayer.id)
+      if (!container) return
+
+      const array = selectedLayer.data
+
+      const targetgid = data.startY * ImageDetails.columns + data.startX + ImageDetails.firstgid
+      console.log(targetgid)
+      console.log('before flood:', selectedLayer.data)
+      const tilesx = Math.floor(snapped.x / TILE_SIZE)
+      const tilesy = Math.floor(snapped.y / TILE_SIZE)
+      console.log(tilesx, tilesy)
+      FloodFillDFS(array, { x: tilesx, y: tilesy }, targetgid)
+      console.log(selectedLayer.data)
+      const tilesets = useMapEditorStore.getState().tilesets
+      const globalGid = buildGlobalGIDLUT(tilesets)
+      console.log(globalGid)
+      rebuildLayerFromData(container, Array.from(selectedLayer.data), globalGid)
+   },
+})
