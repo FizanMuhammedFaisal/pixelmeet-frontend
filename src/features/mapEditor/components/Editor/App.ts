@@ -11,11 +11,13 @@ export class App {
    protected resolvedLight: string = '#573022'
    protected themeMode: ThemeType = 'dark'
    public viewport!: Viewport
+
    public async init(theme: ThemeType) {
       const container = document.getElementById('map-editor')
       if (!container) {
          throw new Error('Map editor now found')
       }
+
       this.themeMode = theme
       this.backgroundColor = this.themeMode == 'dark' ? '#000000' : '#ffffff'
       this.resolvedDark =
