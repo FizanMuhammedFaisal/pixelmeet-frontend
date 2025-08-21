@@ -12,6 +12,7 @@ import gsap from 'gsap'
 import { PixiPlugin } from 'gsap/PixiPlugin'
 import ToolControls from './toolbars/ToolControls'
 import { Toaster } from 'sonner'
+import CoordinatesDisplay from './toolbars/CoordinatesDisplay'
 gsap.registerPlugin(PixiPlugin)
 
 PixiPlugin.registerPIXI(PIXI)
@@ -30,6 +31,7 @@ export default function Editor() {
          <div className="flex justify-between w-full">
             <PixiEditor className="absolute inset-0" />
             <SideBar className="absolute top-0 right-0 h-full shadow-lg" />
+            <CoordinatesDisplay />
          </div>
          <ToolControls />
       </div>

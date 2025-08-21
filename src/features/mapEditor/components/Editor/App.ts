@@ -6,20 +6,34 @@ export class App {
    protected app: Application = new Application()
    protected isInitialized: boolean = false
    protected backgroundColor: string = '#000000'
+   public accentColor: string = '#E5BEB0'
+   protected resolvedDark: string = '#E5BEB0'
+   protected resolvedLight: string = '#573022'
    protected themeMode: ThemeType = 'dark'
    public viewport!: Viewport
+
    public async init(theme: ThemeType) {
       const container = document.getElementById('map-editor')
       if (!container) {
          throw new Error('Map editor now found')
       }
+
       this.themeMode = theme
       this.backgroundColor = this.themeMode == 'dark' ? '#000000' : '#ffffff'
+      this.resolvedDark =
+         getComputedStyle(document.documentElement)
+            .getPropertyValue('--editor-select-dark')
+            .trim() ?? '#E5BEB0'
 
+      this.resolvedLight =
+         getComputedStyle(document.documentElement)
+            .getPropertyValue('--editor-select-light')
+            .trim() ?? '#573022'
+      this.accentColor = this.themeMode == 'dark' ? this.resolvedDark : this.resolvedLight
       await this.app.init({
+         antialias: false,
          resizeTo: container,
          backgroundColor: this.backgroundColor,
-
          roundPixels: true,
       })
       this.isInitialized = true

@@ -2,13 +2,21 @@ import { Assets, Graphics, Rectangle, Sprite, Texture, TextureSource } from 'pix
 import type { ToolHandler } from '../../types/types'
 import { Editor } from './Editor'
 import { TILE_SIZE, WORLD_WIDTH } from '../../types/config'
+import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
+import { buildGlobalGIDLUT, rebuildLayerFromData } from '../../utils/deserializeJson'
+import { FloodFillDFS } from '../../utils/floodFill'
 
 //we need to split the selected tiles into 32 by 32 pixel tiles
 let ghostPromise: TextureSource | null = null
-export const makeFillTool = (editor: Editor): ToolHandler => ({
+export const makeFillTool = (
+   editor: Editor,
+   drawTileset: (x: number, y: number, gid: number) => void,
+): ToolHandler => ({
    onDown: async (pos, e) => {
       const selectedLayerId = editor.selectedLayerId
       if (selectedLayerId === null) return
+
+      if (editor.selectedLayer?.locked) return
       const data = editor.selectedTiles
       if (data) {
          const width = data.endX - data.startX
@@ -17,11 +25,14 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
          // world position
          const worldPos = editor.viewport.toWorld(pos)
          const point = editor.snapToGrid(worldPos.x, worldPos.y)
-         console.log(point + 'point')
+
          const container = editor.layerContainers.get(selectedLayerId)
          const spriteLayer = editor.layerSpriteMap.get(selectedLayerId)
          if (container === undefined || spriteLayer === undefined) return
-
+         const ImageDetails = useMapEditorStore.getState().tilesets.find((curr) => {
+            return curr.name === data.name
+         })
+         if (!ImageDetails) return
          for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
                //iterating through each tile
@@ -37,16 +48,18 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
                })
 
                const sprite = new Sprite({ texture: tileTex })
+
                const spritex = point.x + j * TILE_SIZE
                const spritey = point.y + i * TILE_SIZE
+
+               const tilespritex = Math.floor(point.x / TILE_SIZE) + j
+               const tilespritey = Math.floor(point.y / TILE_SIZE) + i
                sprite.position.x = spritex
                sprite.position.y = spritey
                sprite.zIndex = 1000
 
                // adding
-
-               const index = spritey * WORLD_WIDTH + spritex
-               console.log(index)
+               const index = tilespritey * WORLD_WIDTH + tilespritex
                const old = spriteLayer[index]
                if (old) {
                   container.removeChild(old)
@@ -54,22 +67,35 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
                }
                spriteLayer[index] = sprite
                container.addChild(sprite)
+               const gid =
+                  ImageDetails.columns * (i + data.startY) +
+                  (j + data.startX) +
+                  ImageDetails.firstgid
+
+               drawTileset(tilespritex, tilespritey, gid)
             }
          }
          editor.isDragging = true
          editor.dragStart = { x: point.x, y: point.y }
       }
+      console.log(useMapEditorStore.getState().layers)
    },
    onMove: async (pos) => {
       const data = editor.selectedTiles
       if (!data) return
       const selectedLayerId = editor.selectedLayerId
       if (selectedLayerId === null) return
+      if (editor.selectedLayer?.locked) return
       const worldPos = editor.viewport.toWorld(pos)
       const point = editor.snapToGrid(worldPos.x, worldPos.y)
 
       if (editor.isDragging) {
-         editor.ghostSprite = null
+         if (editor.ghostSprite) {
+            editor.worldContainer.removeChild(editor.ghostSprite)
+            editor.ghostSprite.destroy()
+            editor.ghostSprite = null
+         }
+
          const width = data.endX - data.startX
          const height = data.endY - data.startY
 
@@ -78,9 +104,14 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
          const point = editor.snapToGrid(worldPos.x, worldPos.y)
 
          const container = editor.layerContainers.get(selectedLayerId)
+         console.log(selectedLayerId)
+         console.log(container)
          const spriteLayer = editor.layerSpriteMap.get(selectedLayerId)
          if (container === undefined || spriteLayer === undefined) return
-
+         const ImageDetails = useMapEditorStore.getState().tilesets.find((curr) => {
+            return curr.name === data.name
+         })
+         if (!ImageDetails) return
          for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
                //iterating through each tile
@@ -98,13 +129,15 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
                const sprite = new Sprite({ texture: tileTex })
                const spritex = point.x + j * TILE_SIZE
                const spritey = point.y + i * TILE_SIZE
+               const tilespritex = Math.floor(point.x / TILE_SIZE) + j
+               const tilespritey = Math.floor(point.y / TILE_SIZE) + i
                sprite.position.x = spritex
                sprite.position.y = spritey
                sprite.zIndex = 1000
 
                // adding
 
-               const index = spritey * WORLD_WIDTH + spritex
+               const index = tilespritey * WORLD_WIDTH + tilespritex
                const old = spriteLayer[index]
                if (old) {
                   container.removeChild(old)
@@ -112,6 +145,11 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
                }
                spriteLayer[index] = sprite
                container.addChild(sprite)
+               const gid =
+                  ImageDetails.columns * (i + data.startY) +
+                  (j + data.startX) +
+                  ImageDetails.firstgid
+               drawTileset(tilespritex, tilespritey, gid)
             }
          }
       } else {
@@ -133,9 +171,8 @@ export const makeFillTool = (editor: Editor): ToolHandler => ({
                editor.ghostSprite = new Sprite({ texture: tileTex })
                editor.ghostSprite.zIndex = 1000
                editor.ghostSprite.alpha = 0.8
-
+               console.log('adding ghost to world contaer')
                editor.worldContainer.addChild(editor.ghostSprite)
-               console.log('makde a. ghost')
             } catch (error) {
                console.log('failed to make a sprite', error)
             } finally {
@@ -168,22 +205,80 @@ export const makeSelectTool = (editor: Editor): ToolHandler => ({
 
       // make a reactagle with theme colors as boarder nad fill it, store the x,y of top left point on editor.dragstart
       //make is draggind true
+      const worldPos = editor.viewport.toWorld(pos)
+      editor.dragStart = { x: worldPos.x, y: worldPos.y }
 
-      // const obj = new Graphics().rect(pos.x, pos.y, 2, 2).fill('red')
-      // editor.ghostSprite = obj
+      editor.selectionGraphic = new Graphics()
+         .rect(worldPos.x, worldPos.y, 0, 0)
+         .fill({ color: editor.accentColor, alpha: 0.9 })
+         .stroke({ color: editor.accentColor, width: 1 })
+
+      editor.worldContainer.addChild(editor.selectionGraphic)
+      console.log(editor.selectionGraphic)
    },
-   onMove: () => {
+   onMove: (pos) => {
       //upda teh x,y and updaate teh rectagles
       //
+      if (!editor.selectionGraphic || !editor.dragStart) return
+      const worldPos = editor.viewport.toWorld(pos)
+      const sx = editor.dragStart.x
+      const sy = editor.dragStart.y
+      const startx = Math.min(worldPos.x, sx)
+      const starty = Math.min(worldPos.y, sy)
+      const width = Math.max(worldPos.x, sx)
+      const height = Math.max(worldPos.y, sy)
+
+      const w = width - startx
+      const h = height - starty
+
+      editor.selectionGraphic
+         .clear()
+         .rect(startx, starty, w, h)
+         .fill({ color: editor.accentColor, alpha: 0.2 })
+         .stroke({ color: editor.accentColor, width: 1 })
    },
    onUp: () => {
       editor.viewport.cursor = 'auto'
       //make is draggind false and update the editor.dragstart to null
-      // editor.ghostSprite?.destroy()
+      editor.selectionGraphic?.destroy()
+      editor.selectionGraphic = null
    },
 })
-export const makeEraserTool = (editor: Editor): ToolHandler => ({
+export const makeEraserTool = (
+   editor: Editor,
+   drawTileset: (x: number, y: number, gid: number) => void,
+): ToolHandler => ({
    onDown: (pos) => {
+      editor.isDragging = true
+      const worldpos = editor.viewport.toWorld(pos)
+
+      if (editor.selectedLayerId === null) return
+      const spritelayer = editor.layerSpriteMap.get(editor.selectedLayerId)
+
+      if (spritelayer === undefined) return
+
+      const snappedCor = editor.snapToGrid(worldpos.x, worldpos.y)
+      const tilespritex = snappedCor.x / TILE_SIZE
+      const tilespritey = snappedCor.y / TILE_SIZE
+      const index = tilespritey * WORLD_WIDTH + tilespritex
+      const sprite = spritelayer[index]
+      console.log(tilespritex, tilespritey)
+      if (sprite) {
+         const container = editor.layerContainers.get(editor.selectedLayerId)
+         if (container) {
+            console.log(sprite)
+            console.log(container)
+            console.log(sprite.uid)
+            container.removeChild(sprite)
+            sprite.destroy()
+
+            console.log(tilespritex, tilespritey)
+            drawTileset(tilespritex, tilespritey, 0)
+         }
+      }
+   },
+   onMove: (pos) => {
+      if (!editor.isDragging) return
       const worldpos = editor.viewport.toWorld(pos)
 
       if (editor.selectedLayerId === null) return
@@ -191,8 +286,9 @@ export const makeEraserTool = (editor: Editor): ToolHandler => ({
 
       if (spritelayer === undefined) return
       const snappedCor = editor.snapToGrid(worldpos.x, worldpos.y)
-
-      const index = snappedCor.y * WORLD_WIDTH + snappedCor.x
+      const tilespritex = Math.floor(snappedCor.x / TILE_SIZE)
+      const tilespritey = Math.floor(snappedCor.y / TILE_SIZE)
+      const index = tilespritey * WORLD_WIDTH + tilespritex
       const sprite = spritelayer[index]
 
       if (sprite) {
@@ -200,10 +296,16 @@ export const makeEraserTool = (editor: Editor): ToolHandler => ({
          if (container) {
             container.removeChild(sprite)
             sprite.destroy()
+
+            drawTileset(tilespritex, tilespritey, 0)
          }
       }
    },
+   onUp: () => {
+      editor.isDragging = false
+   },
 })
+
 export const makeHandTool = (editor: Editor): ToolHandler => ({
    onDown: () => {
       editor.viewport.cursor = 'grab'
@@ -212,5 +314,43 @@ export const makeHandTool = (editor: Editor): ToolHandler => ({
       editor.viewport.cursor = 'auto'
    },
 })
-export const makeLockTool = (editor: Editor): ToolHandler => ({})
-export const makeBucketFillTool = (editor: Editor): ToolHandler => ({})
+
+export const makeLockTool = (editor: Editor): ToolHandler => ({
+   onDown: () => {
+      console.log(editor.layerContainers)
+      console.log(useMapEditorStore.getState().layers)
+   },
+})
+export const makeBucketFillTool = (editor: Editor): ToolHandler => ({
+   onDown: (pos) => {
+      const world = editor.viewport.toWorld(pos)
+      const snapped = editor.snapToGrid(world.x, world.y)
+      const selectedLayer = editor.selectedLayer
+      if (selectedLayer === null) return
+      const data = editor.selectedTiles
+      if (!data) return
+      const ImageDetails = useMapEditorStore.getState().tilesets.find((curr) => {
+         return curr.name === data.name
+      })
+      if (!ImageDetails) return
+      const container = editor.layerContainers.get(selectedLayer.id)
+      if (!container) return
+      const spriteLayer = editor.layerSpriteMap.get(selectedLayer.id)
+      if (!spriteLayer) return
+
+      const array = selectedLayer.data
+
+      const targetgid = data.startY * ImageDetails.columns + data.startX + ImageDetails.firstgid
+      console.log(targetgid)
+      console.log('before flood:', selectedLayer.data)
+      const tilesx = Math.floor(snapped.x / TILE_SIZE)
+      const tilesy = Math.floor(snapped.y / TILE_SIZE)
+      console.log(tilesx, tilesy)
+      FloodFillDFS(array, { x: tilesx, y: tilesy }, targetgid)
+      console.log(selectedLayer.data)
+      const tilesets = useMapEditorStore.getState().tilesets
+      const globalGid = buildGlobalGIDLUT(tilesets)
+      console.log(globalGid)
+      rebuildLayerFromData(container, Array.from(selectedLayer.data), globalGid, spriteLayer)
+   },
+})

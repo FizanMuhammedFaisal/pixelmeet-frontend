@@ -1,39 +1,67 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import TilesPanel from './TilesPanle/TilesPanel'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
 import ObjectPanel from './ObjectPanel'
 import AudioPanel from './AudioPanel'
-// Tiles      │  │  Objects     │  │   Audio
+import TilesPanel from './TilesPanle/TilesPanel'
 
 function AssetPanel() {
+   const [activeTab, setActiveTab] = useState('tilesets')
+
+   const tabs = [
+      { id: 'tilesets', label: 'Tilesets' },
+      { id: 'objects', label: 'Objects' },
+      { id: 'audio', label: 'Audio' },
+   ]
+
+   const renderActiveContent = () => {
+      switch (activeTab) {
+         case 'tilesets':
+            return <TilesPanel />
+         case 'objects':
+            return <ObjectPanel />
+         case 'audio':
+            return <AudioPanel />
+         default:
+            return <TilesPanel />
+      }
+   }
+
    return (
-      <div className="h-full flex flex-col mt-3">
-         <Tabs defaultValue="tilesets" className="h-full flex m-2 flex-col">
-            <TabsList className="grid w-full bg-gray-300 dark:bg-muted grid-cols-3 pr-3.5">
-               <TabsTrigger value="tilesets" className="text-xs">
-                  Tilesets
-               </TabsTrigger>
-               <TabsTrigger value="objects" className="text-xs">
-                  Objects
-               </TabsTrigger>
-               <TabsTrigger value="audio" className="text-xs">
-                  Audio
-               </TabsTrigger>
-            </TabsList>
+      <div className="h-full flex flex-col bg-muted/30">
+         <div className="relative flex p-2 bg-muted/50 border-b border-border/50">
+            {tabs.map((tab, index) => (
+               <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`
+              relative flex-1 px-1 py-1.5 mx-0.5 text-sm font-medium rounded-md
+              transition-all duration-200 ease-out
+              hover:scale-[1.02] active:scale-[0.98]
+              ${activeTab === tab.id ? 'text-foreground z-10' : 'text-muted-foreground hover:text-foreground'}
+            `}
+               >
+                  {activeTab === tab.id && (
+                     <motion.div
+                        layoutId="activeTab"
+                        className="absolute inset-0 bg-primary/20 border border-border/50 rounded-md shadow-sm"
+                        initial={false}
+                        transition={{
+                           type: 'spring',
+                           stiffness: 500,
+                           damping: 45,
+                        }}
+                     />
+                  )}
+                  <span className="relative z-20">{tab.label}</span>
+               </button>
+            ))}
+         </div>
 
-            <div className="flex-1 min-h-0">
-               <TabsContent value="tilesets" className="h-full px-2 pb-2 mt-0">
-                  <TilesPanel />
-               </TabsContent>
-
-               <TabsContent value="objects" className="h-full px-2 pb-2 mt-0">
-                  <ObjectPanel />
-               </TabsContent>
-
-               <TabsContent value="audio" className="h-full px-2 pb-2 mt-0">
-                  <AudioPanel />
-               </TabsContent>
+         <div className="flex-1 min-h-0 p-3">
+            <div className="h-full bg-background border border-border/50 rounded-lg shadow-md overflow-hidden">
+               <div className="h-full">{renderActiveContent()}</div>
             </div>
-         </Tabs>
+         </div>
       </div>
    )
 }

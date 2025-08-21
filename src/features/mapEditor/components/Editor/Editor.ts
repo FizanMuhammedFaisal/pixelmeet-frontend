@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 import type {
    addLayerType,
    ControlTools,
+   MouseCoordinatesType,
    selectedTiles,
    ThemeType,
    ToolHandler,
@@ -21,6 +22,9 @@ import {
    makeZoomOutTool,
 } from './ToolControls'
 import { TILE_SIZE, WORLD_HEIGHT, WORLD_WIDTH } from '../../types/config'
+
+PIXI.extensions.add(PIXI.CullerPlugin)
+
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
 
 export class Editor extends App {
@@ -28,12 +32,13 @@ export class Editor extends App {
    private canvasLocked: boolean = false
    public worldContainer: PIXI.Container = new PIXI.Container()
    public ghostSprite: PIXI.Container | null = null
+   public selectionGraphic: PIXI.Graphics | null = null
    public layersContainer: PIXI.Container = new PIXI.Container()
    public layerContainers: Map<number, PIXI.Container> = new Map()
    public layerSpriteMap = new Map<number, Array<PIXI.Sprite | undefined>>()
    public isDragging: boolean = false
    public dragStart: { x: number; y: number } | null = null
-
+   private setCoordinates?: (coor: MouseCoordinatesType) => void
    //layers
    //selectedTile -- from which image might need the selected palleter
    //selected Pallette
@@ -49,19 +54,23 @@ export class Editor extends App {
       this.setUpEmitterListners()
       this.setUpZustantListners()
       this.setUpInteractions()
+      this.setUpStaticMethods()
    }
    setUpEmitterListners = () => {
       emitter.on('switchTheme', this.handleThemeSwitch)
       emitter.on('addLayer', this.handleAddLayer)
       emitter.on('toggleLayerVisibility', this.handleLayerVisibilty)
       emitter.on('deleteLayer', this.handleDeleteLayer)
+      emitter.on('moveLayer', this.handleMoveLayer)
       emitter.on('*', () => {
          console.log(this.layerContainers)
          console.log(this.viewport)
       })
    }
+
    handleThemeSwitch = (event: { theme: ThemeType }) => {
       this.backgroundColor = event.theme === 'dark' ? '#000000' : '#ffffff'
+      this.accentColor = event.theme == 'dark' ? this.resolvedDark : this.resolvedLight
       this.themeMode = event.theme
       gsap.to(this.app.renderer.background, {
          duration: 0.5,
@@ -87,6 +96,9 @@ export class Editor extends App {
          })
          this.viewport.addChild(this.gridLines)
       }
+   }
+   setUpStaticMethods = () => {
+      this.setCoordinates = useMapEditorStore.getState().actions.setCoordinates
    }
    setUpGridLines = async () => {
       console.log(this.viewport.worldHeight)
@@ -123,7 +135,7 @@ export class Editor extends App {
       if (tool === 'lock') {
          this.canvasLocked = true
       }
-      if (tool === 'fill') {
+      if (tool === 'fill' || tool === 'eraser' || tool === 'select') {
          this.viewport.plugins.pause('drag')
       }
       if (tool === 'hand') {
@@ -139,8 +151,12 @@ export class Editor extends App {
       newLayer.height = data.height
       newLayer.visible = data.visible
       newLayer.zIndex = data.zindex
+      newLayer.cullable = true
+      newLayer.cullArea = this.viewport.getVisibleBounds()
+      newLayer.cullableChildren = true
       this.layersContainer.addChild(newLayer)
       this.layerContainers.set(data.id, newLayer)
+
       //make the sprite layer tracker
       this.layerSpriteMap.set(data.id, new Array(WORLD_WIDTH * WORLD_HEIGHT))
    }
@@ -157,6 +173,19 @@ export class Editor extends App {
          console.log('container destoryed')
       }
    }
+   handleMoveLayer = ({ neworder }: { neworder: number[] }) => {
+      for (let i = 0; i < neworder.length; i++) {
+         const layer = this.layerContainers.get(neworder[i])
+         if (!layer) continue
+         layer.zIndex = neworder.length - i
+      }
+   }
+   updateCoordinates = (e: PIXI.FederatedPointerEvent) => {
+      const w = this.viewport.toWorld(e)
+      console.log('got the w setting it')
+      this.setCoordinates!({ x: w.x, y: w.y })
+   }
+
    tileSelectionChanged = () => {
       this.ghostSprite?.destroy()
       this.ghostSprite = null
@@ -168,15 +197,25 @@ export class Editor extends App {
       return useMapEditorStore.getState().selectedTile
    }
    get selectedLayerId() {
-      return useMapEditorStore.getState().selectedLayerId
+      return useMapEditorStore.getState().selectedLayer?.id ?? null
+   }
+   get selectedLayer() {
+      console.log(useMapEditorStore.getState().selectedLayer)
+      return useMapEditorStore.getState().selectedLayer
    }
    setUpInteractions = () => {
       const toolMap = this.buildToolMap()
       this.viewport
 
          .on('pointerdown', (e) => toolMap[this.selectedTool].onDown?.(e.global, e))
-         .on('pointermove', (e) => toolMap[this.selectedTool].onMove?.(e.global, e))
+         .on('pointermove', (e) => {
+            toolMap[this.selectedTool].onMove?.(e.global, e)
+            console.log('the pointer is moving')
+            this.updateCoordinates(e)
+         })
          .on('pointerup', (e) => toolMap[this.selectedTool].onUp?.(e.global, e))
+
+      this.changeTool('select')
    }
    loadAssetsNeeded = async () => {
       await Promise.all([
@@ -194,12 +233,13 @@ export class Editor extends App {
       return new PIXI.Point(snapx, snapy)
    }
    private buildToolMap(): Record<ControlTools, ToolHandler> {
+      const draw = useMapEditorStore.getState().actions.drawTileset
       return {
-         fill: makeFillTool(this),
+         fill: makeFillTool(this, draw),
          zoomin: makeZoomInTool(this),
          zoomout: makeZoomOutTool(this),
          select: makeSelectTool(this),
-         eraser: makeEraserTool(this),
+         eraser: makeEraserTool(this, draw),
          hand: makeHandTool(this),
          lock: makeLockTool(this),
          buckerfill: makeBucketFillTool(this),

@@ -170,7 +170,7 @@ export const ThemeToggleButton = ({
 
       // Call the onClick handler if provided
       onClick?.()
-   }, [onClick, variant, start, url, theme])
+   }, [onClick, variant, start, url, theme, speed])
    const MotionButton = motion.create(Button)
    const MotionSun = motion.create(Sun)
    const MotionMoon = motion.create(Moon)
