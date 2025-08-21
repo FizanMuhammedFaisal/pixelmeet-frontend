@@ -1,2 +1,2 @@
 export * from './tags'
-export * from './upload'
+export * from '../../../../../shared/hooks/upload'

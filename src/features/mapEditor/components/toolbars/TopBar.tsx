@@ -2,7 +2,9 @@ import { ThemeToggle } from '@/shared/layout/Dashboard/ThemeButton'
 import type { ThemeType } from '../../types/types'
 import { Button } from '@/components/ui/button'
 import { Save } from 'lucide-react'
-import { useEditorActions } from '@/app/store/mapEditor/mapEditor'
+import { useEditorActions, useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
+import { useCreateAsset, useGetPresignedURL, useUploadAsset } from '@/shared/hooks/upload'
+import { toast } from 'sonner'
 
 type props = {
    className?: string
@@ -17,8 +19,60 @@ function TopBar({ className, setTheme }: props) {
       }
    }
    const { exportMap } = useEditorActions()
-   const handleSave = () => {
+   const getPresignedMutation = useGetPresignedURL()
+   const uploadMutation = useUploadAsset()
+   const createAssetMutation = useCreateAsset()
+   const handleSave = async () => {
       const map = exportMap()
+
+      const encoder = new TextEncoder()
+      const size = encoder.encode(JSON.stringify(map)).length
+      const name = useMapEditorStore.getState().mapName
+      let urldata: {
+         url: string
+         mimeType: string
+         assetKey: string
+      } | null = null
+      try {
+         const res = await getPresignedMutation.mutateAsync({
+            fileName: name,
+            type: 'tilemapTiledJSON',
+         })
+         urldata = res.data.data
+      } catch (error) {
+         toast.error('Saving Map Failed. Try Again')
+      }
+      if (!urldata) {
+         return toast.error('Saving Map Failed. Try Again')
+      }
+      try {
+         await uploadMutation.mutateAsync({
+            contentType: urldata.mimeType,
+            file: map as unknown as File,
+            url: urldata.url,
+         })
+      } catch (error) {
+         toast.error('Saving Map Failed. Try Again')
+      }
+      try {
+         createAssetMutation.mutate(
+            {
+               size: size,
+               description: 'Map',
+               metadata: { urlKey: urldata.assetKey },
+               name: name,
+               type: 'tilemapTiledJSON',
+            },
+            {
+               onSuccess: () => {
+                  toast.success('Map Saved')
+               },
+            },
+         )
+      } catch (error) {
+         toast.error('Saving Map Failed. Try Again')
+      }
+
       console.log(JSON.stringify(map))
    }
    return (

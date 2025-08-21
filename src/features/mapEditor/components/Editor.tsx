@@ -13,16 +13,21 @@ import { PixiPlugin } from 'gsap/PixiPlugin'
 import ToolControls from './toolbars/ToolControls'
 import { Toaster } from 'sonner'
 import CoordinatesDisplay from './toolbars/CoordinatesDisplay'
+import { useParams } from 'react-router'
 gsap.registerPlugin(PixiPlugin)
 
 PixiPlugin.registerPIXI(PIXI)
 
 export default function Editor() {
+   const { mapId } = useParams()
+
    const handleThemeChange = (theme: ThemeType) => {
       //signal the system
       emitter.emit('switchTheme', { theme })
    }
-
+   //hook to fetch map and pass it to pixi and pixi will recreate it fullly using hte. logic a load logic
+   // and then after that  when saving chek if ther i alrady amp id then update the json and update  teh back end i guess
+   // if not then add the json and then make a new map with given details collect anydetils from users if needed
    return (
       <div className="flex flex-col flex-1 grow">
          <Toaster richColors={true} />

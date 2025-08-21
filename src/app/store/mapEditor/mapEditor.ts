@@ -17,6 +17,7 @@ import type {
    TileSet,
 } from '@/features/mapEditor/types/types'
 import emitter from '@/features/mapEditor/utils/EventEmitter'
+
 import { toast } from 'sonner'
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
@@ -31,6 +32,7 @@ interface useMapEditorStore {
    selectedTool: ControlTools
    selectedTile: selectedTiles | null
    mapData: MapData | null
+   mapName: string
    layers: Layer[]
    tilesets: TileSet[]
    selectedLayer: Layer | null
@@ -72,6 +74,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
          selectedTile: null,
          selectedLayer: null,
          mapData: null,
+         mapName: `map.json`,
          layers: [],
          tilesets: [],
          layersOrder: [],

@@ -78,7 +78,7 @@ const AdminRouter: RouteObject[] = [
             ],
          },
          {
-            path: '/dashboard/map-editor',
+            path: '/dashboard/map-editor/:mapId?',
             element: <AdminMapEditor />,
          },
       ],
