@@ -2,6 +2,7 @@ import { ThemeToggle } from '@/shared/layout/Dashboard/ThemeButton'
 import type { ThemeType } from '../../types/types'
 import { Button } from '@/components/ui/button'
 import { Save } from 'lucide-react'
+import { useEditorActions } from '@/app/store/mapEditor/mapEditor'
 
 type props = {
    className?: string
@@ -15,10 +16,15 @@ function TopBar({ className, setTheme }: props) {
          setTheme('light')
       }
    }
+   const { exportMap } = useEditorActions()
+   const handleSave = () => {
+      const map = exportMap()
+      console.log(JSON.stringify(map))
+   }
    return (
       <div className={`dark:bg-muted bg-white flex z-10 w-full p-2 justify-between ${className}`}>
          <div>
-            <Button>
+            <Button onClick={() => handleSave()}>
                <span>Save</span>
                <Save />
             </Button>
