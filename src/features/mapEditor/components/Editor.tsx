@@ -30,12 +30,13 @@ export default function Editor() {
    //hook to fetch map and pass it to pixi and pixi will recreate it fullly using hte. logic a load logic
    // and then after that  when saving chek if ther i alrady amp id then update the json and update  teh back end i guess
    // if not then add the json and then make a new map with given details collect anydetils from users if needed
-   const { data, isLoading, error } = useGetMap({ id: mapId })
-
+   const { data, isLoading, error } = useGetMap({ id: mapId, populate: 'manifest' })
+   console.log(data)
    if (isLoading) {
       return <div>loading</div>
    }
    if (error) {
+      console.log(error)
       return <div className="text-red-400">error</div>
    }
    const map = data?.data.data.map

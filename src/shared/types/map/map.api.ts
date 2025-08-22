@@ -15,6 +15,7 @@ export type GetMapsPayload = {
 }
 export type GetMapPayload = {
    id?: string
+   populate?: 'manifest'
 }
 export type GetMapResponse = {
    data: {

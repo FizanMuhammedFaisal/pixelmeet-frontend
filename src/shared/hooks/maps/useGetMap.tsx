@@ -6,7 +6,7 @@ import { mapServices } from '@/shared/services'
 
 export const useGetMap = (data: GetMapPayload) => {
    return useQuery<AxiosResponse<GetMapResponse>, AxiosError<ErrorResponse>>({
-      queryKey: ['map', data.id],
+      queryKey: ['map', data.id, data.populate],
       queryFn: () => mapServices.getMap(data),
       enabled: !!data.id,
    })

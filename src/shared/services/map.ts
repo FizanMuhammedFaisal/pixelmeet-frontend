@@ -16,11 +16,13 @@ export const mapServices = {
    },
    getMap: async (data: GetMapPayload) => {
       const params = new URLSearchParams()
-
-      if (data.id) {
-         params.set('limit', String(data.id))
+      if (data.populate === 'manifest') {
+         params.append('populate', 'manifest')
       }
-      const res = await apiClient.get(`${API_ENDPOINTS.ASSET.GET_MAP}?${params.toString()}`)
+
+      const queryString = params.toString()
+      const url = `${API_ENDPOINTS.ASSET.GET_MAP}/${data.id}${queryString ? `?${queryString}` : ''}`
+      const res = await apiClient.get(url)
       return res
    },
    createMap: async (data: CreateMapPayload) => {
