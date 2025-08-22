@@ -15,6 +15,7 @@ import { Toaster } from 'sonner'
 import CoordinatesDisplay from './toolbars/CoordinatesDisplay'
 import { useParams } from 'react-router'
 import { useGetMap } from '@/shared/hooks/maps/useGetMap'
+import type { MapWithManifest } from '@/shared/types'
 gsap.registerPlugin(PixiPlugin)
 
 PixiPlugin.registerPIXI(PIXI)
@@ -40,6 +41,7 @@ export default function Editor() {
       return <div className="text-red-400">error</div>
    }
    const map = data?.data.data.map
+   console.log(map)
    return (
       <div className="flex flex-col flex-1 grow">
          <Toaster richColors={true} />

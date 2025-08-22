@@ -1,9 +1,11 @@
 import * as PIXI from 'pixi.js'
-import type { TileSet } from '../types/types'
+import type { FinalMapLayerType, FinalMapType, FinalTilesetType, TileSet } from '../types/types'
 import { constructImageUrl } from '../helpers'
 import { TILE_SIZE, WORLD_HEIGHT, WORLD_WIDTH } from '../types/config'
-import type { Map } from '@/shared/types'
+import type { Map, MapWithManifest } from '@/shared/types'
 import type { Editor } from '../components/Editor/Editor'
+import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
+import type { Manifest } from '@/shared/types/manifest/manifest'
 //The array contains gid. so we need to make a o(1) operational ds for getting the needed texture given a gid
 //a lookup table creating function is needed for that
 /**
@@ -53,7 +55,9 @@ export function buildGlobalGIDLUT(tilesets: TileSet[]): (PIXI.Texture | undefine
    const gidTextureLUT: (PIXI.Texture | undefined)[] = []
    for (const tileset of tilesets) {
       //need to construct image and make it dynamic
+      console.log(tileset.image)
       const source = PIXI.Assets.get(tileset.image)
+      console.log(source)
       const total =
          Math.floor(tileset.imageheight / TILE_SIZE) * Math.floor(tileset.imagewidth / TILE_SIZE)
       const cols = tileset.columns
@@ -77,7 +81,95 @@ export function buildGlobalGIDLUT(tilesets: TileSet[]): (PIXI.Texture | undefine
  * @param {Map} Map - the container which need to be rebuilded
  *
  */
-export function reBuildMap(map: Map, editor: Editor) {
-   console.log(map)
+export async function reBuildMap(map: MapWithManifest, editor: Editor) {
+   const { setMapDetails } = useMapEditorStore.getState().actions
+   //load all the data first
+   //build zunstand first
+   //build pixi with zunstnad data
+
+   const mapJson: FinalMapType | null = await LoadMapJson(map.manifest)
+   if (!mapJson) return
+   await loadAssets(mapJson.tilesets)
+   const textures = buildGlobalGIDLUT(mapJson.tilesets)
+   addLayersToStore(mapJson.layers)
+   addTilesetsToStore(mapJson.tilesets)
+   setMapDetails({
+      name: map.name,
+      createdBy: map.createdBy,
+      description: map.description,
+      forkedFrom: map.forkedFrom,
+      isPublic: map.isPublic,
+      isTemplate: map.isPublic,
+      previewImageUrl: map.previewImageUrl,
+   })
+
+   const layers = useMapEditorStore.getState().layers
+
+   layers.forEach((layer) => {
+      const container = editor.layerContainers.get(layer.id)
+      const spriteMap = editor.layerSpriteMap.get(layer.id)
+      console.log(container, spriteMap)
+      if (container && spriteMap) {
+         rebuildLayerFromData(container, Array.from(layer.data), textures, spriteMap)
+      }
+   })
+
+   //pixi state
 }
 //reconstruct pixi memory and zunstand
+
+async function LoadMapJson(manifest: Manifest): Promise<FinalMapType | null> {
+   console.log(manifest)
+   let mapjsonUrl: string | null = null
+   console.log(manifest)
+   if (!manifest?.data?.files) return null
+   manifest.data.files?.forEach((curr) => {
+      if (curr.type == 'tilemapTiledJSON') {
+         mapjsonUrl = curr.url
+      }
+   })
+   if (!mapjsonUrl) return null
+   await PIXI.Assets.load({ src: mapjsonUrl })
+   return PIXI.Assets.get(mapjsonUrl)
+}
+
+// function LoadTilesets(params: type) {}
+
+function addLayersToStore(layers: FinalMapLayerType[]) {
+   const { addLayer } = useMapEditorStore.getState().actions
+   let id = 1
+   layers.map((curr) => {
+      addLayer({
+         data: new Uint32Array(curr.data),
+         height: curr.height,
+         id: id,
+         locked: false,
+         name: curr.name,
+         opacity: curr.opacity,
+         visible: curr.visible,
+         width: curr.width,
+         zindex: id++,
+      })
+   })
+}
+
+function addTilesetsToStore(tilesets: FinalTilesetType[]) {
+   const { addTilesets } = useMapEditorStore.getState().actions
+   tilesets.map((curr) => {
+      addTilesets(
+         curr.name,
+         curr.imagewidth,
+         curr.imageheight,
+         curr.columns,
+         constructImageUrl(curr.image),
+      )
+   })
+   console.log(useMapEditorStore.getState().tilesets)
+}
+
+async function loadAssets(tilesets: FinalTilesetType[]) {
+   for (const tileset of tilesets) {
+      //later use url
+      await PIXI.Assets.load(tileset.image)
+   }
+}

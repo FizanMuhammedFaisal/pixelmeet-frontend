@@ -1,3 +1,4 @@
+import type { MapWithManifest } from '@/shared/types'
 import type { FederatedPointerEvent, Point } from 'pixi.js'
 
 export type LayerDirection = 'up' | 'down'
@@ -100,3 +101,8 @@ export type FinalMapType = {
    version: string
    width: number
 }
+
+export type MapDetails = Omit<
+   MapWithManifest,
+   'id' | 'manifest' | 'createdAt' | 'updatedAt' | 'category' | 'previewImageUrl'
+> & { previewImageUrl?: string }

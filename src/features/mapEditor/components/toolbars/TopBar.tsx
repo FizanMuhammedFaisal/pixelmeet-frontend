@@ -24,9 +24,11 @@ function TopBar({ className, setTheme }: props) {
    const createAssetMutation = useCreateAsset()
    const handleSave = async () => {
       const map = exportMap()
-
+      console.log(map)
+      const copy = map
+      console.log(copy)
       const encoder = new TextEncoder()
-      const size = encoder.encode(JSON.stringify(map)).length
+      const size = encoder.encode(JSON.stringify(copy)).length
       const name = useMapEditorStore.getState().mapName
       let urldata: {
          url: string
@@ -58,7 +60,7 @@ function TopBar({ className, setTheme }: props) {
          createAssetMutation.mutate(
             {
                size: size,
-               description: 'Map',
+               description: 'Mapd',
                metadata: { urlKey: urldata.assetKey },
                name: name,
                type: 'tilemapTiledJSON',

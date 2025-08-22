@@ -12,6 +12,7 @@ import type {
    FinalTilesetType,
    Layer,
    MapData,
+   MapDetails,
    MouseCoordinatesType,
    selectedTiles,
    TileSet,
@@ -32,7 +33,7 @@ interface useMapEditorStore {
    selectedTool: ControlTools
    selectedTile: selectedTiles | null
    mapData: MapData | null
-   mapName: string
+   mapDetails: MapDetails | null
    layers: Layer[]
    tilesets: TileSet[]
    selectedLayer: Layer | null
@@ -45,7 +46,7 @@ type MapEditorAction = {
    setTool: (tool: ControlTools) => void
    setSelectedTiles: (selected: selectedTiles) => void
    setSelectedLayer: (selected: Layer) => void
-   addLayer: () => void
+   addLayer: (layer?: Layer) => void
    renameLayer: (id: number, name: string) => void
    moveLayer: (newlayerOrder: number[]) => void
    toggleLayerLock: (id: number) => void
@@ -60,7 +61,7 @@ type MapEditorAction = {
    ) => void
    drawTileset: (xposition: number, yposition: number, gid: number) => void
    setCoordinates: (coord: MouseCoordinatesType) => void
-
+   setMapDetails: (detail: Partial<MapDetails>) => void
    // main funtions
 
    exportMap: () => FinalMapType
@@ -74,7 +75,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
          selectedTile: null,
          selectedLayer: null,
          mapData: null,
-         mapName: `map.json`,
+         mapDetails: null,
          layers: [],
          tilesets: [],
          layersOrder: [],
@@ -96,6 +97,12 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                   state.mouseCoordinates = coor
                })
             },
+            setMapDetails: (details) => {
+               set((state) => ({
+                  ...state.mapDetails,
+                  ...details,
+               }))
+            },
             renameLayer: (id, name) => {
                console.log(id, name)
                set((state) => {
@@ -116,7 +123,8 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                   state.selectedLayer = selected
                })
             },
-            addLayer: () => {
+            addLayer: (layer) => {
+               console.log(layer)
                set((state) => {
                   if (state.layers.length >= LAYERS_LIMIT) {
                      toast.info(
@@ -124,27 +132,32 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                      )
                      return
                   }
-
-                  const newLayerId = state.layers.length + 1
-                  const newLayerName = `Layer ${newLayerId}`
-                  const newLayer = {
-                     id: newLayerId,
-                     name: newLayerName,
-                     locked: false,
-                     opacity: 1,
-                     zindex: newLayerId,
-                     visible: true,
-                     width: WORLD_WIDTH,
-                     height: WORLD_HEIGHT,
+                  if (layer) {
+                     state.layers.unshift(layer)
+                     state.selectedLayer = layer
+                     emitter.emit('addLayer', { data: layer })
+                  } else {
+                     const newLayerId = state.layers.length + 1
+                     const newLayerName = `Layer ${newLayerId}`
+                     const newLayer = {
+                        id: newLayerId,
+                        name: newLayerName,
+                        locked: false,
+                        opacity: 1,
+                        zindex: newLayerId,
+                        visible: true,
+                        width: WORLD_WIDTH,
+                        height: WORLD_HEIGHT,
+                     }
+                     const layerWithData = {
+                        ...newLayer,
+                        data: new Uint32Array(WORLD_HEIGHT * WORLD_WIDTH),
+                     }
+                     state.layers.unshift(layerWithData)
+                     state.selectedLayer = layerWithData
+                     state.layersOrder.unshift(newLayerId)
+                     emitter.emit('addLayer', { data: newLayer })
                   }
-                  const layer = {
-                     ...newLayer,
-                     data: new Uint32Array(WORLD_HEIGHT * WORLD_WIDTH),
-                  }
-                  state.layers.unshift(layer)
-                  state.selectedLayer = layer
-                  state.layersOrder.unshift(newLayerId)
-                  emitter.emit('addLayer', { data: newLayer })
                })
             },
             moveLayer: (neworder) => {

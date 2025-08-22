@@ -2,11 +2,11 @@ import { useEffect, useRef } from 'react'
 import { Editor } from './Editor/Editor'
 import { useEditorActions } from '@/app/store/mapEditor/mapEditor'
 import { useAppTheme } from '@/shared/hooks/useAppTheme'
-import type { Map } from '@/shared/types'
+import type { MapWithManifest } from '@/shared/types'
 
 type props = {
    className?: string
-   map?: Map
+   map?: MapWithManifest
 }
 export default function PixiEditor({ className, map }: props) {
    const appRef = useRef<Editor | null>(null)
