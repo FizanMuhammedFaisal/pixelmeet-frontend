@@ -22,6 +22,7 @@ import {
    makeZoomOutTool,
 } from './ToolControls'
 import { TILE_SIZE, WORLD_HEIGHT, WORLD_WIDTH } from '../../types/config'
+import { reBuildMap } from '../../utils/deserializeJson'
 
 PIXI.extensions.add(PIXI.CullerPlugin)
 
@@ -55,6 +56,7 @@ export class Editor extends App {
       this.setUpZustantListners()
       this.setUpInteractions()
       this.setUpStaticMethods()
+      this.loadMap()
    }
    setUpEmitterListners = () => {
       emitter.on('switchTheme', this.handleThemeSwitch)
@@ -127,6 +129,11 @@ export class Editor extends App {
       this.viewport.addChild(this.layersContainer)
       this.layersContainer.width = this.viewport.worldWidth
       this.layersContainer.height = this.viewport.worldHeight
+   }
+   loadMap = () => {
+      if (this.mapData) {
+         reBuildMap(this.mapData, this)
+      }
    }
 
    //hanlders

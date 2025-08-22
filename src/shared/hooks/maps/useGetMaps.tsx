@@ -6,7 +6,7 @@ import type { ErrorResponse } from '@/shared/types'
 
 export const useGetMaps = (data: GetMapsPayload) => {
    return useQuery<AxiosResponse<GetMapsResponse>, AxiosError<ErrorResponse>>({
-      queryKey: ['tag', data.limit, data.page],
+      queryKey: ['Maps', data.limit, data.page],
       queryFn: () => mapServices.getMaps(data),
    })
 }

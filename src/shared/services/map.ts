@@ -1,6 +1,6 @@
 import { apiClient } from '@/api/config/axios'
 import { API_ENDPOINTS } from '@/api/config/enpoints'
-import type { CreateMapPayload, GetMapsPayload } from '@/shared/types'
+import type { CreateMapPayload, GetMapPayload, GetMapsPayload } from '@/shared/types'
 
 export const mapServices = {
    getMaps: async (data: GetMapsPayload) => {
@@ -11,10 +11,16 @@ export const mapServices = {
       if (data.limit) {
          params.set('limit', String(data.limit))
       }
-      console.log(params.toString())
-      console.log(`${API_ENDPOINTS.ASSET.GET_MAPS}}?${params.toString()}`)
-      console.log(API_ENDPOINTS.ASSET.GET_MAPS)
       const res = await apiClient.get(`${API_ENDPOINTS.ASSET.GET_MAPS}?${params.toString()}`)
+      return res
+   },
+   getMap: async (data: GetMapPayload) => {
+      const params = new URLSearchParams()
+
+      if (data.id) {
+         params.set('limit', String(data.id))
+      }
+      const res = await apiClient.get(`${API_ENDPOINTS.ASSET.GET_MAP}?${params.toString()}`)
       return res
    },
    createMap: async (data: CreateMapPayload) => {

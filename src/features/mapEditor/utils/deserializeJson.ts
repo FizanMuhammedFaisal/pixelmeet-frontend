@@ -2,6 +2,8 @@ import * as PIXI from 'pixi.js'
 import type { TileSet } from '../types/types'
 import { constructImageUrl } from '../helpers'
 import { TILE_SIZE, WORLD_HEIGHT, WORLD_WIDTH } from '../types/config'
+import type { Map } from '@/shared/types'
+import type { Editor } from '../components/Editor/Editor'
 //The array contains gid. so we need to make a o(1) operational ds for getting the needed texture given a gid
 //a lookup table creating function is needed for that
 /**
@@ -68,3 +70,14 @@ export function buildGlobalGIDLUT(tilesets: TileSet[]): (PIXI.Texture | undefine
    }
    return gidTextureLUT
 }
+
+/**
+ *This function will load the map into memory 
+
+ * @param {Map} Map - the container which need to be rebuilded
+ *
+ */
+export function reBuildMap(map: Map, editor: Editor) {
+   console.log('rebud')
+}
+//reconstruct pixi memory and zunstand
