@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 
 import type { AxiosError, AxiosResponse } from 'axios'
 
-import type { UploadToAssetStorePaylod } from '../../schema/upload.schema'
+import type { UploadToAssetStorePaylod } from '../../schema/upload/upload.schema'
 import { uploadService } from '../../services/upload'
 import type { ErrorResponse } from '@/shared/types'
 

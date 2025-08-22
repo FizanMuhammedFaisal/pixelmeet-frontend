@@ -1,5 +1,6 @@
 export * from './upload'
-
+export * from './map/map'
+export * from './map/map.api'
 export type ErrorResponse = {
    success: boolean
    message: string

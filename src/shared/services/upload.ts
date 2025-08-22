@@ -1,5 +1,8 @@
 import { apiClient, apiClientPublic } from '@/api/config/axios'
-import type { GetPresingedURLPayload, UploadToAssetStorePaylod } from '../schema/upload.schema'
+import type {
+   GetPresingedURLPayload,
+   UploadToAssetStorePaylod,
+} from '../schema/upload/upload.schema'
 import type { CreateAssetRequestPayload } from '../types'
 import { API_ENDPOINTS } from '@/api/config/enpoints'
 
