@@ -69,6 +69,7 @@ export class App {
       return this.app
    }
    constructor(map?: Map) {
-      this.mapData = JSON.parse(JSON.stringify(map))
+      const data = map ? JSON.parse(JSON.stringify(map)) : undefined
+      this.mapData = data
    }
 }

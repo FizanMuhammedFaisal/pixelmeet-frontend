@@ -78,6 +78,6 @@ export function buildGlobalGIDLUT(tilesets: TileSet[]): (PIXI.Texture | undefine
  *
  */
 export function reBuildMap(map: Map, editor: Editor) {
-   console.log('rebud')
+   console.log(map)
 }
 //reconstruct pixi memory and zunstand

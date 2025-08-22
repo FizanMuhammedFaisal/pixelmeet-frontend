@@ -1,7 +1,7 @@
-import MapsList from '@/features/dashboard/sections/DashboardMaps/components/MapList';
+import MapsList from '@/features/dashboard/sections/DashboardMaps/components/maps/MapList'
 
 function AdminMapsPage() {
-  return <MapsList />;
+   return <MapsList />
 }
 
-export default AdminMapsPage;
+export default AdminMapsPage

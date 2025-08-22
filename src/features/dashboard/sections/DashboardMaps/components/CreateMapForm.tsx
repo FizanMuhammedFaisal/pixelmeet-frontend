@@ -34,10 +34,10 @@ const categories = [
    'Other',
 ]
 
-import { createMapFormSchema, type CreateMapFormData } from '../schema/map.schema'
-import { ImageDropzone } from './FileDropZone'
+import { createMapFormSchema, type CreateMapFormData } from '@/shared/schema'
+import { ImageDropzone } from './createMap/FileDropZone'
 import { useGetPresignedURL, useUploadAsset } from '../../DashboardAssets/hooks'
-import { useCreateMap } from '../hooks/useCreateMap'
+import { useCreateMap } from '@/shared/hooks'
 import useAuthStore from '@/app/store/auth.store'
 import SubmitButton from '@/components/ui/submit-button'
 import { useState } from 'react'
