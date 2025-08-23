@@ -4,6 +4,7 @@ export interface Manifest {
    createdAt: Date
    updatedAt: Date
    data: ManifestData
+   tileMapId?: string
 }
 
 export type ManifestData = {
@@ -22,12 +23,12 @@ export interface ManifestAsepriteFile {
    textureURL: string
    atlasURL: string
 }
-type ManifestImageFile = {
+export type ManifestImageFile = {
    type: 'image'
    key: string
    url: string
 }
-type ManifestTileMapTiledJSONFile = {
+export type ManifestTileMapTiledJSONFile = {
    type: 'tilemapTiledJSON'
    key: string
    url: string //json

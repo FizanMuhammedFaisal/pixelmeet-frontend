@@ -1,12 +1,17 @@
 import type z from 'zod'
-import type { createMapSchema } from '../../schema'
-import type { Map } from '@/shared/types'
+import type { createMapSchema, UpdateMapSchema } from '../../schema'
+import type { Map, MapWithManifest } from '@/shared/types'
 
 export type CreateMapPayload = z.infer<typeof createMapSchema>
-
+export type UpdateMapPayload = z.infer<typeof UpdateMapSchema>
+export type UpdateMapResponse = {
+   data: {
+      map: MapWithManifest
+   }
+}
 export type CreateMapResponse = {
    data: {
-      map: Map
+      map: MapWithManifest
    }
 }
 export type GetMapsPayload = {

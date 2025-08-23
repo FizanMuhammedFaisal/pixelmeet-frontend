@@ -19,6 +19,12 @@ import type {
    TileSet,
 } from '@/features/mapEditor/types/types'
 import emitter from '@/features/mapEditor/utils/EventEmitter'
+import type {
+   Manifest,
+   ManifestData,
+   ManifestImageFile,
+   ManifestTileMapTiledJSONFile,
+} from '@/shared/types/manifest/manifest'
 
 import { toast } from 'sonner'
 import { create } from 'zustand'
@@ -62,10 +68,12 @@ type MapEditorAction = {
    ) => void
    drawTileset: (xposition: number, yposition: number, gid: number) => void
    setCoordinates: (coord: MouseCoordinatesType) => void
-   setMapDetails: (detail: Partial<MapDetails>) => void
+   setMapDetails: (detail: MapDetails) => void
+   updateMapDetails: (detail: Partial<MapDetails>) => void
    // main funtions
 
    exportMap: () => FinalMapType
+   exportManifest: (mapJsonUrlKey: string) => ManifestData
 }
 
 export const useMapEditorStore = create<useMapEditorStore>()(
@@ -99,10 +107,16 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                })
             },
             setMapDetails: (details) => {
-               set((state) => ({
-                  ...state.mapDetails,
-                  ...details,
-               }))
+               set((state) => {
+                  state.mapDetails = details
+               })
+            },
+            updateMapDetails: (details) => {
+               set((state) => {
+                  if (state.mapDetails) {
+                     Object.assign(state.mapDetails, details)
+                  }
+               })
             },
             renameLayer: (id, name) => {
                console.log(id, name)
@@ -287,6 +301,30 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                   version: '1',
                }
                return FinalMap
+            },
+            exportManifest: (mapJsonUrlKey) => {
+               const files: ManifestData['files'] = []
+
+               const tilesets = get().tilesets
+               const mapDetails = get().mapDetails
+               if (!mapDetails) return { files: [] }
+
+               const jsonData: ManifestTileMapTiledJSONFile = {
+                  key: `${mapDetails.id}.json`,
+                  type: 'tilemapTiledJSON',
+                  url: mapJsonUrlKey,
+               }
+
+               files.push(jsonData)
+               tilesets.map((curr) => {
+                  const data: ManifestImageFile = {
+                     key: curr.name,
+                     type: 'image',
+                     url: deConstructImageUrl(curr.image),
+                  }
+                  files.push(data)
+               })
+               return { files: files }
             },
          },
       })),

@@ -4,12 +4,11 @@ import type { AxiosError, AxiosResponse } from 'axios'
 
 import type { ErrorResponse } from 'react-router'
 import { uploadService } from '../../services/upload'
-import type { CreateAssetRequestPayload } from '../../types'
-import type { UploadFile } from '@/features/dashboard/sections/DashboardAssets/types'
+import type { CreateAssetRequestPayload, CreateAssetRequestResponse } from '../../types'
 
 export const useCreateAsset = () => {
    return useMutation<
-      AxiosResponse<Omit<UploadFile, 'error' | 'previewUrl'>>,
+      AxiosResponse<CreateAssetRequestResponse>,
       AxiosError<ErrorResponse>,
       CreateAssetRequestPayload
    >({

@@ -102,7 +102,6 @@ export type FinalMapType = {
    width: number
 }
 
-export type MapDetails = Omit<
-   MapWithManifest,
-   'id' | 'manifest' | 'createdAt' | 'updatedAt' | 'category' | 'previewImageUrl'
-> & { previewImageUrl?: string }
+export type MapDetails = Omit<MapWithManifest, 'createdAt' | 'updatedAt' | 'category'> & {
+   previewImageUrl?: string
+}

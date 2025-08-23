@@ -32,3 +32,19 @@ export const createMapSchema = z.object({
    previewImageUrl: z.string().optional(),
    manifestData: ManifestData.optional(),
 })
+
+export const UpdateMapSchema = z.object({
+   id: z.string(),
+   name: z.string().nonempty().optional(),
+   description: z.string().nonempty().optional(),
+   isTemplate: z.boolean().optional(),
+   createdBy: z.string(),
+   isPublic: z.boolean().optional().default(false),
+   category: z.string().optional(),
+   previewImageUrl: z.string().optional(),
+   manifest: z.object({
+      tileMapId: z.string(),
+      id: z.string(),
+      manifestData: ManifestData.optional(),
+   }),
+})

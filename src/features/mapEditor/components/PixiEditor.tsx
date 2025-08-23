@@ -10,7 +10,7 @@ type props = {
 }
 export default function PixiEditor({ className, map }: props) {
    const appRef = useRef<Editor | null>(null)
-   const { setEditor } = useEditorActions()
+   const { setEditor, setMapDetails } = useEditorActions()
    const { theme } = useAppTheme()
 
    useEffect(() => {

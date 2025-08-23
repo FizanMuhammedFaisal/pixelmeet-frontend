@@ -1,3 +1,4 @@
+import type { Asset } from '@/features/dashboard/sections/DashboardAssets/types'
 import z from 'zod'
 
 export const CreateAssetSchema = z.discriminatedUnion('type', [
@@ -26,7 +27,6 @@ export const CreateAssetSchema = z.discriminatedUnion('type', [
       type: z.literal('tilemapTiledJSON'),
       name: z.string().nonempty(),
       size: z.number(),
-      description: z.string(),
       tags: z.array(z.string()).optional(),
       metadata: z.object({
          urlKey: z.string().nonempty(),
@@ -62,6 +62,11 @@ export const CreateAssetSchema = z.discriminatedUnion('type', [
 ])
 
 export type CreateAssetRequestPayload = z.infer<typeof CreateAssetSchema>
+export type CreateAssetRequestResponse = {
+   data: {
+      asset: Asset
+   }
+}
 
 export type PresignedURLApiResponse = {
    data: {

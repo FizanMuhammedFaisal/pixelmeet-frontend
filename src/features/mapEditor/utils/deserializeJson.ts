@@ -86,14 +86,8 @@ export async function reBuildMap(map: MapWithManifest, editor: Editor) {
    //load all the data first
    //build zunstand first
    //build pixi with zunstnad data
-
-   const mapJson: FinalMapType | null = await LoadMapJson(map.manifest)
-   if (!mapJson) return
-   await loadAssets(mapJson.tilesets)
-   const textures = buildGlobalGIDLUT(mapJson.tilesets)
-   addLayersToStore(mapJson.layers)
-   addTilesetsToStore(mapJson.tilesets)
    setMapDetails({
+      id: map.id,
       name: map.name,
       createdBy: map.createdBy,
       description: map.description,
@@ -101,10 +95,16 @@ export async function reBuildMap(map: MapWithManifest, editor: Editor) {
       isPublic: map.isPublic,
       isTemplate: map.isPublic,
       previewImageUrl: map.previewImageUrl,
+      manifest: map.manifest,
    })
-
+   console.log('setttin mapdata')
+   const mapJson: FinalMapType | null = await LoadMapJson(map.manifest)
+   if (!mapJson) return
+   await loadAssets(mapJson.tilesets)
+   const textures = buildGlobalGIDLUT(mapJson.tilesets)
+   addLayersToStore(mapJson.layers)
+   addTilesetsToStore(mapJson.tilesets)
    const layers = useMapEditorStore.getState().layers
-
    layers.forEach((layer) => {
       const container = editor.layerContainers.get(layer.id)
       const spriteMap = editor.layerSpriteMap.get(layer.id)
@@ -119,9 +119,7 @@ export async function reBuildMap(map: MapWithManifest, editor: Editor) {
 //reconstruct pixi memory and zunstand
 
 async function LoadMapJson(manifest: Manifest): Promise<FinalMapType | null> {
-   console.log(manifest)
    let mapjsonUrl: string | null = null
-   console.log(manifest)
    if (!manifest?.data?.files) return null
    manifest.data.files?.forEach((curr) => {
       if (curr.type == 'tilemapTiledJSON') {
@@ -129,6 +127,7 @@ async function LoadMapJson(manifest: Manifest): Promise<FinalMapType | null> {
       }
    })
    if (!mapjsonUrl) return null
+   console.log(mapjsonUrl)
    await PIXI.Assets.load({ src: mapjsonUrl })
    return PIXI.Assets.get(mapjsonUrl)
 }
@@ -169,7 +168,6 @@ function addTilesetsToStore(tilesets: FinalTilesetType[]) {
 
 async function loadAssets(tilesets: FinalTilesetType[]) {
    for (const tileset of tilesets) {
-      //later use url
-      await PIXI.Assets.load(tileset.image)
+      await PIXI.Assets.load(constructImageUrl(tileset.image))
    }
 }

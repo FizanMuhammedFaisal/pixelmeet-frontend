@@ -1,3 +1,4 @@
+import type { Asset } from '@/features/dashboard/sections/DashboardAssets/types'
 import z from 'zod'
 export const AssetCategoryEnum = z.enum([
    'image',
@@ -10,6 +11,7 @@ export const GetPresingedURLSchema = z
    .object({
       fileName: z.string().nonempty(),
       type: AssetCategoryEnum,
+      id: z.uuid().optional(),
    })
    .refine(
       (data) => {

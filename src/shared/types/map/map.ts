@@ -4,7 +4,7 @@ export interface Map {
    readonly id: string
    readonly name: string
    manifestId: string
-   description?: string
+   description: string
    isTemplate: boolean
    forkedFrom?: string
    createdBy: string
@@ -19,7 +19,7 @@ export interface MapWithManifest {
    readonly id: string
    readonly name: string
    manifest: Manifest
-   description?: string
+   description: string
    isTemplate: boolean
    forkedFrom?: string
    createdBy: string

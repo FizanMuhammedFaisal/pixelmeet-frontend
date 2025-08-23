@@ -23,6 +23,6 @@ export const uploadService = {
    },
    createAsset: async (credentials: CreateAssetRequestPayload) => {
       const res = await apiClient.post(API_ENDPOINTS.ASSET.CREATE_ASSET, credentials)
-      return res.data
+      return res
    },
 }
