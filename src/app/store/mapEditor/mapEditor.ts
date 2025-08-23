@@ -1,4 +1,5 @@
 import type { Editor } from '@/features/mapEditor/components/Editor/Editor'
+import { deConstructImageUrl } from '@/features/mapEditor/helpers'
 import {
    LAYERS_LIMIT,
    TILE_SIZE,
@@ -267,6 +268,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                      spacing: 0,
                      tileheight: TILE_SIZE,
                      tilewidth: TILE_SIZE,
+                     image: deConstructImageUrl(curr.image),
                   }
                   return newLayer
                })

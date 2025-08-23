@@ -12,7 +12,7 @@ export class App {
    protected resolvedLight: string = '#573022'
    protected themeMode: ThemeType = 'dark'
    public viewport!: Viewport
-   public mapData?: MapWithManifest
+   public mapData: MapWithManifest
 
    public async init(theme: ThemeType) {
       const container = document.getElementById('map-editor')
@@ -68,7 +68,7 @@ export class App {
    public getApp() {
       return this.app
    }
-   constructor(map?: MapWithManifest) {
+   constructor(map: MapWithManifest) {
       this.mapData = map
    }
 }

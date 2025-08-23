@@ -1,4 +1,4 @@
-import { CreateMapForm } from '../CreateMapForm'
+import { CreateMapForm } from './CreateMapForm'
 
 export default function CreateMapCompoent() {
    return (

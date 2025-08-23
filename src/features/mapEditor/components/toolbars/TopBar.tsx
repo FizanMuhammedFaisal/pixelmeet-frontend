@@ -29,7 +29,7 @@ function TopBar({ className, setTheme }: props) {
       console.log(copy)
       const encoder = new TextEncoder()
       const size = encoder.encode(JSON.stringify(copy)).length
-      const name = useMapEditorStore.getState().mapName
+      const name = useMapEditorStore.getState().mapDetails?.name
       let urldata: {
          url: string
          mimeType: string

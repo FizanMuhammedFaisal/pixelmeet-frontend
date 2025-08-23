@@ -10,7 +10,7 @@ export interface Map {
    createdBy: string
    isPublic: boolean
    category?: string
-   previewImageUrl: string
+   previewImageUrl?: string
    createdAt: Date
    updatedAt: Date
 }
@@ -24,8 +24,8 @@ export interface MapWithManifest {
    forkedFrom?: string
    createdBy: string
    isPublic: boolean
-   category: string
-   previewImageUrl: string
+   category?: string
+   previewImageUrl?: string
    createdAt: Date
    updatedAt: Date
 }

@@ -17,7 +17,8 @@ export const createMapFormSchema = z.object({
       .refine(
          (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
          'Only .jpg, .jpeg, .png and .webp formats are supported.',
-      ),
+      )
+      .optional(),
 })
 export type CreateMapFormData = z.infer<typeof createMapFormSchema>
 
@@ -28,6 +29,6 @@ export const createMapSchema = z.object({
    createdBy: z.string(),
    isPublic: z.boolean().optional(),
    category: z.string().optional(),
-   previewImageUrl: z.string(),
-   manifestData: ManifestData,
+   previewImageUrl: z.string().optional(),
+   manifestData: ManifestData.optional(),
 })

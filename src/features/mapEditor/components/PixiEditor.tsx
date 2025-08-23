@@ -6,7 +6,7 @@ import type { MapWithManifest } from '@/shared/types'
 
 type props = {
    className?: string
-   map?: MapWithManifest
+   map: MapWithManifest
 }
 export default function PixiEditor({ className, map }: props) {
    const appRef = useRef<Editor | null>(null)
@@ -32,7 +32,7 @@ export default function PixiEditor({ className, map }: props) {
       return () => {
          window.removeEventListener('wheel', handleGlobalScroll)
       }
-   }, [])
+   }, [map, setEditor])
 
    return <div id="map-editor" className={` h-full w-full   ${className}`}></div>
 }
