@@ -55,8 +55,8 @@ export function buildGlobalGIDLUT(tilesets: TileSet[]): (PIXI.Texture | undefine
    const gidTextureLUT: (PIXI.Texture | undefined)[] = []
    for (const tileset of tilesets) {
       //need to construct image and make it dynamic
-      console.log(tileset.image)
-      const source = PIXI.Assets.get(tileset.image)
+
+      const source = PIXI.Assets.get(constructImageUrl(tileset.image))
       console.log(source)
       const total =
          Math.floor(tileset.imageheight / TILE_SIZE) * Math.floor(tileset.imagewidth / TILE_SIZE)

@@ -6,6 +6,7 @@ import { useEditorActions, useMapEditorStore } from '@/app/store/mapEditor/mapEd
 import { useCreateAsset, useGetPresignedURL, useUploadAsset } from '@/shared/hooks/upload'
 import { toast } from 'sonner'
 import { useUpdateMap } from '@/shared/hooks/maps/useUpdateMap'
+import { assetsService } from '@/features/dashboard/sections/DashboardAssets/services/assets'
 
 type props = {
    className?: string
@@ -19,6 +20,7 @@ function TopBar({ className, setTheme }: props) {
          setTheme('light')
       }
    }
+
    const { exportMap, exportManifest, updateMapDetails } = useEditorActions()
    const getPresignedMutation = useGetPresignedURL()
    const uploadMutation = useUploadAsset()
@@ -57,6 +59,7 @@ function TopBar({ className, setTheme }: props) {
          return toast.error('Saving Map Failed. Try Again')
       }
       const manifest = exportManifest(urldata.assetKey)
+
       try {
          await uploadMutation.mutateAsync({
             contentType: urldata.mimeType,
@@ -66,17 +69,28 @@ function TopBar({ className, setTheme }: props) {
       } catch (error) {
          toast.error('Saving Map Failed. Try Again')
       }
+
       let assetData
-      try {
-         assetData = await createAssetMutation.mutateAsync({
-            size: size,
-            metadata: { urlKey: urldata.assetKey },
-            name: jsonName,
-            type: 'tilemapTiledJSON',
+
+      if (mapDetails.manifest.tileMapId) {
+         const res = await assetsService.getAsset({
+            id: mapDetails.manifest.tileMapId,
          })
-      } catch (error) {
-         toast.error('Saving Map Failed. Try Again')
+
+         assetData = res
+      } else {
+         try {
+            assetData = await createAssetMutation.mutateAsync({
+               size: size,
+               metadata: { urlKey: urldata.assetKey },
+               name: jsonName,
+               type: 'tilemapTiledJSON',
+            })
+         } catch (error) {
+            toast.error('Saving Map Failed. Try Again')
+         }
       }
+
       console.log(assetData)
       if (!assetData) {
          throw Error("Could't create asset")

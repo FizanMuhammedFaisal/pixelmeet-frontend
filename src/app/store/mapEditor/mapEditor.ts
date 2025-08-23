@@ -20,7 +20,6 @@ import type {
 } from '@/features/mapEditor/types/types'
 import emitter from '@/features/mapEditor/utils/EventEmitter'
 import type {
-   Manifest,
    ManifestData,
    ManifestImageFile,
    ManifestTileMapTiledJSONFile,
