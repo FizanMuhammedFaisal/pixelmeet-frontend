@@ -57,7 +57,6 @@ export function buildGlobalGIDLUT(tilesets: TileSet[]): (PIXI.Texture | undefine
       //need to construct image and make it dynamic
 
       const source = PIXI.Assets.get(constructImageUrl(tileset.image))
-      console.log(source)
       const total =
          Math.floor(tileset.imageheight / TILE_SIZE) * Math.floor(tileset.imagewidth / TILE_SIZE)
       const cols = tileset.columns
@@ -111,6 +110,7 @@ export async function reBuildMap(map: MapWithManifest, editor: Editor) {
       console.log(container, spriteMap)
       if (container && spriteMap) {
          rebuildLayerFromData(container, Array.from(layer.data), textures, spriteMap)
+         console.log(container, spriteMap)
       }
    })
 
@@ -136,8 +136,10 @@ async function LoadMapJson(manifest: Manifest): Promise<FinalMapType | null> {
 
 function addLayersToStore(layers: FinalMapLayerType[]) {
    const { addLayer } = useMapEditorStore.getState().actions
-   let id = 1
-   layers.map((curr) => {
+   let id = layers.length - 1
+
+   for (let i = layers.length - 1; i >= 0; i--) {
+      const curr = layers[i]
       addLayer({
          data: new Uint32Array(curr.data),
          height: curr.height,
@@ -147,9 +149,9 @@ function addLayersToStore(layers: FinalMapLayerType[]) {
          opacity: curr.opacity,
          visible: curr.visible,
          width: curr.width,
-         zindex: id++,
+         zindex: id--,
       })
-   })
+   }
 }
 
 function addTilesetsToStore(tilesets: FinalTilesetType[]) {
