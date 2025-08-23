@@ -341,14 +341,15 @@ export const makeBucketFillTool = (editor: Editor): ToolHandler => ({
       const array = selectedLayer.data
 
       const targetgid = data.startY * ImageDetails.columns + data.startX + ImageDetails.firstgid
-    
+
       const tilesx = Math.floor(snapped.x / TILE_SIZE)
       const tilesy = Math.floor(snapped.y / TILE_SIZE)
-   
+
       FloodFillDFS(array, { x: tilesx, y: tilesy }, targetgid)
-    
+
       const tilesets = useMapEditorStore.getState().tilesets
-      const globalGid = buildGlobalGIDLUT(tilesets)
+      console.log(tilesets)
+      const globalGid = buildGlobalGIDLUT(tilesets, true)
       console.log(globalGid)
       rebuildLayerFromData(container, Array.from(selectedLayer.data), globalGid, spriteLayer)
    },

@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 import type { FinalMapLayerType, FinalMapType, FinalTilesetType, TileSet } from '../types/types'
-import { constructImageUrl } from '../helpers'
+import { constructImageUrl, deConstructImageUrl } from '../helpers'
 import { TILE_SIZE, WORLD_HEIGHT, WORLD_WIDTH } from '../types/config'
 import type { Map, MapWithManifest } from '@/shared/types'
 import type { Editor } from '../components/Editor/Editor'
@@ -49,14 +49,18 @@ export function rebuildLayerFromData(
  *This function is going to take a array of tilesets and construct a array with a gid will give back a texture
 
  * @param {TileSet[]} Tilesets - the container which need to be rebuilded
- *
+ *@param {boolean} foolFill- a boolean true if this is called from bucket fill tool
  */
-export function buildGlobalGIDLUT(tilesets: TileSet[]): (PIXI.Texture | undefined)[] {
+export function buildGlobalGIDLUT(
+   tilesets: TileSet[],
+   foolFill: boolean = false,
+): (PIXI.Texture | undefined)[] {
    const gidTextureLUT: (PIXI.Texture | undefined)[] = []
    for (const tileset of tilesets) {
       //need to construct image and make it dynamic
-
-      const source = PIXI.Assets.get(constructImageUrl(tileset.image))
+      const image = foolFill ? tileset.image : constructImageUrl(tileset.image)
+      console.log(image)
+      const source = PIXI.Assets.get(image)
       const total =
          Math.floor(tileset.imageheight / TILE_SIZE) * Math.floor(tileset.imagewidth / TILE_SIZE)
       const cols = tileset.columns
@@ -136,7 +140,7 @@ async function LoadMapJson(manifest: Manifest): Promise<FinalMapType | null> {
 
 function addLayersToStore(layers: FinalMapLayerType[]) {
    const { addLayer } = useMapEditorStore.getState().actions
-   let id = layers.length - 1
+   let id = 0
 
    for (let i = layers.length - 1; i >= 0; i--) {
       const curr = layers[i]
@@ -149,7 +153,7 @@ function addLayersToStore(layers: FinalMapLayerType[]) {
          opacity: curr.opacity,
          visible: curr.visible,
          width: curr.width,
-         zindex: id--,
+         zindex: id++,
       })
    }
 }
