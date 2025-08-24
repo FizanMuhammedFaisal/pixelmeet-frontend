@@ -1,4 +1,5 @@
 import type { Editor } from '@/features/mapEditor/components/Editor/Editor'
+import { deConstructImageUrl } from '@/features/mapEditor/helpers'
 import {
    LAYERS_LIMIT,
    TILE_SIZE,
@@ -12,11 +13,18 @@ import type {
    FinalTilesetType,
    Layer,
    MapData,
+   MapDetails,
    MouseCoordinatesType,
    selectedTiles,
    TileSet,
 } from '@/features/mapEditor/types/types'
 import emitter from '@/features/mapEditor/utils/EventEmitter'
+import type {
+   ManifestData,
+   ManifestImageFile,
+   ManifestTileMapTiledJSONFile,
+} from '@/shared/types/manifest/manifest'
+
 import { toast } from 'sonner'
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
@@ -31,6 +39,7 @@ interface useMapEditorStore {
    selectedTool: ControlTools
    selectedTile: selectedTiles | null
    mapData: MapData | null
+   mapDetails: MapDetails | null
    layers: Layer[]
    tilesets: TileSet[]
    selectedLayer: Layer | null
@@ -43,7 +52,7 @@ type MapEditorAction = {
    setTool: (tool: ControlTools) => void
    setSelectedTiles: (selected: selectedTiles) => void
    setSelectedLayer: (selected: Layer) => void
-   addLayer: () => void
+   addLayer: (layer?: Layer) => void
    renameLayer: (id: number, name: string) => void
    moveLayer: (newlayerOrder: number[]) => void
    toggleLayerLock: (id: number) => void
@@ -58,10 +67,12 @@ type MapEditorAction = {
    ) => void
    drawTileset: (xposition: number, yposition: number, gid: number) => void
    setCoordinates: (coord: MouseCoordinatesType) => void
-
+   setMapDetails: (detail: MapDetails) => void
+   updateMapDetails: (detail: Partial<MapDetails>) => void
    // main funtions
 
    exportMap: () => FinalMapType
+   exportManifest: (mapJsonUrlKey: string) => ManifestData
 }
 
 export const useMapEditorStore = create<useMapEditorStore>()(
@@ -72,6 +83,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
          selectedTile: null,
          selectedLayer: null,
          mapData: null,
+         mapDetails: null,
          layers: [],
          tilesets: [],
          layersOrder: [],
@@ -91,6 +103,18 @@ export const useMapEditorStore = create<useMapEditorStore>()(
             setCoordinates: (coor) => {
                set((state) => {
                   state.mouseCoordinates = coor
+               })
+            },
+            setMapDetails: (details) => {
+               set((state) => {
+                  state.mapDetails = details
+               })
+            },
+            updateMapDetails: (details) => {
+               set((state) => {
+                  if (state.mapDetails) {
+                     Object.assign(state.mapDetails, details)
+                  }
                })
             },
             renameLayer: (id, name) => {
@@ -113,7 +137,8 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                   state.selectedLayer = selected
                })
             },
-            addLayer: () => {
+            addLayer: (layer) => {
+               console.log(layer)
                set((state) => {
                   if (state.layers.length >= LAYERS_LIMIT) {
                      toast.info(
@@ -121,30 +146,47 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                      )
                      return
                   }
-
-                  const newLayerId = state.layers.length + 1
-                  const newLayerName = `Layer ${newLayerId}`
-                  const newLayer = {
-                     id: newLayerId,
-                     name: newLayerName,
-                     locked: false,
-                     opacity: 1,
-                     zindex: newLayerId,
-                     visible: true,
-                     width: WORLD_WIDTH,
-                     height: WORLD_HEIGHT,
+                  if (layer) {
+                     state.layers.unshift(layer)
+                     state.selectedLayer = layer
+                     state.layersOrder.unshift(layer.id)
+                     const layerWithoutData = {
+                        id: layer.id,
+                        name: layer.name,
+                        locked: layer.locked,
+                        opacity: layer.opacity,
+                        zindex: layer.zindex,
+                        visible: true,
+                        width: WORLD_WIDTH,
+                        height: WORLD_HEIGHT,
+                     }
+                     emitter.emit('addLayer', { data: layerWithoutData })
+                  } else {
+                     const newLayerId = state.layers.length + 1
+                     const newLayerName = `Layer ${newLayerId}`
+                     const newLayer = {
+                        id: newLayerId,
+                        name: newLayerName,
+                        locked: false,
+                        opacity: 1,
+                        zindex: newLayerId,
+                        visible: true,
+                        width: WORLD_WIDTH,
+                        height: WORLD_HEIGHT,
+                     }
+                     const layerWithData = {
+                        ...newLayer,
+                        data: new Uint32Array(WORLD_HEIGHT * WORLD_WIDTH),
+                     }
+                     state.layers.unshift(layerWithData)
+                     state.selectedLayer = layerWithData
+                     state.layersOrder.unshift(newLayerId)
+                     emitter.emit('addLayer', { data: newLayer })
                   }
-                  const layer = {
-                     ...newLayer,
-                     data: new Uint32Array(WORLD_HEIGHT * WORLD_WIDTH),
-                  }
-                  state.layers.unshift(layer)
-                  state.selectedLayer = layer
-                  state.layersOrder.unshift(newLayerId)
-                  emitter.emit('addLayer', { data: newLayer })
                })
             },
             moveLayer: (neworder) => {
+               console.log(neworder)
                set((state) => {
                   state.layersOrder = neworder
                })
@@ -160,6 +202,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
 
                      newLayers.push(layer)
                   }
+                  console.log(newLayers)
 
                   state.layers = newLayers
                })
@@ -200,7 +243,6 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                emitter.emit('deleteLayer', { id })
             },
             addTilesets: (name, width, height, coloums, image) => {
-               console.log(name, width, height, coloums)
                set((state) => {
                   const lastMap = state.tilesets[state.tilesets.length - 1]
                   const tilecount = lastMap
@@ -251,6 +293,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                      spacing: 0,
                      tileheight: TILE_SIZE,
                      tilewidth: TILE_SIZE,
+                     image: deConstructImageUrl(curr.image),
                   }
                   return newLayer
                })
@@ -269,6 +312,30 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                   version: '1',
                }
                return FinalMap
+            },
+            exportManifest: (mapJsonUrlKey) => {
+               const files: ManifestData['files'] = []
+
+               const tilesets = get().tilesets
+               const mapDetails = get().mapDetails
+               if (!mapDetails) return { files: [] }
+
+               const jsonData: ManifestTileMapTiledJSONFile = {
+                  key: `${mapDetails.id}.json`,
+                  type: 'tilemapTiledJSON',
+                  url: mapJsonUrlKey,
+               }
+
+               files.push(jsonData)
+               tilesets.map((curr) => {
+                  const data: ManifestImageFile = {
+                     key: curr.name,
+                     type: 'image',
+                     url: deConstructImageUrl(curr.image),
+                  }
+                  files.push(data)
+               })
+               return { files: files }
             },
          },
       })),

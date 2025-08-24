@@ -1,4 +1,4 @@
-import type { Tag } from '../../../../app/store/admin/tagsTab.store'
+import type { Tag } from '@/app/store/admin/tagsTab.store'
 
 export type AsepriteMetadata = {
    textureURL?: string

@@ -34,10 +34,8 @@ const categories = [
    'Other',
 ]
 
-import { createMapFormSchema, type CreateMapFormData } from '../schema/map.schema'
-import { ImageDropzone } from './FileDropZone'
-import { useGetPresignedURL, useUploadAsset } from '../../DashboardAssets/hooks'
-import { useCreateMap } from '../hooks/useCreateMap'
+import { createMapFormSchema, type CreateMapFormData } from '@/shared/schema'
+import { useCreateMap } from '@/shared/hooks'
 import useAuthStore from '@/app/store/auth.store'
 import SubmitButton from '@/components/ui/submit-button'
 import { useState } from 'react'
@@ -55,39 +53,16 @@ export function CreateMapForm() {
          isTemplate: false,
          isPublic: false,
          category: '',
-         previewImageFile: undefined,
       },
    })
    const navigate = useNavigate()
-   //presignedurl hook
 
-   const getPresignedURLMutation = useGetPresignedURL()
-   const uploadAssetMutation = useUploadAsset()
    const createMapMutation = useCreateMap()
 
    const submit: SubmitHandler<CreateMapFormData> = async (data) => {
       setIsLoading(true)
 
       try {
-         const presignedRes = await getPresignedURLMutation.mutateAsync({
-            fileName: data.previewImageFile.name,
-            type: 'image',
-         })
-         if (presignedRes.status !== 200) {
-            setIsLoading(false)
-            toast.error(`Couldn't create Map ${data.name}`)
-         }
-
-         const uploadRes = await uploadAssetMutation.mutateAsync({
-            contentType: presignedRes.data.data.mimeType,
-            file: data.previewImageFile,
-            url: presignedRes.data.data.url,
-         })
-         if (uploadRes.status !== 200) {
-            setIsLoading(false)
-            return toast.error(`Couldn't create Map ${data.name}`)
-         }
-         console.log(user)
          if (!user) {
             setIsLoading(false)
             return toast.error(`Couldn't create Map, Try Logging in again`)
@@ -99,7 +74,6 @@ export function CreateMapForm() {
                description: data.description,
                isTemplate: data.isTemplate,
                category: data.category,
-               previewImageUrl: presignedRes.data.data.assetKey,
                isPublic: data.isPublic,
             },
             {
@@ -193,24 +167,6 @@ export function CreateMapForm() {
                            <FormDescription>
                               Categorize your map for easier discovery.
                            </FormDescription>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-
-                  <FormField
-                     control={form.control}
-                     name="previewImageFile"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>Preview Image</FormLabel>
-                           <FormControl>
-                              <ImageDropzone
-                                 onFileChange={field.onChange}
-                                 currentFile={field.value}
-                                 description="Upload a preview image for your map (e.g., JPG, PNG, GIF, SVG, WebP)."
-                              />
-                           </FormControl>
                            <FormMessage />
                         </FormItem>
                      )}

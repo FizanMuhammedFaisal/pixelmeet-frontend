@@ -2,6 +2,7 @@ import { Application } from 'pixi.js'
 import { Viewport } from 'pixi-viewport'
 import type { ThemeType } from '../../types/types'
 import { WORLD_HEIGHT, WORLD_WIDTH } from '../../types/config'
+import type { Map, MapWithManifest } from '@/shared/types'
 export class App {
    protected app: Application = new Application()
    protected isInitialized: boolean = false
@@ -11,6 +12,7 @@ export class App {
    protected resolvedLight: string = '#573022'
    protected themeMode: ThemeType = 'dark'
    public viewport!: Viewport
+   public mapData: MapWithManifest
 
    public async init(theme: ThemeType) {
       const container = document.getElementById('map-editor')
@@ -66,5 +68,7 @@ export class App {
    public getApp() {
       return this.app
    }
-   constructor() {}
+   constructor(map: MapWithManifest) {
+      this.mapData = map
+   }
 }

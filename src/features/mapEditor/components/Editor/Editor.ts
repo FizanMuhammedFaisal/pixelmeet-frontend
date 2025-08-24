@@ -22,6 +22,7 @@ import {
    makeZoomOutTool,
 } from './ToolControls'
 import { TILE_SIZE, WORLD_HEIGHT, WORLD_WIDTH } from '../../types/config'
+import { reBuildMap } from '../../utils/deserializeJson'
 
 PIXI.extensions.add(PIXI.CullerPlugin)
 
@@ -55,6 +56,7 @@ export class Editor extends App {
       this.setUpZustantListners()
       this.setUpInteractions()
       this.setUpStaticMethods()
+      this.loadMap()
    }
    setUpEmitterListners = () => {
       emitter.on('switchTheme', this.handleThemeSwitch)
@@ -128,6 +130,11 @@ export class Editor extends App {
       this.layersContainer.width = this.viewport.worldWidth
       this.layersContainer.height = this.viewport.worldHeight
    }
+   loadMap = () => {
+      if (this.mapData) {
+         reBuildMap(this.mapData, this)
+      }
+   }
 
    //hanlders
    changeTool = (tool: ControlTools) => {
@@ -182,7 +189,6 @@ export class Editor extends App {
    }
    updateCoordinates = (e: PIXI.FederatedPointerEvent) => {
       const w = this.viewport.toWorld(e)
-      console.log('got the w setting it')
       this.setCoordinates!({ x: w.x, y: w.y })
    }
 
@@ -210,7 +216,6 @@ export class Editor extends App {
          .on('pointerdown', (e) => toolMap[this.selectedTool].onDown?.(e.global, e))
          .on('pointermove', (e) => {
             toolMap[this.selectedTool].onMove?.(e.global, e)
-            console.log('the pointer is moving')
             this.updateCoordinates(e)
          })
          .on('pointerup', (e) => toolMap[this.selectedTool].onUp?.(e.global, e))
