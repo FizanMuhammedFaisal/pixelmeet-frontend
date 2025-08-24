@@ -45,7 +45,7 @@ const UserRouter: RouteObject[] = [
                   element: <SpacesPage />,
                },
                {
-                  path: '/map-editor/mapId?',
+                  path: '/map-editor/:mapId?',
                   element: <AdminMapEditor />,
                },
                {

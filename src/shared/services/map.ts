@@ -35,7 +35,7 @@ export const mapServices = {
       return res
    },
    updateMap: async (data: UpdateMapPayload) => {
-      const res = await apiClient.put(API_ENDPOINTS.ASSET.CREATE_MAP, data)
+      const res = await apiClient.put(API_ENDPOINTS.ASSET.UPDATE_MAP, data)
       return res
    },
 }

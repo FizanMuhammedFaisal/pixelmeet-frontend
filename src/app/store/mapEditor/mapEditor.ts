@@ -150,7 +150,17 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                      state.layers.unshift(layer)
                      state.selectedLayer = layer
                      state.layersOrder.unshift(layer.id)
-                     emitter.emit('addLayer', { data: layer })
+                     const layerWithoutData = {
+                        id: layer.id,
+                        name: layer.name,
+                        locked: layer.locked,
+                        opacity: layer.opacity,
+                        zindex: layer.zindex,
+                        visible: true,
+                        width: WORLD_WIDTH,
+                        height: WORLD_HEIGHT,
+                     }
+                     emitter.emit('addLayer', { data: layerWithoutData })
                   } else {
                      const newLayerId = state.layers.length + 1
                      const newLayerName = `Layer ${newLayerId}`
