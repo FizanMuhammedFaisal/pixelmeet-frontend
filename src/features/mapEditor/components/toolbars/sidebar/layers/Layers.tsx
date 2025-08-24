@@ -90,7 +90,7 @@ function SideBarLayers() {
       if (!over) return
       const oldIndex = layerOrder.indexOf(Number(active.id))
       const newIndex = layerOrder.indexOf(Number(over.id))
-
+      console.log(layerOrder, oldIndex, newIndex)
       const res = arrayMove(layerOrder, oldIndex, newIndex)
       console.log(res)
       moveLayer(res)

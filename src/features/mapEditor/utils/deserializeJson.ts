@@ -23,24 +23,27 @@ export function rebuildLayerFromData(
    textures: (PIXI.Texture | undefined)[],
    spriteLayer: (PIXI.Sprite | undefined)[],
 ) {
-   container.removeChildren()
    for (let x = 0; x < WORLD_WIDTH; x++) {
       for (let y = 0; y < WORLD_HEIGHT; y++) {
          const i = WORLD_WIDTH * y + x
          const texture = textures[array[i]]
-         if (!texture) continue
-         const sprite = new PIXI.Sprite({ texture })
-         sprite.position.x = x * TILE_SIZE
-         sprite.position.y = y * TILE_SIZE
-         sprite.zIndex = 1000
+         const existingSprite = spriteLayer[i]
 
-         const old = spriteLayer[i]
-         if (old) {
-            container.removeChild(old)
-            old.destroy()
+         if (texture) {
+            if (existingSprite) {
+               existingSprite.texture = texture
+               existingSprite.visible = true
+            } else {
+               const sprite = new PIXI.Sprite({ texture })
+               sprite.position.x = x * TILE_SIZE
+               sprite.position.y = y * TILE_SIZE
+               sprite.zIndex = 1000
+               spriteLayer[i] = sprite
+               container.addChild(sprite)
+            }
+         } else if (existingSprite) {
+            existingSprite.visible = false
          }
-         spriteLayer[i] = sprite
-         container.addChild(sprite)
       }
    }
 }
@@ -53,12 +56,12 @@ export function rebuildLayerFromData(
  */
 export function buildGlobalGIDLUT(
    tilesets: TileSet[],
-   foolFill: boolean = false,
+   useRawImagePath: boolean = false,
 ): (PIXI.Texture | undefined)[] {
    const gidTextureLUT: (PIXI.Texture | undefined)[] = []
    for (const tileset of tilesets) {
       //need to construct image and make it dynamic
-      const image = foolFill ? tileset.image : constructImageUrl(tileset.image)
+      const image = useRawImagePath ? tileset.image : constructImageUrl(tileset.image)
       console.log(image)
       const source = PIXI.Assets.get(image)
       const total =
@@ -113,8 +116,7 @@ export async function reBuildMap(map: MapWithManifest, editor: Editor) {
       const spriteMap = editor.layerSpriteMap.get(layer.id)
       console.log(container, spriteMap)
       if (container && spriteMap) {
-         rebuildLayerFromData(container, Array.from(layer.data), textures, spriteMap)
-         console.log(container, spriteMap)
+         rebuildLayerFromData(container, layer.data as unknown as number[], textures, spriteMap)
       }
    })
 
@@ -123,17 +125,12 @@ export async function reBuildMap(map: MapWithManifest, editor: Editor) {
 //reconstruct pixi memory and zunstand
 
 async function LoadMapJson(manifest: Manifest): Promise<FinalMapType | null> {
-   let mapjsonUrl: string | null = null
    if (!manifest?.data?.files) return null
-   manifest.data.files?.forEach((curr) => {
-      if (curr.type == 'tilemapTiledJSON') {
-         mapjsonUrl = curr.url
-      }
-   })
-   if (!mapjsonUrl) return null
-   console.log(mapjsonUrl)
-   await PIXI.Assets.load({ src: mapjsonUrl })
-   return PIXI.Assets.get(mapjsonUrl)
+   const mapFile = manifest.data.files.find((file) => file.type === 'tilemapTiledJSON')
+
+   if (!mapFile) return null
+   await PIXI.Assets.load({ src: mapFile.url, data: { cache: true } })
+   return PIXI.Assets.get(mapFile.url)
 }
 
 // function LoadTilesets(params: type) {}
@@ -160,7 +157,7 @@ function addLayersToStore(layers: FinalMapLayerType[]) {
 
 function addTilesetsToStore(tilesets: FinalTilesetType[]) {
    const { addTilesets } = useMapEditorStore.getState().actions
-   tilesets.map((curr) => {
+   tilesets.forEach((curr) => {
       addTilesets(
          curr.name,
          curr.imagewidth,
@@ -169,7 +166,6 @@ function addTilesetsToStore(tilesets: FinalTilesetType[]) {
          constructImageUrl(curr.image),
       )
    })
-   console.log(useMapEditorStore.getState().tilesets)
 }
 
 async function loadAssets(tilesets: FinalTilesetType[]) {

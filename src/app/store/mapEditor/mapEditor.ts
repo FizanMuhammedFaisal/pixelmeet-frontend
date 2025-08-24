@@ -149,6 +149,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                   if (layer) {
                      state.layers.unshift(layer)
                      state.selectedLayer = layer
+                     state.layersOrder.unshift(layer.id)
                      emitter.emit('addLayer', { data: layer })
                   } else {
                      const newLayerId = state.layers.length + 1
@@ -175,6 +176,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                })
             },
             moveLayer: (neworder) => {
+               console.log(neworder)
                set((state) => {
                   state.layersOrder = neworder
                })
@@ -190,6 +192,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
 
                      newLayers.push(layer)
                   }
+                  console.log(newLayers)
 
                   state.layers = newLayers
                })
@@ -230,7 +233,6 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                emitter.emit('deleteLayer', { id })
             },
             addTilesets: (name, width, height, coloums, image) => {
-               console.log(name, width, height, coloums)
                set((state) => {
                   const lastMap = state.tilesets[state.tilesets.length - 1]
                   const tilecount = lastMap
