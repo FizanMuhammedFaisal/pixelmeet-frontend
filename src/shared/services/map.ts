@@ -16,6 +16,12 @@ export const mapServices = {
       if (data.limit) {
          params.set('limit', String(data.limit))
       }
+      if (data.public) {
+         params.set('public', String(data.public))
+      }
+      if (data.template) {
+         params.set('template', String(data.template))
+      }
       const res = await apiClient.get(`${API_ENDPOINTS.ASSET.GET_MAPS}?${params.toString()}`)
       return res
    },

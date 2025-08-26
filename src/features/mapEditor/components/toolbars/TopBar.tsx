@@ -21,11 +21,16 @@ function TopBar({ className, setTheme }: props) {
    return (
       <div className={`dark:bg-muted bg-white flex z-10 w-full p-2 justify-between ${className}`}>
          <div>
-            <SubmitButton onClick={() => saveMap()} processingName="Saving" isLoading={isSaving}>
-               <span className="flex">
-                  {' '}
-                  <SaveIcon /> Save
-               </span>
+            <SubmitButton
+               onClick={() => saveMap()}
+               processingName="Saving"
+               isLoading={isSaving}
+               className="px-4 py-2"
+            >
+               <div className="flex gap-0.5">
+                  <SaveIcon className="w-6 h-6 pt-0.5" />
+                  <span className="mb-0.5">Save</span>
+               </div>
             </SubmitButton>
          </div>
          <ThemeToggle onThemeChange={handleOnThemeChange} speed={0.5} />

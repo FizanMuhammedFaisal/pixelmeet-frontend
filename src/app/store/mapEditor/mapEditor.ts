@@ -118,10 +118,9 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                })
             },
             renameLayer: (id, name) => {
-               console.log(id, name)
                set((state) => {
                   const index = state.layers.findIndex((curr) => curr.id === id)
-                  console.log(index)
+
                   if (index !== null) {
                      state.layers[index].name = name
                   }
@@ -138,7 +137,6 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                })
             },
             addLayer: (layer) => {
-               console.log(layer)
                set((state) => {
                   if (state.layers.length >= LAYERS_LIMIT) {
                      toast.info(
@@ -202,7 +200,6 @@ export const useMapEditorStore = create<useMapEditorStore>()(
 
                      newLayers.push(layer)
                   }
-                  console.log(newLayers)
 
                   state.layers = newLayers
                })

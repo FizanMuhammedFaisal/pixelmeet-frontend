@@ -15,7 +15,7 @@ function BrowseMaps({ setView, handleStartBuilding }: props) {
    const [currentPage, setCurrentPage] = useState(1)
    const [selectedMap, setSelectedMap] = useState<any>(null)
    const limit = 8
-   const { data } = useGetMaps({ limit, page: currentPage })
+   const { data } = useGetMaps({ limit, page: currentPage, template: true, public: true })
    const maps = data?.data.data.maps
    const totalPages = data?.data.data.totalPages
 

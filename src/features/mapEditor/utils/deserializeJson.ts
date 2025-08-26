@@ -62,7 +62,7 @@ export function buildGlobalGIDLUT(
    for (const tileset of tilesets) {
       //need to construct image and make it dynamic
       const image = useRawImagePath ? tileset.image : constructImageUrl(tileset.image)
-      console.log(image)
+
       const source = PIXI.Assets.get(image)
       const total =
          Math.floor(tileset.imageheight / TILE_SIZE) * Math.floor(tileset.imagewidth / TILE_SIZE)
@@ -103,7 +103,7 @@ export async function reBuildMap(map: MapWithManifest, editor: Editor) {
       previewImageUrl: map.previewImageUrl,
       manifest: map.manifest,
    })
-   console.log('setttin mapdata')
+
    const mapJson: FinalMapType | null = await LoadMapJson(map.manifest)
    if (!mapJson) return
    await loadAssets(mapJson.tilesets)
@@ -114,7 +114,7 @@ export async function reBuildMap(map: MapWithManifest, editor: Editor) {
    layers.forEach((layer) => {
       const container = editor.layerContainers.get(layer.id)
       const spriteMap = editor.layerSpriteMap.get(layer.id)
-      console.log(container, spriteMap)
+
       if (container && spriteMap) {
          rebuildLayerFromData(container, layer.data as unknown as number[], textures, spriteMap)
       }

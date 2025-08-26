@@ -3,6 +3,8 @@ import { Viewport } from 'pixi-viewport'
 import type { ThemeType } from '../../types/types'
 import { WORLD_HEIGHT, WORLD_WIDTH } from '../../types/config'
 import type { Map, MapWithManifest } from '@/shared/types'
+import { initDevtools } from '@pixi/devtools'
+
 export class App {
    protected app: Application = new Application()
    protected isInitialized: boolean = false
@@ -33,11 +35,13 @@ export class App {
             .trim() ?? '#573022'
       this.accentColor = this.themeMode == 'dark' ? this.resolvedDark : this.resolvedLight
       await this.app.init({
-         antialias: false,
+         antialias: true,
          resizeTo: container,
          backgroundColor: this.backgroundColor,
          roundPixels: true,
       })
+      const app = this.app
+      initDevtools({ app })
       this.isInitialized = true
 
       const viewport = new Viewport({
@@ -53,7 +57,7 @@ export class App {
          .wheel()
          .decelerate()
          .clampZoom({
-            minScale: 0.1,
+            minScale: 0.45,
             maxScale: 16,
          })
 

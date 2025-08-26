@@ -16,12 +16,7 @@ export function FloodFillDFS(data: Uint32Array, clicked: { x: number; y: number 
    const index = getIndex(clicked.x, clicked.y)
    const current = data[index]
    if (current === target) return
-   console.log('NEW code running')
-   console.assert(
-      clicked.x >= 0 && clicked.x < WORLD_WIDTH && clicked.y >= 0 && clicked.y < WORLD_HEIGHT,
-      'click out of bounds',
-      clicked,
-   )
+
    const visited = new Uint8Array(SIZE)
    const stack = new Uint32Array(SIZE)
    let top = 0
@@ -31,7 +26,7 @@ export function FloodFillDFS(data: Uint32Array, clicked: { x: number; y: number 
 
    while (top > 0) {
       const id = stack[--top]
-      console.log(id)
+
       if (data[id] !== current) continue
       data[id] = target
 

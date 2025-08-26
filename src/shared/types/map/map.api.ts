@@ -17,6 +17,8 @@ export type CreateMapResponse = {
 export type GetMapsPayload = {
    limit: number
    page: number
+   template?: boolean
+   public?: boolean
 }
 export type GetMapPayload = {
    id?: string
