@@ -4,15 +4,15 @@ import { Features } from '@/shared/layout/home/Features'
 import { Footer } from '@/shared/layout/home/Footer'
 
 const HomePage = () => {
-  return (
-    <div className='min-h-screen bg-background'>
-      <Navigation />
+   return (
+      <div className="min-h-screen bg-background">
+         <Navigation />
 
-      <Hero />
-      <Features />
-      <Footer />
-    </div>
-  )
+         <Hero />
+         <Features />
+         <Footer />
+      </div>
+   )
 }
 
 export default HomePage

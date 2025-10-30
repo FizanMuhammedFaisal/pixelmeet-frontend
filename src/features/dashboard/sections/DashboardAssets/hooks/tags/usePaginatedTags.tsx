@@ -6,8 +6,8 @@ import type { ErrorResponse } from 'react-router'
 import { tagServices } from '../../services/tag'
 
 export const usePaginatedTags = (page: number = 1, limit: number = 10) => {
-  return useQuery<AxiosResponse<TagResponse>, AxiosError<ErrorResponse>>({
-    queryKey: ['tags', page, limit],
-    queryFn: () => tagServices.getTags({ page, limit })
-  })
+   return useQuery<AxiosResponse<TagResponse>, AxiosError<ErrorResponse>>({
+      queryKey: ['tags', page, limit],
+      queryFn: () => tagServices.getTags({ page, limit }),
+   })
 }
