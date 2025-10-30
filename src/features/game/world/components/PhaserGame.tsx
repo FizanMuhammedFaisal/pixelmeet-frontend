@@ -9,6 +9,7 @@ function PhaserGame() {
       if (game.current === null) {
          game.current = StartGame(GameCanvasName)
       }
+
       return () => {
          if (game.current) {
             game.current.destroy(true)

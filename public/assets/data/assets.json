@@ -1,0 +1,138 @@
+[
+    {
+        "path": "assets/sprites/player/",
+        "files": [
+            {
+                "type": "aseprite",
+                "key": "PLAYER",
+                "textureURL": "main_green.png",
+                "atlasURL": "main_green.json"
+            }
+        ]
+    },
+    {
+        "path": "assets/hud/",
+        "files": [
+            {
+                "type": "aseprite",
+                "key": "HUD_NUMBERS",
+                "textureURL": "heart_and_hud_numbers.png",
+                "atlasURL": "heart_and_hud_numbers.json"
+            }
+        ]
+    },
+    {
+        "path": "assets/tilemaps/",
+        "files": [
+            {
+                "type": "tilemapTiledJSON",
+                "key": "game-map",
+                "url": "game.json"
+            }
+        ]
+    },
+    {
+        "path": "assets/tilesets/",
+        "files": [
+            {
+                "type": "image",
+                "key": "Tiles",
+                "url": "Tiles.png"
+            },
+            {
+                "type": "image",
+                "key": "Trees",
+                "url": "trees.png"
+            },
+            {
+                "type": "image",
+                "key": "CollisionTiles",
+                "url": "Collition.png"
+            },
+            {
+                "type": "image",
+                "key": "WoodWalls",
+                "url": "WoodWalls.png"
+            },
+            {
+                "type": "spritesheet",
+                "key": "Crystal",
+                "url": "crystal.png",
+                "frameConfig": {
+                    "frameWidth": 32,
+                    "frameHeight": 32
+                }
+            },
+            {
+                "type": "spritesheet",
+                "key": "FountainStone",
+                "url": "FountainStone.png",
+                "frameConfig": {
+                    "frameWidth": 32,
+                    "frameHeight": 32
+                }
+            },
+            {
+                "type": "image",
+                "key": "GroundSet",
+                "url": "GroundSet.png"
+            },
+            {
+                "type": "image",
+                "key": "Bridge",
+                "url": "bridge.png"
+            },
+            {
+                "type": "image",
+                "key": "Tiles2",
+                "url": "Tiles2.png"
+            }
+        ]
+    },
+    {
+        "path": "assets/sprites/enimies/slime/",
+        "files": [
+            {
+                "type": "aseprite",
+                "key": "ENIMIE_SLIME",
+                "textureURL": "PixelArtSlime.png",
+                "atlasURL": "PixelArtSlime.json"
+            }
+        ]
+    },
+    {
+        "path": "assets/ui",
+        "files": [
+            {
+                "type": "image",
+                "key": "UI_DIALOG",
+                "url": "dialog_ui.png"
+            },
+            {
+                "type": "image",
+                "key": "UI_CURSOR",
+                "url": "cursor_white.png"
+            },
+            {
+                "type": "spritesheet",
+                "key": "UI_ICONS",
+                "url": "icons.png",
+                "frameConfig": {
+                    "frameWidth": 16,
+                    "frameHeight": 16
+                }
+            }
+        ]
+    },
+    {
+        "path": "assets/sprites/enimies/torchEnimie/",
+        "files": [
+            {
+                "type": "aseprite",
+                "key": "TORCH_ENIMIE",
+                "textureURL": "Torch_Blue.png",
+                "atlasURL": "Torch_Blue.json"
+            }
+        ]
+    }
+]

@@ -3,7 +3,9 @@ import * as scenes from '../engine/scenes'
 const config: Phaser.Types.Core.GameConfig = {
    title: 'PixelMeet:World',
    type: Phaser.AUTO,
-   backgroundColor: '#000000',
+   backgroundColor: '#2c3e50',
+   width: '100%',
+   height: '100%',
    scene: [scenes.Boot, ...Object.values(scenes).filter((scene) => scene !== scenes.Boot)],
    scale: {
       mode: Phaser.Scale.RESIZE,
