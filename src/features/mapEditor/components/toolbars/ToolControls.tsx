@@ -85,9 +85,8 @@ function ToolControls() {
                   ${
                      isActive
                         ? 'text-accent-foreground shadow-lg'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted-foreground/10'
+                        : 'text-muted-foreground hover:text-foreground rounded-base hover:bg-muted-foreground/10'
                   } `}
-                        style={{ borderRadius: 'var(--radius)' }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         transition={{
@@ -113,8 +112,7 @@ function ToolControls() {
                         {isActive && (
                            <motion.div
                               layoutId="activeIndicator"
-                              className="absolute inset-0 bg-primary/40 dark:bg-primary/40 border border-primary/10 shadow-lg shadow-primary/25"
-                              style={{ borderRadius: 'var(--radius)' }}
+                              className=" rounded-base absolute inset-0 bg-primary/40 dark:bg-primary/40 border border-primary/10 shadow-lg shadow-primary/25"
                               initial={false}
                               transition={{
                                  duration: 0.3,
@@ -128,8 +126,7 @@ function ToolControls() {
                               initial={{ opacity: 0, scale: 0.8 }}
                               animate={{ opacity: 1, scale: 1 }}
                               exit={{ opacity: 0, scale: 0.8 }}
-                              className="absolute inset-0 bg-primary/10 "
-                              style={{ borderRadius: 'var(--radius)' }}
+                              className="absolute inset-0 bg-primary/10 rounded-base"
                               transition={{ duration: 0.15 }}
                            />
                         )}
@@ -140,8 +137,7 @@ function ToolControls() {
                            initial={{ opacity: 0, y: 10, scale: 0.8 }}
                            animate={{ opacity: 1, y: 0, scale: 1 }}
                            exit={{ opacity: 0, y: 10, scale: 0.8 }}
-                           className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2.5 py-0.5 backdrop-blur-md bg-popover/80 border border-border shadow-md z-50"
-                           style={{ borderRadius: 'var(--radius)' }}
+                           className="rounded-base absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2.5 py-0.5 backdrop-blur-md bg-popover/80 border border-border shadow-md z-50"
                            transition={{ duration: 0.15, ease: [0.78, 0.41, 0.46, 1.17] }}
                         >
                            <span className="text-xs font-medium text-popover-foreground whitespace-nowrap">

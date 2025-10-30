@@ -92,7 +92,7 @@ keep the  in hex format
    --font-sans: Open Sans, sans-serif;
    --font-serif: Georgia, serif;
    --font-mono: Menlo, monospace;
-   --radius: 0.325rem;
+   --radius: 0.375rem;
    --shadow-2xs: 0px 2px 0px 0px hsl(202.8986 89.6104% 54.7059% / 0);
    --shadow-xs: 0px 2px 0px 0px hsl(202.8986 89.6104% 54.7059% / 0);
    --shadow-sm:
@@ -152,7 +152,7 @@ keep the  in hex format
    --font-sans: Open Sans, sans-serif;
    --font-serif: Georgia, serif;
    --font-mono: Menlo, monospace;
-   --radius: 0.325rem;
+   --radius: 0.375rem;
    --shadow-2xs: 0px 2px 0px 0px hsl(202.8986 89.6104% 54.7059% / 0);
    --shadow-xs: 0px 2px 0px 0px hsl(202.8986 89.6104% 54.7059% / 0);
    --shadow-sm:
@@ -361,6 +361,12 @@ keep the  in hex format
 @theme inline {
    --font-Minecraftia: 'Minecraftia', 'sans-serif';
 }
+@layer components {
+   .rounded-base {
+      border-radius: var(--radius);
+   }
+}
+
 .hero {
    background-image: url('/images/background1.png');
    background-repeat: no-repeat;
