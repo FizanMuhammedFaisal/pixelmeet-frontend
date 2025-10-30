@@ -1,69 +1,83 @@
-# React + TypeScript + Vite
+# PixelMeet
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A 2D virtual collaborative platform inspired by Gather.town, enabling real-time social interactions in customizable pixel-art spaces.
 
-Currently, two official plugins are available:
+## 🌟 Key Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Virtual Spaces**
+   - Customizable 2D environments
+   - Real-time multiplayer interactions
+   - Proximity-based audio/video chat
+   - Interactive objects and furniture
+   - Private spaces and meeting rooms
 
-## Expanding the ESLint configuration
+- **Social Features**
+   - Avatar customization
+   - Emotes and reactions
+   - Text chat with emoji support
+   - Private messaging
+   - Group formations
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Space Management**
+   - Built-in map editor
+   - Template spaces
+   - Custom asset support
+   - Space permissions
+   - User management
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🛠️ Technology Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- **Frontend**: React + TypeScript + Vite
+- **Game Engine**: Pixi.js
+- **State Management**: Zustand
+- **Real-time Communication**: WebRTC
+- **Styling**: Tailwind CSS
+- **Backend**: [Your backend tech stack]
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🚀 Getting Started
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/FizanMuhammedFaisal/pixelmeet-frontend.git
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Install dependencies
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd pixelmeet-frontend
+npm install
 ```
+
+3. Start development server
+
+```bash
+npm run dev
+```
+
+## 🎮 Space Controls
+
+- **WASD/Arrow Keys**: Move avatar
+- **E**: Interact with objects
+- **Space**: Action button
+- **Tab**: Open menu
+- **M**: Toggle map
+- **V**: Toggle video
+- **M**: Toggle microphone
+
+## 🔧 Configuration
+
+Create a `.env` file or change the example.env
+
+## 🤝 Contributing
+
+We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting pull requests.
+
+## 📝 License
+
+[Add your license information here]
+
+## 🔗 Links
+
+- [Documentation](docs/)
+- [Bug Reports](https://github.com/FizanMuhammedFaisal/pixelmeet-frontend/issues)

@@ -1,7 +1,8 @@
 import { ThemeToggle } from '@/shared/layout/Dashboard/ThemeButton'
 import type { ThemeType } from '../../types/types'
-import { Button } from '@/components/ui/button'
-import { Save } from 'lucide-react'
+import { SaveIcon } from 'lucide-react'
+import { useMapSave } from '../../hooks/useMapSave'
+import SubmitButton from '@/components/ui/submit-button'
 
 type props = {
    className?: string
@@ -15,13 +16,22 @@ function TopBar({ className, setTheme }: props) {
          setTheme('light')
       }
    }
+
+   const { saveMap, isSaving } = useMapSave()
    return (
       <div className={`dark:bg-muted bg-white flex z-10 w-full p-2 justify-between ${className}`}>
          <div>
-            <Button>
-               <span>Save</span>
-               <Save />
-            </Button>
+            <SubmitButton
+               onClick={() => saveMap()}
+               processingName="Saving"
+               isLoading={isSaving}
+               className="px-4 py-2"
+            >
+               <div className="flex gap-0.5">
+                  <SaveIcon className="w-6 h-6 pt-0.5" />
+                  <span className="mb-0.5">Save</span>
+               </div>
+            </SubmitButton>
          </div>
          <ThemeToggle onThemeChange={handleOnThemeChange} speed={0.5} />
       </div>

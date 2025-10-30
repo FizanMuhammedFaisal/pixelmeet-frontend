@@ -22,6 +22,7 @@ import {
    makeZoomOutTool,
 } from './ToolControls'
 import { TILE_SIZE, WORLD_HEIGHT, WORLD_WIDTH } from '../../types/config'
+import { reBuildMap } from '../../utils/deserializeJson'
 
 PIXI.extensions.add(PIXI.CullerPlugin)
 
@@ -55,6 +56,7 @@ export class Editor extends App {
       this.setUpZustantListners()
       this.setUpInteractions()
       this.setUpStaticMethods()
+      this.loadMap()
    }
    setUpEmitterListners = () => {
       emitter.on('switchTheme', this.handleThemeSwitch)
@@ -101,8 +103,6 @@ export class Editor extends App {
       this.setCoordinates = useMapEditorStore.getState().actions.setCoordinates
    }
    setUpGridLines = async () => {
-      console.log(this.viewport.worldHeight)
-      console.log(this.viewport.worldWidth)
       this.gridLines = new PIXI.TilingSprite({
          texture: PIXI.Texture.from(
             this.themeMode === 'dark'
@@ -127,6 +127,11 @@ export class Editor extends App {
       this.viewport.addChild(this.layersContainer)
       this.layersContainer.width = this.viewport.worldWidth
       this.layersContainer.height = this.viewport.worldHeight
+   }
+   loadMap = () => {
+      if (this.mapData) {
+         reBuildMap(this.mapData, this)
+      }
    }
 
    //hanlders
@@ -170,7 +175,6 @@ export class Editor extends App {
       const container = this.layerContainers.get(id)
       if (container) {
          container.destroy()
-         console.log('container destoryed')
       }
    }
    handleMoveLayer = ({ neworder }: { neworder: number[] }) => {
@@ -182,7 +186,6 @@ export class Editor extends App {
    }
    updateCoordinates = (e: PIXI.FederatedPointerEvent) => {
       const w = this.viewport.toWorld(e)
-      console.log('got the w setting it')
       this.setCoordinates!({ x: w.x, y: w.y })
    }
 
@@ -200,7 +203,6 @@ export class Editor extends App {
       return useMapEditorStore.getState().selectedLayer?.id ?? null
    }
    get selectedLayer() {
-      console.log(useMapEditorStore.getState().selectedLayer)
       return useMapEditorStore.getState().selectedLayer
    }
    setUpInteractions = () => {
@@ -210,7 +212,6 @@ export class Editor extends App {
          .on('pointerdown', (e) => toolMap[this.selectedTool].onDown?.(e.global, e))
          .on('pointermove', (e) => {
             toolMap[this.selectedTool].onMove?.(e.global, e)
-            console.log('the pointer is moving')
             this.updateCoordinates(e)
          })
          .on('pointerup', (e) => toolMap[this.selectedTool].onUp?.(e.global, e))

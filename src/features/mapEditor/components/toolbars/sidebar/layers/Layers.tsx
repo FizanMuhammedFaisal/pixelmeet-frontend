@@ -90,7 +90,7 @@ function SideBarLayers() {
       if (!over) return
       const oldIndex = layerOrder.indexOf(Number(active.id))
       const newIndex = layerOrder.indexOf(Number(over.id))
-
+      console.log(layerOrder, oldIndex, newIndex)
       const res = arrayMove(layerOrder, oldIndex, newIndex)
       console.log(res)
       moveLayer(res)
@@ -109,7 +109,12 @@ function SideBarLayers() {
                      Layers
                   </div>
                   <div className="flex items-center gap-1">
-                     <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={addLayer}>
+                     <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0"
+                        onClick={() => addLayer()}
+                     >
                         <Plus className="h-4 w-4 " />
                      </Button>
                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0">

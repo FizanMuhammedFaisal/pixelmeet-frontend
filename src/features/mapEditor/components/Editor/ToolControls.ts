@@ -104,8 +104,7 @@ export const makeFillTool = (
          const point = editor.snapToGrid(worldPos.x, worldPos.y)
 
          const container = editor.layerContainers.get(selectedLayerId)
-         console.log(selectedLayerId)
-         console.log(container)
+
          const spriteLayer = editor.layerSpriteMap.get(selectedLayerId)
          if (container === undefined || spriteLayer === undefined) return
          const ImageDetails = useMapEditorStore.getState().tilesets.find((curr) => {
@@ -171,7 +170,7 @@ export const makeFillTool = (
                editor.ghostSprite = new Sprite({ texture: tileTex })
                editor.ghostSprite.zIndex = 1000
                editor.ghostSprite.alpha = 0.8
-               console.log('adding ghost to world contaer')
+
                editor.worldContainer.addChild(editor.ghostSprite)
             } catch (error) {
                console.log('failed to make a sprite', error)
@@ -214,7 +213,6 @@ export const makeSelectTool = (editor: Editor): ToolHandler => ({
          .stroke({ color: editor.accentColor, width: 1 })
 
       editor.worldContainer.addChild(editor.selectionGraphic)
-      console.log(editor.selectionGraphic)
    },
    onMove: (pos) => {
       //upda teh x,y and updaate teh rectagles
@@ -262,17 +260,13 @@ export const makeEraserTool = (
       const tilespritey = snappedCor.y / TILE_SIZE
       const index = tilespritey * WORLD_WIDTH + tilespritex
       const sprite = spritelayer[index]
-      console.log(tilespritex, tilespritey)
+
       if (sprite) {
          const container = editor.layerContainers.get(editor.selectedLayerId)
          if (container) {
-            console.log(sprite)
-            console.log(container)
-            console.log(sprite.uid)
             container.removeChild(sprite)
             sprite.destroy()
 
-            console.log(tilespritex, tilespritey)
             drawTileset(tilespritex, tilespritey, 0)
          }
       }
@@ -341,16 +335,16 @@ export const makeBucketFillTool = (editor: Editor): ToolHandler => ({
       const array = selectedLayer.data
 
       const targetgid = data.startY * ImageDetails.columns + data.startX + ImageDetails.firstgid
-      console.log(targetgid)
-      console.log('before flood:', selectedLayer.data)
+
       const tilesx = Math.floor(snapped.x / TILE_SIZE)
       const tilesy = Math.floor(snapped.y / TILE_SIZE)
-      console.log(tilesx, tilesy)
+
       FloodFillDFS(array, { x: tilesx, y: tilesy }, targetgid)
-      console.log(selectedLayer.data)
+
       const tilesets = useMapEditorStore.getState().tilesets
-      const globalGid = buildGlobalGIDLUT(tilesets)
-      console.log(globalGid)
+
+      const globalGid = buildGlobalGIDLUT(tilesets, true)
+
       rebuildLayerFromData(container, Array.from(selectedLayer.data), globalGid, spriteLayer)
    },
 })
