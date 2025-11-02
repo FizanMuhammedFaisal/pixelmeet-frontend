@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
-import { Search, Plus, Home, Map } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { Plus, Home, Map } from 'lucide-react'
+import { motion } from 'motion/react'
 import ProfileDropDown from '@/components/ui/profile-dropdown'
 import { cn } from '@/shared/lib/utils'
 
@@ -23,11 +23,11 @@ function SpaceTopBar({ currentTab, setCurrentTab, onCreateSpace }: SpaceTopBarPr
       damping: 30,
    }
    return (
-      <div className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80">
+      <div className="sticky top-0  w-full border-b border-border bg-background/80">
          <div className="container mx-auto px-6">
             <div className="flex h-20 items-center justify-between">
                <div className="flex items-center gap-8">
-                  <nav className="flex items-center bg-primary/15 p-1.5 border border-primary/25">
+                  <nav className="flex items-center bg-primary/15 p-1 rounded-base border border-primary/15 ">
                      {tabs.map((tab) => {
                         const Icon = tab.icon
                         const isActive = currentTab === tab.id
@@ -37,7 +37,7 @@ function SpaceTopBar({ currentTab, setCurrentTab, onCreateSpace }: SpaceTopBarPr
                               {isActive && (
                                  <motion.div
                                     layoutId="activeTab"
-                                    className="absolute inset-0 bg-card shadow-sm border border-border/90"
+                                    className="rounded-base absolute inset-0 bg-card shadow-sm border border-border/90"
                                     initial={false}
                                     transition={LAYOUT_SPRING}
                                  />
@@ -70,7 +70,8 @@ function SpaceTopBar({ currentTab, setCurrentTab, onCreateSpace }: SpaceTopBarPr
                   <Button
                      onClick={onCreateSpace}
                      size="sm"
-                     className="bg-gradient-to-b from-primary to-primary/90 hover:bg-primary text-primary-foreground shadow px-4 py-2 "
+                     variant={'special'}
+                     className="shadow px-4 py-2 "
                   >
                      <Plus className="h-4 w-4 mr-2" />
                      Create Space

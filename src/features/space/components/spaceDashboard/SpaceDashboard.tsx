@@ -10,10 +10,10 @@ function SpaceDashboard() {
    const tabComponents = (tab: SpaceTabs) => {
       switch (tab) {
          case 'maps':
-            return <SpaceList />
-
-         default:
             return null
+
+         case 'spaces':
+            return <SpaceList />
       }
    }
    return (

@@ -1,15 +1,15 @@
 import HomePage from '@/pages/user/Home'
-import AppLayout from '@/shared/layout/route/AppLayout'
 import UserLayout from '@/shared/layout/route/UserLayout'
 import { type RouteObject } from 'react-router-dom'
 import GuestWrapper from '../guards/GuestGuard'
-import LoginPage from '@/pages/user/Login'
-import SignUpPage from '@/pages/user/Signup'
-import ForgotPasswordPage from '@/pages/user/ForgotPassword'
+import LoginPage from '@/pages/user/auth/Login'
+import SignUpPage from '@/pages/user/auth/Signup'
+import ForgotPasswordPage from '@/pages/user/auth/ForgotPassword'
 import AuthWrapper from '../guards/AuthGuard'
 import SpacesPage from '@/pages/user/Spaces'
 import AdminMapEditor from '@/pages/admin/MapEditor'
 import TestingPage from '@/pages/user/Testing'
+import WorldPage from '@/pages/user/World'
 
 const UserRouter: RouteObject[] = [
    {
@@ -51,6 +51,10 @@ const UserRouter: RouteObject[] = [
                {
                   path: '/testing',
                   element: <TestingPage />,
+               },
+               {
+                  path: '/world',
+                  element: <WorldPage />,
                },
             ],
          },

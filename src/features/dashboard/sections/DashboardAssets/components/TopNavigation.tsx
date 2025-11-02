@@ -1,6 +1,6 @@
 import type React from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { LayoutGrid, Star, Upload, List, Files, TagsIcon, DeleteIcon, Trash2 } from 'lucide-react'
+import { motion, AnimatePresence } from 'motion/react'
+import { LayoutGrid, Star, Upload, List, Files, TagsIcon, Trash2 } from 'lucide-react'
 
 import type { AssetDashboardTabs } from '../DashboardAssets'
 import { cn } from '../../../../../shared/lib/utils'
@@ -76,7 +76,7 @@ export function TopNavigation({
                      key={tab.id}
                      onClick={() => onTabChange(tab.id)}
                      className={cn(
-                        'relative z-10 flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap',
+                        'relative z-0 flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap',
                         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                         'min-w-0',
                         isActive

@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { CheckCircle } from 'lucide-react'
-import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
+import { motion, AnimatePresence, LayoutGroup } from 'motion/react'
 
 import type React from 'react'
 import { cn } from '../../shared/lib/utils'

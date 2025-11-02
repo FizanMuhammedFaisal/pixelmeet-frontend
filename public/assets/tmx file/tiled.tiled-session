@@ -1,0 +1,186 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "TiesPreph.tmx",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "": {
+            "scaleInEditor": 1
+        },
+        "/Users/fizanmuhammedfaisal/Downloads/phaser-zelda-like-tutorial-additional-assets/tiled/world.tmx": {
+            "expandedGroupLayers": [
+                20
+            ],
+            "scale": 1.0798,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 250.509353583997,
+                "y": 131.50583441378035
+            }
+        },
+        "/Users/fizanmuhammedfaisal/Downloads/phaser-zelda-like-tutorial-additional-assets/tiled/world.tmx#collision": {
+            "scaleInDock": 1
+        },
+        "/Users/fizanmuhammedfaisal/Downloads/phaser-zelda-like-tutorial-additional-assets/tiled/world.tmx#grassland_resized": {
+            "scaleInDock": 2.9841
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tiled.tmx": {
+            "scale": 0.3642,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 707.0291048874245,
+                "y": 952.7732015376167
+            }
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tiled.tmx#CollisionTiles": {
+            "scaleInDock": 1
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tiled.tmx#Collition": {
+            "scaleInDock": 1
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tiled.tmx#Grass": {
+            "scaleInDock": 1
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tiled.tmx#GroundSet": {
+            "scaleInDock": 1
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tiled.tmx#Tiles": {
+            "scaleInDock": 1
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tiled.tmx#WoodWalls": {
+            "scaleInDock": 1
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tiled.tmx#trees": {
+            "scaleInDock": 1
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx": {
+            "scale": 0.772,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 658.6787564766839,
+                "y": 840.6735751295337
+            }
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx#CollisionTiles": {
+            "scaleInDock": 1
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx#Collition": {
+            "scaleInDock": 1
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx#Grass": {
+            "scaleInDock": 1
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx#GroundSet": {
+            "scaleInDock": 1
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx#Tiles": {
+            "scaleInDock": 1
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx#WoodWalls": {
+            "scaleInDock": 1
+        },
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx#trees": {
+            "scaleInDock": 1
+        },
+        "Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx": {
+            "expandedGroupLayers": [
+                16,
+                14,
+                13
+            ],
+            "scale": 1.454,
+            "selectedLayer": 10,
+            "viewCenter": {
+                "x": 946.0110041265475,
+                "y": 787.4828060522697
+            }
+        },
+        "Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx#CollisionTiles": {
+            "scaleInDock": 1
+        },
+        "Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx#Collition": {
+            "scaleInDock": 8.3536
+        },
+        "Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx#Grass": {
+            "scaleInDock": 1
+        },
+        "Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx#GroundSet": {
+            "scaleInDock": 1
+        },
+        "Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx#Tiles": {
+            "scaleInDock": 1
+        },
+        "Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx#WoodWalls": {
+            "scaleInDock": 1
+        },
+        "Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx#trees": {
+            "scaleInDock": 1
+        },
+        "TiesPreph.tmx": {
+            "expandedGroupLayers": [
+                20,
+                13,
+                23,
+                16,
+                14
+            ],
+            "scale": 0.2579,
+            "selectedLayer": 19,
+            "viewCenter": {
+                "x": 663.0476929042263,
+                "y": 2780.147343931756
+            }
+        },
+        "TiesPreph.tmx#CollisionTiles": {
+            "scaleInDock": 2.33
+        },
+        "TiesPreph.tmx#Collition": {
+            "scaleInDock": 2.33
+        },
+        "TiesPreph.tmx#Grass": {
+            "scaleInDock": 2.33
+        },
+        "TiesPreph.tmx#GroundSet": {
+            "scaleInDock": 2.33
+        },
+        "TiesPreph.tmx#Tiles": {
+            "scaleInDock": 2.33
+        },
+        "TiesPreph.tmx#WoodWalls": {
+            "scaleInDock": 2.33
+        },
+        "TiesPreph.tmx#bridge": {
+            "scaleInDock": 1.316
+        },
+        "TiesPreph.tmx#grass2": {
+            "scaleInDock": 2.33
+        },
+        "TiesPreph.tmx#trees": {
+            "scaleInDock": 1.2391
+        }
+    },
+    "last.exportedFilePath": "/Users/fizanmuhammedfaisal/Desktop",
+    "last.imagePath": "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre-PH/frontend/game/src/assets/tilesets",
+    "last.objectTypesPath": "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/propertytypes.json",
+    "map.lastUsedExportFilter": "All Files (*)",
+    "map.lastUsedFormat": "tmx",
+    "openFiles": [
+        "TiesPreph.tmx"
+    ],
+    "project": "tiled.tiled-project",
+    "property.type": "int",
+    "recentFiles": [
+        "TiesPreph.tmx",
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tiled.tmx",
+        "/Users/fizanmuhammedfaisal/Projects/Projects/Project-Pre(PH)/frontend/game/src/assets/tmx file/TiesPreph.tmx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

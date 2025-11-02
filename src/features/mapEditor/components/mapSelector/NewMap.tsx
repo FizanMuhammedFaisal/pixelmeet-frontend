@@ -72,7 +72,7 @@ function NewMap({
    }
    return (
       <div className="fixed inset-0 z-50 bg-white/50 flex items-center justify-center p-5 h-full w-full  ">
-         <div className="bg-background rounded-[var(--radius)] shadow-2xl w-full  flex flex-col max-w-5/6 h-5/6">
+         <div className="bg-background rounded-base shadow-2xl w-full  flex flex-col max-w-5/6 h-5/6">
             {!createSuccess ? (
                <>
                   <div className="px-8 py-6 border-b">
@@ -90,7 +90,7 @@ function NewMap({
                      <div className="w-full max-w-lg h-full justify-center flex">
                         <div className=" w-full  p-8 ">
                            <div className="text-center mb-8">
-                              <div className="w-16 h-16 bg-primary/10 rounded-[var(--radius)] flex items-center justify-center mx-auto mb-4">
+                              <div className="w-16 h-16 bg-primary/10 rounded-base flex items-center justify-center mx-auto mb-4">
                                  <MapIcon className="h-8 w-8 text-primary" />
                               </div>
                               <h3 className="text-xl font-semibold mb-2">

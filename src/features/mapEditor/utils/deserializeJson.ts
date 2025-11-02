@@ -38,6 +38,8 @@ export function rebuildLayerFromData(
                sprite.position.x = x * TILE_SIZE
                sprite.position.y = y * TILE_SIZE
                sprite.zIndex = 1000
+               sprite.eventMode = 'none'
+               sprite.interactiveChildren = false
                spriteLayer[i] = sprite
                container.addChild(sprite)
             }

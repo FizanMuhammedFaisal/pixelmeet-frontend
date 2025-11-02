@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import ObjectPanel from './ObjectPanel'
 import AudioPanel from './AudioPanel'
 import TilesPanel from './TilesPanle/TilesPanel'
