@@ -70,10 +70,10 @@ export class InputComponent {
    get isDDown() {
       return this.D
    }
-   set isEscapeKeyDown(val: boolean) {
+   set isEscapeKeyJustDown(val: boolean) {
       this.escapeKey = val
    }
-   get isEscapeKeyDown() {
+   get isEscapeKeyJustDown() {
       return this.escapeKey
    }
    public reset(): void {
