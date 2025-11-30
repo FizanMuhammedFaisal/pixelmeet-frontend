@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import type { Map } from '../../types/map'
 import { Spinner } from '@/components/ui/spinner'
 import { PaginationControls } from '@/components/ui/paginationControls'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { useNavigate } from 'react-router'
 import MapPreview from './MapPreview'
 

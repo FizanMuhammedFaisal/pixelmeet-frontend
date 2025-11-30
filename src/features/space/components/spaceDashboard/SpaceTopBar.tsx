@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { Plus, Home, Map } from 'lucide-react'
 import { motion } from 'motion/react'
 import ProfileDropDown from '@/components/ui/profile-dropdown'

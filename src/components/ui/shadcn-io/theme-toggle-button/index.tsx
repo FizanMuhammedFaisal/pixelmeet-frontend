@@ -1,6 +1,6 @@
 import { Moon, Sun } from 'lucide-react'
 import { useCallback } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { cn } from '../../../../shared/lib/utils'
 import { AnimatePresence, motion } from 'motion/react'
 

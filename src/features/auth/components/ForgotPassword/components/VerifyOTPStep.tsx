@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { ArrowLeft, Check, RefreshCw } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'

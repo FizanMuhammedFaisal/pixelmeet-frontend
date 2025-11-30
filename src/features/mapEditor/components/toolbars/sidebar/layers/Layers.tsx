@@ -4,7 +4,7 @@ import {
    useLayers,
    useSelectedLayer,
 } from '@/app/store/mapEditor/mapEditor'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 import type { Layer } from '@/features/mapEditor/types/types'

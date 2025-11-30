@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { CheckCircle } from 'lucide-react'
 import { motion, AnimatePresence, LayoutGroup } from 'motion/react'
 

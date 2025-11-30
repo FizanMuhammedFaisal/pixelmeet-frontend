@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { motion } from 'motion/react'
 import { PlusIcon, PencilIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
    Table,

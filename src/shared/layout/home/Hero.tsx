@@ -1,5 +1,5 @@
 import { motion } from 'motion/react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { useNavigate } from 'react-router'
 
 export const Hero = () => {

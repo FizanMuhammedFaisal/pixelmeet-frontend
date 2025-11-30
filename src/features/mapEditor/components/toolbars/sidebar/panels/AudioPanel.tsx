@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { Upload, Volume2 } from 'lucide-react'
 
 function AudioPanel() {

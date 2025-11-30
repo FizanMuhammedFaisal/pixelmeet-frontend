@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { Input } from '@/components/ui/input'
 import type { Layer } from '@/features/mapEditor/types/types'
 import { useSortable } from '@dnd-kit/sortable'

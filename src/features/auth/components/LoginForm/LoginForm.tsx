@@ -16,7 +16,7 @@ import { authService } from '../../services'
 import useGoogle from '../../hooks/useGoogle'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import type { ErrorResponse } from '../../../../shared/types'
 
 type FormFields = LoginCredentials

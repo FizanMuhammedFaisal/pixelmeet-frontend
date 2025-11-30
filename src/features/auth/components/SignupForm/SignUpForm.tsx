@@ -14,7 +14,7 @@ import { authService } from '@/features/auth'
 
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import useGoogle from '../../hooks/useGoogle'
 
 type FormFields = SignUpCredentials

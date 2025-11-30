@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { Button } from './button'
+import { Button } from '../button'
 import {
    DropdownMenu,
    DropdownMenuContent,

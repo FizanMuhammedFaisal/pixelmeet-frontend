@@ -1,5 +1,5 @@
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { Badge } from '@/components/ui/badge'
 import { Search, Filter, X } from 'lucide-react'
 
