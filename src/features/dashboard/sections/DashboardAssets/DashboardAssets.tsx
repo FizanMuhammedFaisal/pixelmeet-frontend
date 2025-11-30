@@ -36,14 +36,18 @@ export default function AdminAssetsPage() {
    }
    useEffect(() => {
       if (!validTab(tabFromUrl)) {
-         setSearchParams({ tab: DEFAULT_TAB })
          setCurrentTab(DEFAULT_TAB)
       }
-   }, [tabFromUrl, setSearchParams])
+   }, [tabFromUrl])
 
    const onTabChange = (tab: AssetDashboardTabs) => {
-      setSearchParams({ tab })
       setCurrentTab(tab)
+  
+setTimeout(() => {
+   requestAnimationFrame(() => {
+   setSearchParams({ tab })
+})
+}, 700);
    }
    return (
       <div className="flex flex-col h-screen bg-background">
@@ -55,18 +59,18 @@ export default function AdminAssetsPage() {
                viewMode={viewMode}
             />
          </div>
-         <AnimatePresence mode="wait">
+         {/* <AnimatePresence mode="popLayout"> */}
             <motion.div
                key={currentTab}
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               exit={{ opacity: 0 }}
-               transition={{ duration: 0.3 }}
+               initial={{ opacity: 0, filter: 'blur(1px)' }}
+               animate={{ opacity: 1, filter: 'blur(0px)' }}
+               exit={{ opacity: 0, filter: 'blur(1px)' }}
+               transition={{ duration: 0.2 }}
                className="flex flex-1"
             >
                {tabComponents[currentTab] || <div>Not implemented yet</div>}
             </motion.div>
-         </AnimatePresence>
+         {/* </AnimatePresence> */}
       </div>
    )
 }

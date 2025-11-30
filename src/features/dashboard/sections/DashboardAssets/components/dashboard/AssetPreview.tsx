@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { Heart, Download, Edit, Copy, Play, Volume2, Trash2, Undo2, FileCode } from 'lucide-react'
 import type { Asset } from '../../../../types'
 import { ImageZoom } from '../../../../../../components/ui/shadcn-io/image-zoom'

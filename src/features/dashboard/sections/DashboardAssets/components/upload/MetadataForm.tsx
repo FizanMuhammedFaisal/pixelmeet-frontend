@@ -12,7 +12,7 @@ import { getStatusBadgeVariant, getStatusIcon } from './Statusbadge'
 import { Badge, Upload } from 'lucide-react'
 
 import { useCallback, useState } from 'react'
-import { Button } from '../../../../../../components/ui/button'
+import { Button } from '../../../../../../components/button'
 import {
    Select,
    SelectContent,

@@ -15,4 +15,11 @@ export class BaseGameObjectComponent {
    protected assignComponentToGameObject(gameObject: GameObject): void {
       gameObject[`_${this.constructor.name}`] = this
    }
+   static getComponent<T>(gameObject: GameObject): T {
+      return gameObject[`_${this.name}`] as T
+   }
+   //removing the setted value
+   static remoteComponent(gameObject: GameObject): void {
+      delete gameObject[`_${this.name}`]
+   }
 }

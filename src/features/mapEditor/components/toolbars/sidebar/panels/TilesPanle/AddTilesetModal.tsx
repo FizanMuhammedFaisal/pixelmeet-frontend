@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { PaginationControls } from '@/components/ui/paginationControls'
 import { Plus } from 'lucide-react'
 import type { TilesetType } from '@/features/mapEditor/types/types'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { apiClient, apiClientPublic } from '@/api/config/axios'
 import { Assets } from 'pixi.js'
 

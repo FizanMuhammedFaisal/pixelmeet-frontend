@@ -1,5 +1,5 @@
 import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 
 import { X } from 'lucide-react'
 import type { UploadFile } from '../../types/upload/types'

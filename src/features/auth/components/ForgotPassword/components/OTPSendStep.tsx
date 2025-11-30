@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { ArrowLeft, Mail, RefreshCw } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 type props = {

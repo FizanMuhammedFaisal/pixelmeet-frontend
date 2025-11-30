@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import type { TilesetType } from '@/features/mapEditor/types/types'
 import { cn } from '@/shared/lib/utils'
