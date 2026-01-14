@@ -1,0 +1,39 @@
+name: Manual Test Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Custom message to display'
+        required: false
+        default: 'Hello from workflow_dispatch!'
+        type: string
+      environment:
+        description: 'Environment to test'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Display trigger info
+        run: |
+          echo "🚀 Workflow triggered manually!"
+          echo "📝 Message: ${{ github.event.inputs.message }}"
+          echo "🌍 Environment: ${{ github.event.inputs.environment }}"
+          echo "👤 Triggered by: ${{ github.actor }}"
+          echo "⏰ Timestamp: $(date)"
+
+      - name: Run test command
+        run: |
+          echo "Running test on ${{ github.event.inputs.environment }} environment..."
+          echo "✅ Test completed successfully!"
