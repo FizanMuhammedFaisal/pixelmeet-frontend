@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { Globe, Plus } from 'lucide-react'
 type props = {
    setView: (view: string) => void

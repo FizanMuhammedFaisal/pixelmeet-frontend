@@ -58,7 +58,7 @@ export const sendOTPSchema = {
 export type SendOTPCredentials = z.infer<typeof sendOTPSchema>
 export const VerifyOTPSchema = {
    email: z.email(),
-   otp: z.email(),
+   otp: z.string(),
 }
 
 export type VerifyOTPCredentials = z.infer<typeof VerifyOTPSchema>
