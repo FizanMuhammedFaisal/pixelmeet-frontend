@@ -122,7 +122,7 @@ export default function TagsList() {
                         <TableHeader>
                            <TableRow>
                               <TableHead className="w-[200px]">Name</TableHead>
-                              <TableHead>Description</TableHead>
+                              <TableHead className="max-w-[300px]">Description</TableHead>
                               <TableHead className="hidden md:table-cell w-[150px]">
                                  Created At
                               </TableHead>
@@ -142,7 +142,7 @@ export default function TagsList() {
                                  className="hover:bg-muted/50"
                               >
                                  <TableCell className="font-medium">{tag.name}</TableCell>
-                                 <TableCell className="text-muted-foreground">
+                                 <TableCell className="text-muted-foreground max-w-[300px] truncate">
                                     {tag.description || 'N/A'}
                                  </TableCell>
                                  <TableCell className="hidden md:table-cell">

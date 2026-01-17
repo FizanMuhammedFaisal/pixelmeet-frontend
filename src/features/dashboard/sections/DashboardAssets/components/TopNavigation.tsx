@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import { LayoutGrid, Star, Upload, List, Files, TagsIcon, Trash2 } from 'lucide-react'
 
 import type { AssetDashboardTabs } from '../DashboardAssets'
-import { cn } from '../../../../../shared/lib/utils'
+import { cn } from '@/shared/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router'
 
@@ -67,109 +67,105 @@ export function TopNavigation({
          role="navigation"
          aria-label="Asset dashboard navigation"
       >
-         <div className="flex items-center flex-wrap bg-primary/10 border border-primary/25 rounded-xl p-1 gap-2 lg:gap-3">
+         <div className="flex items-center flex-wrap bg-primary/10 border border-primary/25 rounded-xl p-1">
             {tabs.map((tab) => {
                const Icon = tab.icon
                const isActive = currentTab === tab.id
                return (
-                  <motion.button
-                     key={tab.id}
-                     onClick={() => onTabChange(tab.id)}
-                     className={cn(
-                        'relative z-0 flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap',
-                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-                        'min-w-0',
-                        isActive
-                           ? 'text-foreground'
-                           : 'text-muted-foreground hover:text-foreground',
-                     )}
-                     whileHover={{ scale: 1.01 }}
-                     whileTap={{ scale: 0.99 }}
-                     transition={BUTTON_SPRING}
-                     aria-pressed={isActive}
-                     role="tab"
-                  >
+                  <div key={tab.id} className="relative">
                      {isActive && (
                         <motion.div
                            layoutId="activeTab"
-                           className="absolute inset-0 bg-card rounded-lg shadow-sm border border-border/90 z-[-1]"
+                           className="absolute inset-0 bg-card rounded-lg shadow-sm border border-border/90"
+                           initial={false}
                            transition={LAYOUT_SPRING}
                         />
                      )}
-                     <Icon
+                     <button
+                        onClick={() => onTabChange(tab.id)}
                         className={cn(
-                           'h-4 w-4 transition-colors duration-200 flex-shrink-0 relative z-[2]',
-                           isActive ? 'text-primary' : 'text-muted-foreground',
+                           'relative z-10 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap',
+                           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                           isActive
+                              ? 'text-foreground'
+                              : 'text-muted-foreground hover:text-foreground hover:bg-transparent',
                         )}
-                     />
-                     <span className="hidden sm:inline font-medium relative z-[2]">
-                        {tab.label}
-                     </span>
-                     <AnimatePresence>
-                        {tab.badge && (
-                           <motion.span
-                              initial={{ scale: 0, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              exit={{ scale: 0, opacity: 0 }}
-                              transition={{ ...BUTTON_SPRING, ease: 'easeOut' }}
-                              className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground relative z-[2]"
-                           >
-                              {tab.badge}
-                           </motion.span>
-                        )}
-                     </AnimatePresence>
-                  </motion.button>
+                        aria-pressed={isActive}
+                        role="tab"
+                     >
+                        <Icon
+                           className={cn(
+                              'h-4 w-4 flex-shrink-0',
+                              isActive ? 'text-primary' : 'text-muted-foreground',
+                           )}
+                        />
+                        <span className="hidden sm:inline font-medium">{tab.label}</span>
+                        <AnimatePresence>
+                           {tab.badge && (
+                              <motion.span
+                                 initial={{ scale: 0, opacity: 0 }}
+                                 animate={{ scale: 1, opacity: 1 }}
+                                 exit={{ scale: 0, opacity: 0 }}
+                                 transition={BUTTON_SPRING}
+                                 className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
+                              >
+                                 {tab.badge}
+                              </motion.span>
+                           )}
+                        </AnimatePresence>
+                     </button>
+                  </div>
                )
             })}
          </div>
          <div className="flex items-center gap-2 flex-wrap">
-            <div className="relative flex h-9 items-center justify-center rounded-lg bg-primary/10 border border-primary/25 p-1">
-               <motion.button
-                  className={cn(
-                     'relative z-10 flex h-full items-center justify-center rounded-md px-2 text-xs sm:text-sm font-medium transition-colors',
-                     viewMode === 'grid'
-                        ? 'text-foreground'
-                        : 'text-muted-foreground hover:text-foreground',
-                  )}
-                  onClick={() => onViewModeToggle('grid')}
-                  aria-pressed={viewMode === 'grid'}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
-                  transition={BUTTON_SPRING}
-               >
+            <div className="flex h-9 items-center rounded-lg bg-primary/10 border border-primary/25 p-1">
+               <div className="relative h-full">
                   {viewMode === 'grid' && (
                      <motion.div
                         layoutId="activeViewMode"
-                        className="absolute inset-0 rounded-md bg-card shadow-sm border border-border/90 z-[-1]"
+                        className="absolute inset-0 rounded-md bg-card shadow-sm border border-border/90"
+                        initial={false}
                         transition={LAYOUT_SPRING}
                      />
                   )}
-                  <LayoutGrid className="h-4 w-4 relative z-[2]" />
-                  <span className="sr-only">Grid View</span>
-               </motion.button>
-               <motion.button
-                  className={cn(
-                     'relative z-10 flex h-full items-center justify-center rounded-md px-2 text-xs sm:text-sm font-medium transition-colors',
-                     viewMode === 'list'
-                        ? 'text-foreground'
-                        : 'text-muted-foreground hover:text-foreground',
-                  )}
-                  onClick={() => onViewModeToggle('list')}
-                  aria-pressed={viewMode === 'list'}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
-                  transition={BUTTON_SPRING}
-               >
+                  <button
+                     className={cn(
+                        'relative z-10 flex h-full items-center justify-center rounded-md px-2 text-xs sm:text-sm font-medium transition-colors',
+                        viewMode === 'grid'
+                           ? 'text-foreground'
+                           : 'text-muted-foreground hover:text-foreground',
+                     )}
+                     onClick={() => onViewModeToggle('grid')}
+                     aria-pressed={viewMode === 'grid'}
+                  >
+                     <LayoutGrid className="h-4 w-4" />
+                     <span className="sr-only">Grid View</span>
+                  </button>
+               </div>
+               <div className="relative h-full">
                   {viewMode === 'list' && (
                      <motion.div
                         layoutId="activeViewMode"
-                        className="absolute inset-0 rounded-md bg-card shadow-sm border border-border/90 z-[-1]"
+                        className="absolute inset-0 rounded-md bg-card shadow-sm border border-border/90"
+                        initial={false}
                         transition={LAYOUT_SPRING}
                      />
                   )}
-                  <List className="h-4 w-4 relative z-[2]" />
-                  <span className="sr-only">List View</span>
-               </motion.button>
+                  <button
+                     className={cn(
+                        'relative z-10 flex h-full items-center justify-center rounded-md px-2 text-xs sm:text-sm font-medium transition-colors',
+                        viewMode === 'list'
+                           ? 'text-foreground'
+                           : 'text-muted-foreground hover:text-foreground',
+                     )}
+                     onClick={() => onViewModeToggle('list')}
+                     aria-pressed={viewMode === 'list'}
+                  >
+                     <List className="h-4 w-4" />
+                     <span className="sr-only">List View</span>
+                  </button>
+               </div>
             </div>
             <motion.div whileHover={{ scale: 1.02 }} onClick={handleDeletePageNavigation}>
                <Button
