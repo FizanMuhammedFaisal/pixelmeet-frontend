@@ -14,7 +14,7 @@ function LoginPage() {
 
          <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 pt-24">
             <div className="w-full max-w-sm">
-               <div className="text-center mb-8">
+               <div className="text-center mb-4">
                   <PixelMeetLogo />
                </div>
                {showOTP === true ? (

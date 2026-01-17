@@ -67,8 +67,7 @@ export function SignUpForm({ className, setShowOTP, setEmail, ...props }: SignUp
          <form onSubmit={handleSubmit(submit)}>
             <div className="flex flex-col gap-6">
                <div className="text-center">
-                  <h2 className="text-2xl font-bold text-foreground">Create your account</h2>
-                  <p className="text-muted-foreground mt-1">Sign up for your PixelMeet account</p>
+                  <p className="text-muted-foreground">Sign up for your PixelMeet account</p>
                </div>
 
                <div className="flex flex-col gap-4">
@@ -87,8 +86,7 @@ export function SignUpForm({ className, setShowOTP, setEmail, ...props }: SignUp
                         })}
                         id="username"
                         type="text"
-                        placeholder="Enter your name..."
-                        className="h-11"
+                        placeholder="John Doe"
                      />
                      {errors.username && (
                         <div className="text-destructive text-sm">{errors.username.message}</div>
@@ -103,8 +101,7 @@ export function SignUpForm({ className, setShowOTP, setEmail, ...props }: SignUp
                         })}
                         id="email"
                         type="text"
-                        placeholder="Enter your email address..."
-                        className="h-11"
+                        placeholder="john@example.com"
                      />
                      {errors.email && (
                         <div className="text-destructive text-sm">{errors.email.message}</div>
@@ -116,8 +113,7 @@ export function SignUpForm({ className, setShowOTP, setEmail, ...props }: SignUp
                         {...register('password')}
                         id="password"
                         type="password"
-                        placeholder="Create a password..."
-                        className="h-11"
+                        placeholder="••••••••"
                      />
                      {errors.password && (
                         <div className="text-destructive text-sm">{errors.password.message}</div>
@@ -129,8 +125,7 @@ export function SignUpForm({ className, setShowOTP, setEmail, ...props }: SignUp
                         {...register('confirmPassword')}
                         id="confirmPassword"
                         type="password"
-                        placeholder="Confirm your password..."
-                        className="h-11"
+                        placeholder="••••••••"
                      />
                      {errors.confirmPassword && (
                         <div className="text-destructive text-sm">

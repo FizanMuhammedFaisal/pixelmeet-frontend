@@ -110,10 +110,7 @@ export function LoginForm({
                <form onSubmit={handleSubmit(submit)}>
                   <div className="flex flex-col gap-6">
                      <div className="text-center">
-                        <h2 className="text-2xl font-bold text-foreground">Welcome back</h2>
-                        <p className="text-muted-foreground mt-1">
-                           Log in to your PixelMeet account
-                        </p>
+                        <p className="text-muted-foreground">Log in to your PixelMeet account</p>
                      </div>
 
                      <div className="flex flex-col gap-4">
@@ -130,8 +127,7 @@ export function LoginForm({
                               })}
                               id="email"
                               type="text"
-                              placeholder="Enter your email address..."
-                              className="h-11"
+                              placeholder="john@example.com"
                            />
                            {loginErrors.email && (
                               <div className="text-destructive text-sm">
@@ -153,8 +149,7 @@ export function LoginForm({
                               {...register('password')}
                               id="password"
                               type="password"
-                              placeholder="Enter your password..."
-                              className="h-11"
+                              placeholder="••••••••"
                            />
                            {loginErrors.password && (
                               <div className="text-destructive text-sm">
