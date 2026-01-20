@@ -9,8 +9,8 @@ import { useUploadAsset } from '../../hooks/'
 import { GlobalMutationError } from '../../../../../../shared/lib/utils'
 import type { AxiosError } from 'axios'
 import { useUploadTabStore } from '../../../../../../app/store/admin/uploadTab.store'
-import type { ErrorResponse } from '../../../../../../shared/types'
-import { hasValidMetadata, type CreateAssetRequestPayload, type UploadFile } from '../../types'
+import type { CreateAssetRequestPayload, ErrorResponse } from '../../../../../../shared/types'
+import { hasValidMetadata, type UploadFile } from '../../types'
 import { useCreateAsset } from '../../hooks'
 
 export default function UploadTab() {
@@ -116,10 +116,8 @@ export default function UploadTab() {
                         removeFile(ToUpload.id)
                      },
                      onError: (error) => {
-                        GlobalMutationError(error)
-                        const axiosError = error as AxiosError<ErrorResponse>
-                        const firstDetail = axiosError.response?.data?.issues?.[0]?.message
-                        const fallback = axiosError.response?.data?.message || 'Try Again'
+                        const firstDetail = error.response?.data?.issues?.[0]?.message
+                        const fallback = error.response?.data?.message || 'Try Again'
                         toast.error(
                            `Asset ${fileToUpload.name} upload failed, ${firstDetail || fallback}`,
                         )
@@ -129,14 +127,13 @@ export default function UploadTab() {
             } else {
                toast.error(`Asset ${fileToUpload.name} upload failed due to validation error `)
             }
-         } catch (error: any) {
+         } catch (error) {
+            const axiosError = error as AxiosError<ErrorResponse>
             updateFile(fileToUpload.id, {
                uploadStatus: 'failed',
-               error: error.message || 'Upload failed',
+               error: axiosError.message || 'Upload failed',
             })
 
-            GlobalMutationError(error)
-            const axiosError = error as AxiosError<ErrorResponse>
             const firstDetail = axiosError.response?.data?.issues?.[0]?.message
             const fallback = axiosError.response?.data?.message || 'Try Again'
             toast.error(`Asset ${fileToUpload.name} upload failed, ${firstDetail || fallback}`)

@@ -1,8 +1,7 @@
 import { useEffect } from 'react'
 import { motion } from 'motion/react'
-import { PlusIcon, PencilIcon } from 'lucide-react'
+import { PlusIcon, PencilIcon, Tags, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
    Table,
    TableBody,
@@ -22,6 +21,7 @@ import { useDeleteTag } from '../../hooks'
 import { GlobalMutationError } from '../../../../../../shared/lib/utils'
 import { queryClient } from '../../../../../../api/config/queryClient'
 import { PaginationControls } from '@/components/ui/paginationControls'
+import { EmptyState } from '@/components/ui/empty-state'
 
 export default function TagsList() {
    const limit = 10
@@ -81,110 +81,128 @@ export default function TagsList() {
    }
 
    if (isError) {
-      return <div>Error: {error.message}</div>
+      return (
+         <div className="w-full h-full flex items-center justify-center p-8">
+            <EmptyState
+               icon={AlertCircle}
+               title="Failed to Load Tags"
+               description={
+                  error.message || 'Something went wrong while fetching tags. Please try again.'
+               }
+               action={
+                  <Button onClick={() => refetch()} variant="outline">
+                     Try Again
+                  </Button>
+               }
+               showArrow={false}
+            />
+         </div>
+      )
    }
 
    return (
-      <div className="w-full max-w-6xl mx-auto p-4 md:p-8 bg-background rounded-lg shadow-sm flex flex-col min-h-[calc(100vh-2rem)] md:min-h-[calc(100vh-4rem)]">
-         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 px-0 pt-0">
+      <div className="w-full space-y-4 p-4 md:p-6">
+         <div className="flex items-center justify-between">
             <div className="space-y-1">
-               <CardTitle className="text-3xl font-bold">Asset Tags</CardTitle>
-               <CardDescription>
+               <h2 className="text-3xl font-bold tracking-tight">Asset Tags</h2>
+               <p className="text-muted-foreground">
                   Manage your asset tags here. Create, edit, or delete tags.
-               </CardDescription>
+               </p>
             </div>
             <Link to="/dashboard/assets/new-tag">
-               <Button variant="default" size="sm" className="h-9 gap-1">
+               <Button variant="special" size="sm" className="h-9 gap-1">
                   <PlusIcon className="h-4 w-4" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                      Create New Tag
                   </span>
                </Button>
             </Link>
-         </CardHeader>
-
-         <div className="flex-grow flex flex-col">
-            {tags.length === 0 ? (
-               <div className="text-center py-16 text-muted-foreground flex-grow flex items-center justify-center">
-                  <p className="text-lg">
-                     No tags available. Click "Create New Tag" to add your first tag!
-                  </p>
-               </div>
-            ) : (
-               <>
-                  {isFetching && (
-                     <div className="absolute inset-0 bg-background/50 z-10 flex items-center justify-center">
-                        <p>Loading new page...</p>
-                     </div>
-                  )}
-                  <div className="overflow-x-auto mb-5 flex-grow   max-h-[580px]  rounded-md">
-                     <Table>
-                        <TableHeader>
-                           <TableRow>
-                              <TableHead className="w-[200px]">Name</TableHead>
-                              <TableHead>Description</TableHead>
-                              <TableHead className="hidden md:table-cell w-[150px]">
-                                 Created At
-                              </TableHead>
-                              <TableHead className="hidden md:table-cell w-[150px]">
-                                 Updated At
-                              </TableHead>
-                              <TableHead className="text-right w-[100px]">Actions</TableHead>
-                           </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                           {tags.map((tag) => (
-                              <motion.tr
-                                 key={tag.id}
-                                 initial={{ opacity: 0, y: 10 }}
-                                 animate={{ opacity: 1, y: 0 }}
-                                 transition={{ duration: 0.3 }}
-                                 className="hover:bg-muted/50"
-                              >
-                                 <TableCell className="font-medium">{tag.name}</TableCell>
-                                 <TableCell className="text-muted-foreground">
-                                    {tag.description || 'N/A'}
-                                 </TableCell>
-                                 <TableCell className="hidden md:table-cell">
-                                    {new Date(tag.createdAt).toLocaleDateString()}
-                                 </TableCell>
-                                 <TableCell className="hidden md:table-cell">
-                                    {new Date(tag.updatedAt).toLocaleDateString()}
-                                 </TableCell>
-                                 <TableCell className="text-right">
-                                    <div className="flex justify-end gap-2">
-                                       <Link to={`/dashboard/assets/edit-tag/${tag.id}`}>
-                                          <Button
-                                             variant="ghost"
-                                             size="icon"
-                                             aria-label={`Edit ${tag.name}`}
-                                          >
-                                             <PencilIcon className="h-4 w-4" />
-                                          </Button>
-                                       </Link>
-                                       <HoldToDeleteButton
-                                          size="sm"
-                                          onHoldComplete={() => handleDelete(tag.id)}
-                                          holdDuration={1100}
-                                          aria-label={`Hold to delete ${tag.name}`}
-                                       />
-                                    </div>
-                                 </TableCell>
-                              </motion.tr>
-                           ))}
-                        </TableBody>
-                     </Table>
-                  </div>
-                  {showPaginationControls && (
-                     <PaginationControls
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={handlePageChange}
-                     />
-                  )}
-               </>
-            )}
          </div>
+
+         {tags.length === 0 ? (
+            <EmptyState
+               icon={Tags}
+               title="No Tags Found"
+               description="You haven't created any tags yet. Tags help you organize and filter your assets efficiently."
+               showArrow={true}
+            />
+         ) : (
+            <div className="space-y-4">
+               {isFetching && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                     <Spinner size="sm" />
+                     <span>Refreshing...</span>
+                  </div>
+               )}
+               <div
+                  className={`rounded-md border ${isFetching ? 'opacity-50 pointer-events-none' : ''}`}
+               >
+                  <Table>
+                     <TableHeader>
+                        <TableRow>
+                           <TableHead className="w-[200px]">Name</TableHead>
+                           <TableHead className="max-w-[300px]">Description</TableHead>
+                           <TableHead className="hidden md:table-cell w-[150px]">
+                              Created At
+                           </TableHead>
+                           <TableHead className="hidden md:table-cell w-[150px]">
+                              Updated At
+                           </TableHead>
+                           <TableHead className="text-right w-[100px]">Actions</TableHead>
+                        </TableRow>
+                     </TableHeader>
+                     <TableBody>
+                        {tags.map((tag) => (
+                           <motion.tr
+                              key={tag.id}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3 }}
+                              className="hover:bg-muted/50"
+                           >
+                              <TableCell className="font-medium">{tag.name}</TableCell>
+                              <TableCell className="text-muted-foreground max-w-[300px] truncate">
+                                 {tag.description || 'N/A'}
+                              </TableCell>
+                              <TableCell className="hidden md:table-cell">
+                                 {new Date(tag.createdAt).toLocaleDateString()}
+                              </TableCell>
+                              <TableCell className="hidden md:table-cell">
+                                 {new Date(tag.updatedAt).toLocaleDateString()}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                 <div className="flex justify-end gap-2">
+                                    <Link to={`/dashboard/assets/edit-tag/${tag.id}`}>
+                                       <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          aria-label={`Edit ${tag.name}`}
+                                       >
+                                          <PencilIcon className="h-4 w-4" />
+                                       </Button>
+                                    </Link>
+                                    <HoldToDeleteButton
+                                       size="sm"
+                                       onHoldComplete={() => handleDelete(tag.id)}
+                                       holdDuration={1100}
+                                       aria-label={`Hold to delete ${tag.name}`}
+                                    />
+                                 </div>
+                              </TableCell>
+                           </motion.tr>
+                        ))}
+                     </TableBody>
+                  </Table>
+               </div>
+               {showPaginationControls && (
+                  <PaginationControls
+                     currentPage={currentPage}
+                     totalPages={totalPages}
+                     onPageChange={handlePageChange}
+                  />
+               )}
+            </div>
+         )}
       </div>
    )
 }

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import UploadTab from './components/upload/UploadTab'
 import TagsTab from './components/tags/TagsTab'
+import CategoriesTab from './components/categories/CategoriesTab'
 import { useSearchParams } from 'react-router'
 import FavouritesTab from './components/favourites/Favourites'
 
@@ -12,9 +13,9 @@ export const AssetDashboardTabs = [
    'dashboard',
    'all',
    'favorites',
-   'deleted',
    'upload',
    'tags',
+   'categories',
 ] as const
 export type AssetDashboardTabs = (typeof AssetDashboardTabs)[number]
 export default function AdminAssetsPage() {
@@ -26,9 +27,9 @@ export default function AdminAssetsPage() {
       dashboard: <DashboardTab currentTab={currentTab} viewMode={viewMode} />,
       all: <AllAssetsTab />,
       favorites: <FavouritesTab />,
-      deleted: <div>Deleted (WIP)</div>,
       upload: <UploadTab />,
       tags: <TagsTab />,
+      categories: <CategoriesTab />,
    }
    const DEFAULT_TAB = 'dashboard'
    function validTab(tab: string | null): tab is AssetDashboardTabs {
@@ -43,7 +44,9 @@ export default function AdminAssetsPage() {
 
    const onTabChange = (tab: AssetDashboardTabs) => {
       setSearchParams({ tab })
-      setCurrentTab(tab)
+      requestAnimationFrame(() => {
+         setCurrentTab(tab)
+      })
    }
    return (
       <div className="flex flex-col h-screen bg-background">

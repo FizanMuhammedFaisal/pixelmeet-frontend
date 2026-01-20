@@ -19,6 +19,8 @@ import { PaginationControls } from '@/components/ui/paginationControls'
 import { queryClient } from '@/api/config/queryClient'
 import { useUpdateAssetDeleted } from '../../hooks/assets/useUpdateAssetDeleted'
 import { useUpdateAssetFavourite } from '../../hooks/assets/useUpdateAssetFavourite'
+import { EmptyState } from '@/components/ui/empty-state'
+import { FolderOpen } from 'lucide-react'
 
 export default function AllAssetsTab() {
    const [assets, setAssets] = useState<Asset[]>([])
@@ -234,8 +236,13 @@ export default function AllAssetsTab() {
                   />
                ))
             ) : (
-               <div className="col-span-full text-center text-muted-foreground py-8">
-                  No assets found matching your criteria.
+               <div className="col-span-full flex flex-col items-center justify-center p-8">
+                  <EmptyState
+                     icon={FolderOpen}
+                     title="No Assets Found"
+                     description="No assets found matching your current search criteria. Try adjusting your filters or search terms."
+                     showArrow={false}
+                  />
                </div>
             )}
          </div>

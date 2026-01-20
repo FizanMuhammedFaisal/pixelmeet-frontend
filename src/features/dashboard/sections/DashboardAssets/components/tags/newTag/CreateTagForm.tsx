@@ -2,16 +2,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router'
-
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCreateTag } from '../../../hooks/'
-import { GlobalMutationError } from '../../../../../../../shared/lib/utils'
 import SubmitButton from '../../../../../../../components/ui/submit-button'
 import { useAssetTagsStore } from '../../../../../../../app/store/admin/tagsTab.store'
 import { queryClient } from '../../../../../../../api/config/queryClient'
@@ -48,8 +44,6 @@ export function CreateTagForm() {
                router('/dashboard/assets?tab=tags')
             },
             onError: (error) => {
-               GlobalMutationError(error)
-
                const firstDetail = error.response?.data?.issues?.[0]?.message
                const fallback = error.response?.data?.message || 'Something went wrong Try Again'
 
@@ -60,46 +54,59 @@ export function CreateTagForm() {
    }
 
    return (
-      <Card className="w-full max-w-md mx-auto">
-         <CardHeader>
-            <CardTitle>Create New Tag</CardTitle>
-            <CardDescription>Fill in the details for your new asset tag.</CardDescription>
-         </CardHeader>
-         <CardContent>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
-               <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">
-                     Name
-                  </Label>
-                  <Input id="name" {...form.register('name')} className="col-span-3" />
-                  {form.formState.errors.name && (
-                     <p className="col-start-2 col-span-3 text-red-500 text-sm">
-                        {form.formState.errors.name.message}
-                     </p>
-                  )}
+      <div className="w-full max-w-3xl mx-auto p-10 space-y-8">
+         <div className="space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight">Create New Tag</h1>
+            <p className="text-muted-foreground text-lg">
+               Fill in the details for your new asset tag
+            </p>
+         </div>
+
+         <div className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+               <div className="space-y-4">
+                  <div className="grid gap-2">
+                     <Label htmlFor="name" className="text-base font-semibold">
+                        Name
+                     </Label>
+                     <Input
+                        id="name"
+                        {...form.register('name')}
+                        className="bg-background border-input focus:border-primary transition-colors h-12 text-base"
+                        placeholder="e.g., Environment, Character, UI"
+                     />
+                     {form.formState.errors.name && (
+                        <p className="text-red-500 text-sm mt-1 px-1">
+                           {form.formState.errors.name.message}
+                        </p>
+                     )}
+                  </div>
+
+                  <div className="grid gap-2">
+                     <Label htmlFor="description" className="text-base font-semibold">
+                        Description
+                     </Label>
+                     <Textarea
+                        id="description"
+                        {...form.register('description')}
+                        className="min-h-[150px] bg-background border-input focus:border-primary transition-colors resize-none p-4 text-base"
+                        placeholder="Describe what this tag is used for..."
+                     />
+                     {form.formState.errors.description && (
+                        <p className="text-red-500 text-sm mt-1 px-1">
+                           {form.formState.errors.description.message}
+                        </p>
+                     )}
+                  </div>
                </div>
 
-               <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="description" className="text-right">
-                     Description
-                  </Label>
-                  <Textarea
-                     id="description"
-                     {...form.register('description')}
-                     className="col-span-3"
-                     placeholder="description for the tag"
-                  />
-                  {form.formState.errors.description && (
-                     <p className="col-start-2 col-span-3 text-red-500 text-sm">
-                        {form.formState.errors.description.message}
-                     </p>
-                  )}
-               </div>
-               <div className="flex justify-end gap-2">
+               <div className="flex items-center justify-end gap-3 pt-4">
                   <Button
                      type="button"
-                     variant="outline"
+                     variant="ghost"
+                     size="lg"
                      onClick={() => router('/dashboard/assets')}
+                     className="text-muted-foreground hover:text-foreground"
                   >
                      Cancel
                   </Button>
@@ -107,12 +114,14 @@ export function CreateTagForm() {
                      processingName="Creating"
                      isLoading={isPending}
                      isSuccess={isSuccess}
+                     size="lg"
+                     className="min-w-[140px]"
                   >
-                     Create
+                     Create Tag
                   </SubmitButton>
                </div>
             </form>
-         </CardContent>
-      </Card>
+         </div>
+      </div>
    )
 }

@@ -48,7 +48,9 @@ export default function SideBar({ className }: props) {
    })
 
    return (
-      <div className={`h-full bg-card border-l  flex flex-col z-9 ${className}`}>
+      <div
+         className={`h-full bg-card/95 dark:bg-zinc-900/95 backdrop-blur-sm border-l border-border dark:border-zinc-800/60 flex flex-col z-9 ${className}`}
+      >
          <div
             className={`fixed top-0 right-0 h-full w-1 cursor-col-resize z-40 hover:bg-accent/50 transition-colors ${
                isResizing ? 'bg-accent' : ''
@@ -63,7 +65,7 @@ export default function SideBar({ className }: props) {
 
          <div
             ref={sidebarRef}
-            className="fixed top-0 right-0 h-screen bg-card border-l pt-14 flex flex-col z-30 shadow-lg"
+            className="fixed top-0 right-0 h-screen bg-card/95 dark:bg-zinc-900/95 backdrop-blur-sm border-l border-border dark:border-zinc-800/60 pt-14 flex flex-col z-30 shadow-2xl shadow-black/10 dark:shadow-black/40"
             style={{ width: `${width}px` }}
          >
             <ResizablePanelGroup direction="horizontal" className="flex-1">
