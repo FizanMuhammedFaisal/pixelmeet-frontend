@@ -14,7 +14,7 @@ export const categoryServices = {
         return res
     },
     getCategories: async (data: GetCategoriesPayload) => {
-        const { page, limit, query } = data
+        const { page, limit, query, status } = data
 
         const params = new URLSearchParams()
         params.set('page', String(page))
@@ -22,6 +22,9 @@ export const categoryServices = {
 
         if (query && query.trim() !== '') {
             params.set('query', query.trim())
+        }
+        if (status) {
+            params.set('status', status)
         }
 
         const res = await apiClient.get(`${API_ENDPOINTS.ASSET.GET_CATEGORIES}?${params.toString()}`)
@@ -39,4 +42,11 @@ export const categoryServices = {
         const res = await apiClient.delete(`${API_ENDPOINTS.ASSET.DELETE_CATEGORY}${data.id}`)
         return res
     },
+    restoreCategory: async (data: RestoreCategoryPayload) => {
+        const res = await apiClient.patch(
+            `${API_ENDPOINTS.ASSET.UPDATE_CATEGORY}/${data.id}/restore`,
+        )
+        return res
+    },
 }
+

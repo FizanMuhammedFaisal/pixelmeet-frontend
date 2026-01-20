@@ -4,6 +4,7 @@ export type GetCategoriesPayload = {
     limit: number
     page: number
     query?: string
+    status?: 'active' | 'deleted' | 'all'
 }
 
 export type CreateCategoryPayload = {
@@ -16,6 +17,10 @@ export type GetCategoryPayload = {
 }
 
 export type DeleteCategoryPayload = {
+    id: string
+}
+
+export type RestoreCategoryPayload = {
     id: string
 }
 

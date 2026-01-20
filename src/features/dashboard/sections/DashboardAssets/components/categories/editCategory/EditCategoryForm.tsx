@@ -8,11 +8,12 @@ import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useGetCategory, useUpdateCategory } from '../../../hooks/categories'
+import { useUpdateCategory } from '../../../hooks/categories'
 import { Spinner } from '../../../../../../../components/ui/spinner'
 import SubmitButton from '../../../../../../../components/ui/submit-button'
 import { useAssetCategoriesStore } from '../../../../../../../app/store/admin/categoriesTab.store'
 import { queryClient } from '../../../../../../../api/config/queryClient'
+import { useGetCategory } from '../../../hooks/categories/useGetCategory'
 
 const formSchema = z.object({
    id: z.string(),
@@ -150,7 +151,7 @@ export function EditCategoryForm() {
                      type="button"
                      variant="ghost"
                      size="lg"
-                     onClick={() => router('/dashboard/assets')}
+                     onClick={() => router('/dashboard/assets?tab=categories')}
                      className="text-muted-foreground hover:text-foreground"
                   >
                      Cancel
