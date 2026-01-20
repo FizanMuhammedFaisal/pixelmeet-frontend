@@ -21,28 +21,25 @@ import {
    FormMessage,
 } from '@/components/ui/form'
 import { toast } from 'sonner'
-
-const categories = [
-   'Urban',
-   'Nature',
-   'Coastal',
-   'Historical',
-   'Residential',
-   'Commercial',
-   'Industrial',
-   'Other',
-]
-
 import { createMapFormSchema, type CreateMapFormData } from '@/shared/schema'
 import { useCreateMap } from '@/shared/hooks'
 import useAuthStore from '@/app/store/auth.store'
 import SubmitButton from '@/components/ui/submit-button'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
+import { Spinner } from '@/components/ui/spinner'
+import { usePaginatedCategories } from '../../../DashboardAssets/hooks/categories'
 
 export function CreateMapForm() {
    const { user } = useAuthStore((state) => state)
    const [isLoading, setIsLoading] = useState(false)
+   const { data: categoriesData, isLoading: isCategoriesLoading } = usePaginatedCategories(
+      1,
+      50,
+      'active',
+   )
+
+   const categories = categoriesData?.data?.data?.categories || []
 
    const form = useForm<CreateMapFormData>({
       resolver: zodResolver(createMapFormSchema),
@@ -165,11 +162,17 @@ export function CreateMapForm() {
                                     </SelectTrigger>
                                  </FormControl>
                                  <SelectContent>
-                                    {categories.map((category) => (
-                                       <SelectItem key={category} value={category}>
-                                          {category}
-                                       </SelectItem>
-                                    ))}
+                                    {isCategoriesLoading ? (
+                                       <div className="flex items-center justify-center p-2">
+                                          <Spinner size="sm" />
+                                       </div>
+                                    ) : (
+                                       categories.map((category) => (
+                                          <SelectItem key={category.id} value={category.name}>
+                                             {category.name}
+                                          </SelectItem>
+                                       ))
+                                    )}
                                  </SelectContent>
                               </Select>
                               <FormDescription className="text-sm text-muted-foreground px-1">

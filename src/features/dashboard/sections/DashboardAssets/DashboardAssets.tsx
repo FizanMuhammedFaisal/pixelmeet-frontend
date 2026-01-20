@@ -13,7 +13,6 @@ export const AssetDashboardTabs = [
    'dashboard',
    'all',
    'favorites',
-   'deleted',
    'upload',
    'tags',
    'categories',
@@ -28,7 +27,6 @@ export default function AdminAssetsPage() {
       dashboard: <DashboardTab currentTab={currentTab} viewMode={viewMode} />,
       all: <AllAssetsTab />,
       favorites: <FavouritesTab />,
-      deleted: <div>Deleted (WIP)</div>,
       upload: <UploadTab />,
       tags: <TagsTab />,
       categories: <CategoriesTab />,
@@ -46,7 +44,9 @@ export default function AdminAssetsPage() {
 
    const onTabChange = (tab: AssetDashboardTabs) => {
       setSearchParams({ tab })
-      setCurrentTab(tab)
+      requestAnimationFrame(() => {
+         setCurrentTab(tab)
+      })
    }
    return (
       <div className="flex flex-col h-screen bg-background">
