@@ -1,4 +1,3 @@
-import type { Asset } from '@/features/dashboard/sections/DashboardAssets/types'
 import z from 'zod'
 export const AssetCategoryEnum = z.enum([
    'image',
@@ -12,6 +11,7 @@ export const GetPresingedURLSchema = z
       fileName: z.string().nonempty(),
       type: AssetCategoryEnum,
       id: z.uuid().optional(),
+      isPublic: z.boolean(),
    })
    .refine(
       (data) => {
@@ -35,4 +35,3 @@ export type UploadToAssetStorePaylod = {
    contentType: string
 }
 
-///

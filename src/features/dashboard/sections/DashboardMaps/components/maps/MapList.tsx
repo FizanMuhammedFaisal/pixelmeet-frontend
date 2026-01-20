@@ -3,13 +3,13 @@ import { useGetMaps } from '@/shared/hooks'
 import { useEffect, useState } from 'react'
 import type { Map } from '../../types/map'
 import { Spinner } from '@/components/ui/spinner'
-import { ErrorState } from '@/components/ui/error-state'
+
 import { PaginationControls } from '@/components/ui/paginationControls'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router'
 import MapPreview from './MapPreview'
 import { EmptyState } from '@/components/ui/empty-state'
-import { Map as MapIcon } from 'lucide-react'
+import { Map as MapIcon, AlertCircle } from 'lucide-react'
 
 const containerVariants = {
    hidden: { opacity: 0 },
@@ -41,14 +41,22 @@ export default function MapsList() {
 
    if (isError) {
       return (
-         <ErrorState
-            title="Failed to load maps"
-            description={
-               error?.message ||
-               'Unable to fetch your maps. Please check your connection and try again.'
-            }
-            onRetry={() => refetch()}
-         />
+         <div className="w-full h-full flex items-center justify-center p-8">
+            <EmptyState
+               icon={AlertCircle}
+               title="Failed to Load Maps"
+               description={
+                  error?.message ||
+                  'Something went wrong while fetching your maps. Please try again.'
+               }
+               action={
+                  <Button onClick={() => refetch()} variant="outline">
+                     Try Again
+                  </Button>
+               }
+               showArrow={false}
+            />
+         </div>
       )
    }
 

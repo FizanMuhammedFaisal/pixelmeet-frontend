@@ -78,6 +78,7 @@ export default function UploadTab() {
             const res = await getPresignedURLMutation.mutateAsync({
                fileName: fileToUpload.name,
                type: fileToUpload.type,
+               isPublic: true,
             })
             if (!res.data) {
                return toast.error(`Upload for ${fileToUpload.name} failed, Try again`)
