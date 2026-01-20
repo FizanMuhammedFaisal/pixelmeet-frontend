@@ -6,6 +6,7 @@ import type { MapWithManifest } from '@/shared/types'
 import type { Editor } from '../components/Editor/Editor'
 import { useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
 import type { Manifest } from '@/shared/types/manifest/manifest'
+import { toast } from 'sonner'
 //The array contains gid. so we need to make a o(1) operational ds for getting the needed texture given a gid
 //a lookup table creating function is needed for that
 /**
@@ -132,10 +133,18 @@ async function LoadMapJson(manifest: Manifest): Promise<FinalMapType | null> {
 
    if (!mapFile) return null
 
-
-
-   await PIXI.Assets.load({ src: mapFile.url, data: { cache: true } })
-   return PIXI.Assets.get(mapFile.url)
+   try {
+      await PIXI.Assets.load({ src: mapFile.url, data: { cache: true } })
+      return PIXI.Assets.get(mapFile.url)
+   } catch (error) {
+      console.error('Failed to load map JSON:', error)
+      toast.error('Unable to load map', {
+         description:
+            'The map could not be loaded. This may be due to an expired link or permission issue. Please try again or contact support.',
+         duration: 8000,
+      })
+      return null
+   }
 }
 
 // function LoadTilesets(params: type) {}

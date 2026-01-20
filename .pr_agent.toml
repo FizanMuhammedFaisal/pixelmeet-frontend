@@ -1,0 +1,10 @@
+# Qodo Merge (PR-Agent) Configuration
+# https://qodo-merge-docs.qodo.ai/
+
+[pr_reviewer]
+# Enable extra effort for thorough review
+extra_instructions = " read the files on docs specially the docs/technical-analysis.md and docs/APPLICATION_RULES.md"
+
+[rag_arguments]
+# Enable codebase context enrichment
+enable_rag = true
