@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import UploadTab from './components/upload/UploadTab'
 import TagsTab from './components/tags/TagsTab'
+import CategoriesTab from './components/categories/CategoriesTab'
 import { useSearchParams } from 'react-router'
 import FavouritesTab from './components/favourites/Favourites'
 
@@ -15,6 +16,7 @@ export const AssetDashboardTabs = [
    'deleted',
    'upload',
    'tags',
+   'categories',
 ] as const
 export type AssetDashboardTabs = (typeof AssetDashboardTabs)[number]
 export default function AdminAssetsPage() {
@@ -29,6 +31,7 @@ export default function AdminAssetsPage() {
       deleted: <div>Deleted (WIP)</div>,
       upload: <UploadTab />,
       tags: <TagsTab />,
+      categories: <CategoriesTab />,
    }
    const DEFAULT_TAB = 'dashboard'
    function validTab(tab: string | null): tab is AssetDashboardTabs {

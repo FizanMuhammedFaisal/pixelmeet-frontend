@@ -7,24 +7,24 @@ import { useNavigate } from 'react-router'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCreateTag } from '../../../hooks/'
+import { useCreateCategory } from '../../../hooks/categories'
 import SubmitButton from '../../../../../../../components/ui/submit-button'
-import { useAssetTagsStore } from '../../../../../../../app/store/admin/tagsTab.store'
+import { useAssetCategoriesStore } from '../../../../../../../app/store/admin/categoriesTab.store'
 import { queryClient } from '../../../../../../../api/config/queryClient'
 
 const formSchema = z.object({
    name: z.string().min(2, {
-      message: 'Tag name must be at least 2 characters.',
+      message: 'Category name must be at least 2 characters.',
    }),
    description: z.string().nonempty({
       message: 'Description required',
    }),
 })
 
-export function CreateTagForm() {
+export function CreateCategoryForm() {
    const router = useNavigate()
-   const { addTag } = useAssetTagsStore()
-   const { mutate, isPending, isSuccess } = useCreateTag()
+   const { addCategory } = useAssetCategoriesStore()
+   const { mutate, isPending, isSuccess } = useCreateCategory()
 
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
@@ -35,15 +35,22 @@ export function CreateTagForm() {
          { name: values.name, description: values.description },
          {
             onSuccess: (data) => {
-               addTag(data.data.data.tag)
+               addCategory(data.data.data.category)
                console.log(data)
-               queryClient.invalidateQueries({ queryKey: ['tags'] })
+               queryClient.invalidateQueries({ queryKey: ['categories'] })
 
-               toast.success('Tag created successfully.')
+               toast.success('Category created successfully.')
 
-               router('/dashboard/assets?tab=tags')
+               router('/dashboard/assets?tab=categories')
             },
             onError: (error) => {
+               if (error.response?.status === 409) {
+                  form.setError('name', {
+                     type: 'manual',
+                     message: 'A category with this name already exists.',
+                  })
+                  return
+               }
                const firstDetail = error.response?.data?.issues?.[0]?.message
                const fallback = error.response?.data?.message || 'Something went wrong Try Again'
 
@@ -56,9 +63,9 @@ export function CreateTagForm() {
    return (
       <div className="w-full max-w-3xl mx-auto p-10 space-y-8">
          <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight">Create New Tag</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Create New Category</h1>
             <p className="text-muted-foreground text-lg">
-               Fill in the details for your new asset tag
+               Fill in the details for your new asset category
             </p>
          </div>
 
@@ -90,7 +97,7 @@ export function CreateTagForm() {
                         id="description"
                         {...form.register('description')}
                         className="min-h-[150px] bg-background border-input focus:border-primary transition-colors resize-none p-4 text-base"
-                        placeholder="Describe what this tag is used for..."
+                        placeholder="Describe what this category is used for..."
                      />
                      {form.formState.errors.description && (
                         <p className="text-red-500 text-sm mt-1 px-1">
@@ -117,7 +124,7 @@ export function CreateTagForm() {
                      size="lg"
                      className="min-w-[140px]"
                   >
-                     Create Tag
+                     Create Category
                   </SubmitButton>
                </div>
             </form>

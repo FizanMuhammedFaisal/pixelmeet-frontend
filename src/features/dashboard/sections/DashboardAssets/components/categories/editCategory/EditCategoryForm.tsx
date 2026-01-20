@@ -1,64 +1,109 @@
+import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import { useNavigate } from 'react-router'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCreateTag } from '../../../hooks/'
+import { useGetCategory, useUpdateCategory } from '../../../hooks/categories'
+import { Spinner } from '../../../../../../../components/ui/spinner'
 import SubmitButton from '../../../../../../../components/ui/submit-button'
-import { useAssetTagsStore } from '../../../../../../../app/store/admin/tagsTab.store'
+import { useAssetCategoriesStore } from '../../../../../../../app/store/admin/categoriesTab.store'
 import { queryClient } from '../../../../../../../api/config/queryClient'
 
 const formSchema = z.object({
+   id: z.string(),
    name: z.string().min(2, {
-      message: 'Tag name must be at least 2 characters.',
+      message: 'Category name must be at least 2 characters.',
    }),
-   description: z.string().nonempty({
-      message: 'Description required',
-   }),
+   description: z.string().optional(),
 })
 
-export function CreateTagForm() {
+export function EditCategoryForm() {
    const router = useNavigate()
-   const { addTag } = useAssetTagsStore()
-   const { mutate, isPending, isSuccess } = useCreateTag()
-
+   const { id: categoryId } = useParams<{ id: string }>()
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
+      defaultValues: {
+         id: categoryId,
+         name: '',
+         description: '',
+      },
    })
 
+   const { data: categoryData, isLoading, isError, error } = useGetCategory(categoryId!)
+   const { editCategory } = useAssetCategoriesStore()
+   const {
+      mutate,
+      isPending,
+      isSuccess,
+      isError: isMutationError,
+      error: mutationError,
+   } = useUpdateCategory()
+
+   useEffect(() => {
+      if (categoryData) {
+         const category = categoryData.data.data
+         console.log(category)
+         form.reset({
+            id: category.id,
+            name: category.name,
+            description: category.description,
+         })
+      }
+   }, [categoryData, form])
+
+   useEffect(() => {
+      if (isSuccess) {
+         toast.success('Category updated successfully.')
+         router('/dashboard/assets?tab=categories')
+      }
+      if (isMutationError) {
+         toast.error(mutationError?.message || 'Failed to update category.')
+      }
+   }, [isSuccess, isMutationError, mutationError, router, queryClient, categoryId])
+
    const onSubmit = (values: z.infer<typeof formSchema>) => {
+      if (!categoryId) {
+         toast.error('Category ID is missing.')
+         return
+      }
       mutate(
-         { name: values.name, description: values.description },
+         { id: categoryId, name: values.name, description: values.description },
          {
             onSuccess: (data) => {
-               addTag(data.data.data.tag)
-               console.log(data)
-               queryClient.invalidateQueries({ queryKey: ['tags'] })
-
-               toast.success('Tag created successfully.')
-
-               router('/dashboard/assets?tab=tags')
-            },
-            onError: (error) => {
-               const firstDetail = error.response?.data?.issues?.[0]?.message
-               const fallback = error.response?.data?.message || 'Something went wrong Try Again'
-
-               toast.error(firstDetail || fallback)
+               editCategory(categoryId, data.data.category)
+               queryClient.invalidateQueries({ queryKey: ['categories'] })
             },
          },
+      )
+   }
+
+   if (isLoading) {
+      return (
+         <div className="grow items-center justify-center z-50 ">
+            <Spinner />
+         </div>
+      )
+   }
+
+   if (isError) {
+      return (
+         <div className="text-center py-8 text-red-500">
+            Error loading category: {error.message}
+         </div>
       )
    }
 
    return (
       <div className="w-full max-w-3xl mx-auto p-10 space-y-8">
          <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight">Create New Tag</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Edit Category</h1>
             <p className="text-muted-foreground text-lg">
-               Fill in the details for your new asset tag
+               Update the details for your asset category
             </p>
          </div>
 
@@ -90,7 +135,7 @@ export function CreateTagForm() {
                         id="description"
                         {...form.register('description')}
                         className="min-h-[150px] bg-background border-input focus:border-primary transition-colors resize-none p-4 text-base"
-                        placeholder="Describe what this tag is used for..."
+                        placeholder="Optional description for the category"
                      />
                      {form.formState.errors.description && (
                         <p className="text-red-500 text-sm mt-1 px-1">
@@ -111,13 +156,13 @@ export function CreateTagForm() {
                      Cancel
                   </Button>
                   <SubmitButton
-                     processingName="Creating"
+                     processingName="Saving..."
                      isLoading={isPending}
                      isSuccess={isSuccess}
                      size="lg"
                      className="min-w-[140px]"
                   >
-                     Create Tag
+                     Save Changes
                   </SubmitButton>
                </div>
             </form>

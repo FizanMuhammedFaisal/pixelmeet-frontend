@@ -14,6 +14,8 @@ import { AdminDeletedAssetsPage } from '@/pages/admin/assets/DeletedAssets'
 import NewTagPage from '@/pages/admin/assets/NewTag'
 import EditTagPage from '@/pages/admin/assets/EditTag'
 import { AdminCreateMapPage } from '@/pages/admin/maps/CreateMap'
+import EditCategoryPage from '@/pages/admin/assets/EditCategory'
+import CreateCategoryPage from '@/pages/admin/assets/CreateCategory'
 
 const AdminRouter: RouteObject[] = [
    {
@@ -49,6 +51,14 @@ const AdminRouter: RouteObject[] = [
                {
                   path: '/dashboard/assets/edit-tag/:id',
                   element: <EditTagPage />,
+               },
+               {
+                  path: '/dashboard/assets/new-category',
+                  element: <CreateCategoryPage />,
+               },
+               {
+                  path: '/dashboard/assets/edit-category/:id',
+                  element: <EditCategoryPage />,
                },
                {
                   path: '/dashboard/users',

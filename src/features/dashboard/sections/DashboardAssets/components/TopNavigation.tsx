@@ -1,6 +1,6 @@
 import type React from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { LayoutGrid, Star, Upload, List, Files, TagsIcon, Trash2 } from 'lucide-react'
+import { LayoutGrid, Star, Upload, List, Files, TagsIcon, Trash2, FolderTree } from 'lucide-react'
 
 import type { AssetDashboardTabs } from '../DashboardAssets'
 import { cn } from '../../../../../shared/lib/utils'
@@ -44,6 +44,7 @@ const tabs: TabConfig[] = [
    // { id: 'deleted', label: 'Deleted', icon: Trash2Icon },
    { id: 'upload', label: 'Upload', icon: Upload },
    { id: 'tags', label: 'Tags', icon: TagsIcon },
+   { id: 'categories', label: 'Categories', icon: FolderTree },
 ]
 
 export function TopNavigation({
@@ -61,17 +62,22 @@ export function TopNavigation({
    return (
       <nav
          className={cn(
-            'relative flex h-16 items-center justify-between bg-background border-b border-border max-w-full overflow-x-auto flex-wrap gap-2 px-2 sm:px-4',
+            'relative flex flex-col sm:flex-row min-h-16 h-auto items-start sm:items-center justify-between bg-background border-b border-border w-full py-2 sm:py-0 gap-2 px-2 sm:px-4',
             className,
          )}
          role="navigation"
          aria-label="Asset dashboard navigation"
       >
+<<<<<<< Updated upstream
          <div className="flex items-center flex-wrap bg-primary/10 border border-primary/25 rounded-xl p-1 gap-2 lg:gap-3">
+=======
+         <div className="flex items-center w-full sm:w-auto overflow-x-auto no-scrollbar flex-nowrap bg-primary/10 border border-primary/25 rounded-xl p-1 gap-1">
+>>>>>>> Stashed changes
             {tabs.map((tab) => {
                const Icon = tab.icon
                const isActive = currentTab === tab.id
                return (
+<<<<<<< Updated upstream
                   <motion.button
                      key={tab.id}
                      onClick={() => onTabChange(tab.id)}
@@ -89,6 +95,9 @@ export function TopNavigation({
                      aria-pressed={isActive}
                      role="tab"
                   >
+=======
+                  <div key={tab.id} className="relative flex-shrink-0">
+>>>>>>> Stashed changes
                      {isActive && (
                         <motion.div
                            layoutId="activeTab"
@@ -101,6 +110,7 @@ export function TopNavigation({
                            'h-4 w-4 transition-colors duration-200 flex-shrink-0 relative z-[2]',
                            isActive ? 'text-primary' : 'text-muted-foreground',
                         )}
+<<<<<<< Updated upstream
                      />
                      <span className="hidden sm:inline font-medium relative z-[2]">
                         {tab.label}
@@ -137,6 +147,40 @@ export function TopNavigation({
                   whileTap={{ scale: 0.99 }}
                   transition={BUTTON_SPRING}
                >
+=======
+                        aria-pressed={isActive}
+                        role="tab"
+                     >
+                        <Icon
+                           className={cn(
+                              'h-4 w-4 flex-shrink-0',
+                              isActive ? 'text-primary' : 'text-muted-foreground',
+                           )}
+                        />
+                        <span className="inline font-medium">{tab.label}</span>
+                        <AnimatePresence>
+                           {tab.badge && (
+                              <motion.span
+                                 initial={{ scale: 0, opacity: 0 }}
+                                 animate={{ scale: 1, opacity: 1 }}
+                                 exit={{ scale: 0, opacity: 0 }}
+                                 transition={BUTTON_SPRING}
+                                 className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
+                              >
+                                 {tab.badge}
+                              </motion.span>
+                           )}
+                        </AnimatePresence>
+                     </button>
+                  </div>
+               )
+            })}
+         </div>
+
+         <div className="flex items-center gap-2 self-end sm:self-center flex-shrink-0 ml-auto sm:ml-0">
+            <div className="flex h-9 items-center rounded-lg bg-primary/10 border border-primary/25 p-1">
+               <div className="relative h-full">
+>>>>>>> Stashed changes
                   {viewMode === 'grid' && (
                      <motion.div
                         layoutId="activeViewMode"
@@ -171,12 +215,13 @@ export function TopNavigation({
                   <span className="sr-only">List View</span>
                </motion.button>
             </div>
-            <motion.div whileHover={{ scale: 1.02 }} onClick={handleDeletePageNavigation}>
+            <motion.div whileHover={{ scale: 1.05 }} onClick={handleDeletePageNavigation}>
                <Button
                   variant={'outline'}
-                  className="hover:text-red-500 transition-colors duration-300 cursor-pointer"
+                  size="icon"
+                  className="h-9 w-9 hover:text-red-500 transition-colors duration-300 cursor-pointer"
                >
-                  <Trash2 />
+                  <Trash2 className="h-4 w-4" />
                </Button>
             </motion.div>
          </div>

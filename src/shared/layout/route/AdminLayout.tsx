@@ -10,8 +10,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
    }, [setRole])
    return (
       <>
-         <CommandMenu />
-         {children}
+         <main className="bg-background">
+            <CommandMenu />
+            {children}
+         </main>
       </>
    )
 }

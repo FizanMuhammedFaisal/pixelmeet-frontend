@@ -171,6 +171,7 @@ function NewMap({
                                           Go Back
                                        </Button>
                                        <SubmitButton
+                                          variant={'special'}
                                           size="lg"
                                           type="submit"
                                           form="crateMapForm"
