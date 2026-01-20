@@ -132,10 +132,10 @@ async function LoadMapJson(manifest: Manifest): Promise<FinalMapType | null> {
 
    if (!mapFile) return null
 
-   const mapUrl = constructImageUrl(mapFile.url)
 
-   await PIXI.Assets.load({ src: mapUrl, data: { cache: true } })
-   return PIXI.Assets.get(mapUrl)
+
+   await PIXI.Assets.load({ src: mapFile.url, data: { cache: true } })
+   return PIXI.Assets.get(mapFile.url)
 }
 
 // function LoadTilesets(params: type) {}

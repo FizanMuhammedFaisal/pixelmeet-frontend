@@ -10,7 +10,8 @@
       "preview": "vite preview",
       "format": "prettier --write .",
       "prepare": "husky",
-      "commit": "cz"
+      "commit": "cz",
+      "typecheck": "tsc --noEmit"
    },
    "dependencies": {
       "@dnd-kit/core": "^6.3.1",

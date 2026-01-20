@@ -34,7 +34,6 @@ import {
    SidebarRail,
 } from '@/components/ui/sidebar'
 import SidebarNavbar from './dashboard-logo'
-import { motion } from 'motion/react'
 
 // This is sample data.
 const data = {
@@ -129,10 +128,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <Sidebar collapsible="icon" {...props}>
          <SidebarNavbar />
          <SidebarContent>
-            <motion.div>
+            <div>
                <NavMain items={data.navMain} />
                <NavDesigning projects={data.projects} />
-            </motion.div>
+            </div>
          </SidebarContent>
          <SidebarFooter>
             <NavUser />

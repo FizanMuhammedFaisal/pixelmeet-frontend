@@ -29,6 +29,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Spinner } from '@/components/ui/spinner'
 import { usePaginatedCategories } from '../../../DashboardAssets/hooks/categories'
+import { queryClient } from '@/api/config/queryClient'
 
 export function CreateMapForm() {
    const { user } = useAuthStore((state) => state)
@@ -76,6 +77,7 @@ export function CreateMapForm() {
                onSuccess: (data) => {
                   toast.success(`Map ${data.data.data.map.name} created`)
                   form.reset()
+                  queryClient.invalidateQueries({ queryKey: ['Maps'] })
                   navigate('/dashboard/maps')
                },
                onError: (error) => {

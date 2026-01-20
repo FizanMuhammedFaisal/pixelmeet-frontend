@@ -244,7 +244,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                   const lastMap = state.tilesets[state.tilesets.length - 1]
                   const tilecount = lastMap
                      ? Math.floor(lastMap.imagewidth / TILE_SIZE) *
-                       Math.floor(lastMap.imageheight / TILE_SIZE)
+                     Math.floor(lastMap.imageheight / TILE_SIZE)
                      : 1
                   const lastGid = lastMap ? lastMap.firstgid : 0
                   state.tilesets.push({
@@ -318,7 +318,7 @@ export const useMapEditorStore = create<useMapEditorStore>()(
                if (!mapDetails) return { files: [] }
 
                const jsonData: ManifestTileMapTiledJSONFile = {
-                  key: `${mapDetails.id}.json`,
+                  key: mapJsonUrlKey,
                   type: 'tilemapTiledJSON',
                   url: mapJsonUrlKey,
                }

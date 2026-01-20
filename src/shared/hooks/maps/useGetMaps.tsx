@@ -8,5 +8,6 @@ export const useGetMaps = (data: GetMapsPayload) => {
    return useQuery<AxiosResponse<GetMapsResponse>, AxiosError<ErrorResponse>>({
       queryKey: ['Maps', data.limit, data.page],
       queryFn: () => mapServices.getMaps(data),
+      refetchOnMount: 'always',
    })
 }

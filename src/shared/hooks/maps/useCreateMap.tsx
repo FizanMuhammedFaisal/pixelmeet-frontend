@@ -12,5 +12,6 @@ export const useCreateMap = () => {
       CreateMapPayload
    >({
       mutationFn: mapServices.createMap,
+      mutationKey: ['Maps'],
    })
 }

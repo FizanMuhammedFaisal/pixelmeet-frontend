@@ -9,7 +9,7 @@ import type { TilesetType } from '@/features/mapEditor/types/types'
 import { Assets } from 'pixi.js'
 import { useGetAssets } from '@/features/dashboard/sections/DashboardAssets/hooks/assets/useGetAssets'
 import { EmptyState } from '@/components/ui/empty-state'
-import { Image, XCircle } from 'lucide-react'
+import { Image as ImageIcon } from 'lucide-react'
 import { ErrorState } from '@/components/ui/error-state'
 
 type props = {
@@ -148,7 +148,7 @@ function AddTilesetModal({ isModalOpen, setIsModalOpen, onAdd, selectedAssets }:
                         ) : (
                            <div className="h-full flex items-center justify-center p-8">
                               <EmptyState
-                                 icon={Image}
+                                 icon={ImageIcon}
                                  title="No Tilesets Found"
                                  description="There are no tilesets available at the moment."
                                  showArrow={false}

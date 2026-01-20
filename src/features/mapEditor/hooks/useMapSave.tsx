@@ -37,6 +37,7 @@ export function useMapSave() {
             fileName: jsonName,
             type: 'tilemapTiledJSON',
             id: mapDetails.manifest.tileMapId,
+            isPublic: mapDetails.isPublic,
          })
          const { url, mimeType, assetKey } = presignedUrlData.data
 
