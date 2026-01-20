@@ -22,6 +22,7 @@ import { toast } from 'sonner'
 import { Link } from 'react-router'
 import { authService } from '@/features/auth'
 import ProfileDropDown from '@/components/ui/profile-dropdown'
+import { useLogout } from '@/shared/hooks'
 
 const navItems = [
    { name: 'Product', href: '#product' },
@@ -55,17 +56,9 @@ export const Navigation = () => {
       }
    }
 
-   const clearauth = useMutation({
-      mutationFn: authService.logout,
-   })
-   const handleLogout = async () => {
-      try {
-         const res = await clearauth.mutateAsync()
-
-         toast.success('Logged out')
-      } catch (error) {
-         toast.success('Try Logging out again')
-      }
+   const { mutate: logout } = useLogout()
+   const handleLogout = () => {
+      logout()
    }
 
    return (

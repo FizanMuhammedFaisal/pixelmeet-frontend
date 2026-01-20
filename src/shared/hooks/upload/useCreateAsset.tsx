@@ -1,10 +1,12 @@
 import { useMutation } from '@tanstack/react-query'
 
 import type { AxiosError, AxiosResponse } from 'axios'
-
-import type { ErrorResponse } from 'react-router'
 import { uploadService } from '../../services/upload'
-import type { CreateAssetRequestPayload, CreateAssetRequestResponse } from '../../types'
+import type {
+   CreateAssetRequestPayload,
+   CreateAssetRequestResponse,
+   ErrorResponse,
+} from '../../types'
 
 export const useCreateAsset = () => {
    return useMutation<

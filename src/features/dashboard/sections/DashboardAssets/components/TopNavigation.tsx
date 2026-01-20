@@ -1,7 +1,6 @@
 import type React from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { LayoutGrid, Star, Upload, List, Files, TagsIcon, Trash2 } from 'lucide-react'
-
+import { LayoutGrid, Star, Upload, List, Files, TagsIcon, Trash2, FolderTree } from 'lucide-react'
 import type { AssetDashboardTabs } from '../DashboardAssets'
 import { cn } from '@/shared/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -44,6 +43,7 @@ const tabs: TabConfig[] = [
    // { id: 'deleted', label: 'Deleted', icon: Trash2Icon },
    { id: 'upload', label: 'Upload', icon: Upload },
    { id: 'tags', label: 'Tags', icon: TagsIcon },
+   { id: 'categories', label: 'Categories', icon: FolderTree },
 ]
 
 export function TopNavigation({
@@ -61,18 +61,18 @@ export function TopNavigation({
    return (
       <nav
          className={cn(
-            'relative flex h-16 items-center justify-between bg-background border-b border-border max-w-full overflow-x-auto flex-wrap gap-2 px-2 sm:px-4',
+            'relative flex flex-col sm:flex-row min-h-16 h-auto items-start sm:items-center justify-between bg-background border-b border-border w-full py-2 sm:py-0 gap-2 px-2 sm:px-4',
             className,
          )}
          role="navigation"
          aria-label="Asset dashboard navigation"
       >
-         <div className="flex items-center flex-wrap bg-primary/10 border border-primary/25 rounded-xl p-1">
+         <div className="flex items-center w-full sm:w-auto overflow-x-auto no-scrollbar flex-nowrap bg-primary/10 border border-primary/25 rounded-xl p-1 gap-1">
             {tabs.map((tab) => {
                const Icon = tab.icon
                const isActive = currentTab === tab.id
                return (
-                  <div key={tab.id} className="relative">
+                  <div key={tab.id} className="relative flex-shrink-0">
                      {isActive && (
                         <motion.div
                            layoutId="activeTab"
@@ -99,7 +99,7 @@ export function TopNavigation({
                               isActive ? 'text-primary' : 'text-muted-foreground',
                            )}
                         />
-                        <span className="hidden sm:inline font-medium">{tab.label}</span>
+                        <span className="inline font-medium">{tab.label}</span>
                         <AnimatePresence>
                            {tab.badge && (
                               <motion.span
@@ -118,7 +118,8 @@ export function TopNavigation({
                )
             })}
          </div>
-         <div className="flex items-center gap-2 flex-wrap">
+
+         <div className="flex items-center gap-2 self-end sm:self-center flex-shrink-0 ml-auto sm:ml-0">
             <div className="flex h-9 items-center rounded-lg bg-primary/10 border border-primary/25 p-1">
                <div className="relative h-full">
                   {viewMode === 'grid' && (
@@ -167,12 +168,13 @@ export function TopNavigation({
                   </button>
                </div>
             </div>
-            <motion.div whileHover={{ scale: 1.02 }} onClick={handleDeletePageNavigation}>
+            <motion.div whileHover={{ scale: 1.05 }} onClick={handleDeletePageNavigation}>
                <Button
                   variant={'outline'}
-                  className="hover:text-red-500 transition-colors duration-300 cursor-pointer"
+                  size="icon"
+                  className="h-9 w-9 hover:text-red-500 transition-colors duration-300 cursor-pointer"
                >
-                  <Trash2 />
+                  <Trash2 className="h-4 w-4" />
                </Button>
             </motion.div>
          </div>

@@ -2,6 +2,8 @@ import { toast } from 'sonner'
 import { useEditorActions, useMapEditorStore } from '@/app/store/mapEditor/mapEditor'
 import { useCreateAsset, useGetPresignedURL, useUploadAsset } from '@/shared/hooks/upload'
 import { useUpdateMap } from '@/shared/hooks/maps/useUpdateMap'
+import type { ErrorResponse } from '@/shared/types'
+import type { AxiosError } from 'axios'
 
 export function useMapSave() {
    const { exportMap, exportManifest, updateMapDetails } = useEditorActions()
@@ -70,7 +72,8 @@ export function useMapSave() {
 
          updateMapDetails(updatedMapData.data.map)
          toast.success('Map saved successfully!')
-      } catch (error: any) {
+      } catch (errorc) {
+         const error = errorc as AxiosError<ErrorResponse>
          const firstDetail = error.response?.data?.issues?.[0]?.message
          const fallback = error.response?.data?.message || 'Saving map failed. Please try again.'
          toast.error(firstDetail || fallback)

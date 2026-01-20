@@ -10,7 +10,6 @@ import {
    SelectTrigger,
    SelectValue,
 } from '@/components/ui/select'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 import {
    Form,
@@ -22,28 +21,25 @@ import {
    FormMessage,
 } from '@/components/ui/form'
 import { toast } from 'sonner'
-
-const categories = [
-   'Urban',
-   'Nature',
-   'Coastal',
-   'Historical',
-   'Residential',
-   'Commercial',
-   'Industrial',
-   'Other',
-]
-
 import { createMapFormSchema, type CreateMapFormData } from '@/shared/schema'
 import { useCreateMap } from '@/shared/hooks'
 import useAuthStore from '@/app/store/auth.store'
 import SubmitButton from '@/components/ui/submit-button'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
+import { Spinner } from '@/components/ui/spinner'
+import { usePaginatedCategories } from '../../../DashboardAssets/hooks/categories'
 
 export function CreateMapForm() {
    const { user } = useAuthStore((state) => state)
    const [isLoading, setIsLoading] = useState(false)
+   const { data: categoriesData, isLoading: isCategoriesLoading } = usePaginatedCategories(
+      1,
+      50,
+      'active',
+   )
+
+   const categories = categoriesData?.data?.data?.categories || []
 
    const form = useForm<CreateMapFormData>({
       resolver: zodResolver(createMapFormSchema),
@@ -100,93 +96,36 @@ export function CreateMapForm() {
    }
 
    return (
-      <Card className="w-full max-w-2xl mx-auto">
-         <CardHeader>
-            <CardTitle className="text-2xl font-bold">Create New Map</CardTitle>
-            <CardDescription>Fill in the details below to create a new map entry.</CardDescription>
-         </CardHeader>
-         <CardContent>
+      <div className="w-full max-w-3xl mx-auto p-10 space-y-8">
+         <div className="space-y-2">
+            <p className="text-muted-foreground text-lg">
+               Fill in the details below to create a new map entry.
+            </p>
+         </div>
+
+         <div className="space-y-8">
             <Form {...form}>
                <form
                   onSubmit={form.handleSubmit(submit, (error) => console.log(error))}
                   className="space-y-6"
                >
-                  <FormField
-                     control={form.control}
-                     name="name"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>Map Name</FormLabel>
-                           <FormControl>
-                              <Input placeholder="e.g., Downtown City Map" {...field} />
-                           </FormControl>
-                           <FormDescription>This is the public name of your map.</FormDescription>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-
-                  <FormField
-                     control={form.control}
-                     name="description"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>Description</FormLabel>
-                           <FormControl>
-                              <Textarea
-                                 placeholder="A brief description of your map's content and purpose."
-                                 className="resize-y min-h-[80px]"
-                                 {...field}
-                              />
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-
-                  <FormField
-                     control={form.control}
-                     name="category"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>Category</FormLabel>
-                           <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                 <SelectTrigger>
-                                    <SelectValue placeholder="Select a category" />
-                                 </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                 {categories.map((category) => (
-                                    <SelectItem key={category} value={category}>
-                                       {category}
-                                    </SelectItem>
-                                 ))}
-                              </SelectContent>
-                           </Select>
-                           <FormDescription>
-                              Categorize your map for easier discovery.
-                           </FormDescription>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-
-                  <div className="flex items-center space-x-4">
+                  <div className="space-y-4">
                      <FormField
                         control={form.control}
-                        name="isPublic"
+                        name="name"
                         render={({ field }) => (
-                           <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm flex-1">
+                           <FormItem>
+                              <FormLabel className="text-base font-semibold">Map Name</FormLabel>
                               <FormControl>
-                                 <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                 <Input
+                                    placeholder="e.g., Downtown City Map"
+                                    className="bg-background border-input focus:border-primary transition-colors h-12 text-base"
+                                    {...field}
+                                 />
                               </FormControl>
-                              <div className="space-y-1 leading-none">
-                                 <FormLabel>Public Map</FormLabel>
-                                 <FormDescription>
-                                    Allow other users to view and use this map.
-                                 </FormDescription>
-                              </div>
+                              <FormDescription className="text-sm text-muted-foreground px-1">
+                                 This is the public name of your map.
+                              </FormDescription>
                               <FormMessage />
                            </FormItem>
                         )}
@@ -194,35 +133,128 @@ export function CreateMapForm() {
 
                      <FormField
                         control={form.control}
-                        name="isTemplate"
+                        name="description"
                         render={({ field }) => (
-                           <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm flex-1">
+                           <FormItem>
+                              <FormLabel className="text-base font-semibold">Description</FormLabel>
                               <FormControl>
-                                 <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                 <Textarea
+                                    placeholder="A brief description of your map's content and purpose."
+                                    className="min-h-[150px] bg-background border-input focus:border-primary transition-colors resize-none p-4 text-base"
+                                    {...field}
+                                 />
                               </FormControl>
-                              <div className="space-y-1 leading-none">
-                                 <FormLabel>Is Template</FormLabel>
-                                 <FormDescription>
-                                    Mark this map as a template for new creations.
-                                 </FormDescription>
-                              </div>
                               <FormMessage />
                            </FormItem>
                         )}
                      />
+
+                     <FormField
+                        control={form.control}
+                        name="category"
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel className="text-base font-semibold">Category</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                 <FormControl>
+                                    <SelectTrigger className="bg-background border-input focus:border-primary transition-colors h-12 text-base">
+                                       <SelectValue placeholder="Select a category" />
+                                    </SelectTrigger>
+                                 </FormControl>
+                                 <SelectContent>
+                                    {isCategoriesLoading ? (
+                                       <div className="flex items-center justify-center p-2">
+                                          <Spinner size="sm" />
+                                       </div>
+                                    ) : (
+                                       categories.map((category) => (
+                                          <SelectItem key={category.id} value={category.name}>
+                                             {category.name}
+                                          </SelectItem>
+                                       ))
+                                    )}
+                                 </SelectContent>
+                              </Select>
+                              <FormDescription className="text-sm text-muted-foreground px-1">
+                                 Categorize your map for easier discovery.
+                              </FormDescription>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                           control={form.control}
+                           name="isPublic"
+                           render={({ field }) => (
+                              <FormItem>
+                                 <label className="flex flex-col gap-3 p-5 border border-border rounded-base bg-card hover:border-primary/50 transition-colors cursor-pointer">
+                                    <div className="flex items-start gap-3">
+                                       <FormControl>
+                                          <Checkbox
+                                             checked={field.value}
+                                             onCheckedChange={field.onChange}
+                                             className="mt-0.5"
+                                          />
+                                       </FormControl>
+                                       <div className="flex-1 space-y-1">
+                                          <div className="text-base font-semibold">Public Map</div>
+                                          <FormDescription className="text-sm text-muted-foreground leading-snug">
+                                             Allow other users to view and use this map.
+                                          </FormDescription>
+                                       </div>
+                                    </div>
+                                 </label>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+
+                        <FormField
+                           control={form.control}
+                           name="isTemplate"
+                           render={({ field }) => (
+                              <FormItem>
+                                 <label className="flex flex-col gap-3 p-5 border border-border rounded-base bg-card hover:border-primary/50 transition-colors cursor-pointer">
+                                    <div className="flex items-start gap-3">
+                                       <FormControl>
+                                          <Checkbox
+                                             checked={field.value}
+                                             onCheckedChange={field.onChange}
+                                             className="mt-0.5"
+                                          />
+                                       </FormControl>
+                                       <div className="flex-1 space-y-1">
+                                          <div className="text-base font-semibold">Is Template</div>
+                                          <FormDescription className="text-sm text-muted-foreground leading-snug">
+                                             Mark this map as a template for new creations.
+                                          </FormDescription>
+                                       </div>
+                                    </div>
+                                 </label>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                     </div>
                   </div>
 
-                  <SubmitButton
-                     type="submit"
-                     isLoading={isLoading}
-                     processingName={'Creating Map'}
-                     className="w-full"
-                  >
-                     Create Map
-                  </SubmitButton>
+                  <div className="flex items-center justify-end gap-3 pt-4">
+                     <SubmitButton
+                        type="submit"
+                        variant="special"
+                        isLoading={isLoading}
+                        processingName="Creating"
+                        size="lg"
+                        className="min-w-[140px]"
+                     >
+                        Create Map
+                     </SubmitButton>
+                  </div>
                </form>
             </Form>
-         </CardContent>
-      </Card>
+         </div>
+      </div>
    )
 }

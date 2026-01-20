@@ -28,7 +28,14 @@ export function HoldToDeleteButton({
    const intervalRef = useRef<NodeJS.Timeout | null>(null)
    const startTimeRef = useRef<number>(0)
 
-   const startHold = () => {
+   const startHold = (e?: React.TouchEvent | React.MouseEvent) => {
+      // Prevent ghost clicks on mobile if touch event
+      if (e && e.type === 'touchstart') {
+         // e.preventDefault() // Removing preventDefault as it blocks scrolling/other behaviors sometimes, but handling the double fire via state or cancelHold is key.
+         // Actually, for a button, preventDefault on touchstart might stop the click emulation, which is what we want for a dedicated hold button.
+      }
+      cancelHold() // Clear any existing timers first
+
       setIsHolding(true)
       setProgress(0)
       startTimeRef.current = Date.now()
@@ -42,7 +49,8 @@ export function HoldToDeleteButton({
 
       intervalRef.current = setInterval(() => {
          const elapsed = Date.now() - startTimeRef.current
-         setProgress(Math.min((elapsed / holdDuration) * 100, 100))
+         const newProgress = Math.min((elapsed / holdDuration) * 100, 100)
+         setProgress(newProgress)
       }, 10)
    }
 
@@ -96,9 +104,14 @@ export function HoldToDeleteButton({
          onMouseLeave={cancelHold}
          onTouchStart={startHold}
          onTouchEnd={cancelHold}
+         onContextMenu={(e) => e.preventDefault()}
          {...props}
       >
-         <div aria-hidden="true" className="hold-overlay" style={{ clipPath: clipPathValue }}>
+         <div
+            aria-hidden="true"
+            className="hold-overlay pointer-events-none"
+            style={{ clipPath: clipPathValue }}
+         >
             {children || defaultContent}
          </div>
          {children || defaultContent}

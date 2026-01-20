@@ -23,6 +23,7 @@ type AuthStoreActions = {
    setAuth: (user: User, token: Token) => void
    setIsInitialized: (isInitialized: boolean) => void
    clearAuth: () => void
+   logout: () => void
    updateUser: (updates: Partial<User>) => void
 }
 
@@ -62,6 +63,9 @@ const useAuthStore = create<AuthStore>()((set, get) => ({
             user: { ...currentUser, ...updates },
          })
       }
+   },
+   logout() {
+      get().clearAuth()
    },
 }))
 

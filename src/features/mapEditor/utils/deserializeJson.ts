@@ -131,8 +131,11 @@ async function LoadMapJson(manifest: Manifest): Promise<FinalMapType | null> {
    const mapFile = manifest.data.files.find((file) => file.type === 'tilemapTiledJSON')
 
    if (!mapFile) return null
-   await PIXI.Assets.load({ src: mapFile.url, data: { cache: true } })
-   return PIXI.Assets.get(mapFile.url)
+
+   const mapUrl = constructImageUrl(mapFile.url)
+
+   await PIXI.Assets.load({ src: mapUrl, data: { cache: true } })
+   return PIXI.Assets.get(mapUrl)
 }
 
 // function LoadTilesets(params: type) {}

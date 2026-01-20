@@ -228,7 +228,8 @@ keep the  in hex format
    --editor-select-light: #9b7467;
 }
 .admin.dark {
-   --background: oklch(0.1448 0 0);
+   --admin-background-dark: oklab(16.094% 0.0018 0.01132);
+   --background: var(--admin-background-dark);
    --foreground: oklch(0.9702 0 0);
    --card: oklch(0.2264 0 0);
    --card-foreground: oklch(0.9702 0 0);
@@ -252,7 +253,7 @@ keep the  in hex format
    --chart-3: oklch(0.7686 0.1647 70.0804);
    --chart-4: oklch(0.6368 0.2078 25.3313);
    --chart-5: oklch(0.6056 0.2189 292.7172);
-   --sidebar: oklch(0.1448 0 0);
+   --sidebar: var(--admin-background-dark);
    --sidebar-foreground: oklch(0.7118 0.0129 286.0665);
    --sidebar-primary: oklch(0.5971 0.1352 39.8654);
    --sidebar-primary-foreground: oklch(1 0 0);
@@ -372,4 +373,14 @@ keep the  in hex format
       4px -4px 0 white,
       -4px 4px 0 white,
       4px 4px 0 white;
+}
+
+@layer utilities {
+   .no-scrollbar::-webkit-scrollbar {
+      display: none;
+   }
+   .no-scrollbar {
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+   }
 }

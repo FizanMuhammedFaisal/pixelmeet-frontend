@@ -11,6 +11,8 @@ import {
    PaginationPrevious,
 } from '../../../../../../components/ui/pagination'
 import { cn } from '../../../../../../shared/lib/utils'
+import { EmptyState } from '@/components/ui/empty-state'
+import { Star } from 'lucide-react'
 
 export default function FavouritesTab() {
    const [assets, setAssets] = useState<Asset[]>([])
@@ -53,8 +55,13 @@ export default function FavouritesTab() {
                   />
                ))
             ) : (
-               <div className="flex flex-1 text-center text-muted-foreground py-8">
-                  No assets found matching your criteria.
+               <div className="col-span-full flex flex-col items-center justify-center p-8">
+                  <EmptyState
+                     icon={Star}
+                     title="No Favorites Yet"
+                     description="You haven't marked any assets as favorites. Star items to quickly access them here."
+                     showArrow={false}
+                  />
                </div>
             )}
          </div>

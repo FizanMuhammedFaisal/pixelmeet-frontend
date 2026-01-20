@@ -42,7 +42,7 @@ export const useAssetTagsStore = create<AssetTagsState>()((set, get) => ({
    deleteTag: (id: string) => {
       const length = get().tags.length - 1
       let currPage = get().page
-      if (length < 1) {
+      if (length < 1 && currPage > 1) {
          currPage -= 1
       }
       set((state) => ({

@@ -21,6 +21,11 @@ export const API_ENDPOINTS = {
       CREATE_TAG: `${baseAsset}/tags/`,
       UPDATE_TAG: `${baseAsset}/tags/`,
       DELETE_TAG: `${baseAsset}/tags/`,
+      GET_CATEGORIES: `${baseAsset}/map-categories/`,
+      GET_CATEGORY: `${baseAsset}/map-categories/`,
+      CREATE_CATEGORY: `${baseAsset}/map-categories/`,
+      UPDATE_CATEGORY: `${baseAsset}/map-categories/`,
+      DELETE_CATEGORY: `${baseAsset}/map-categories/`,
       GET_ASSET: `${baseAsset}/assets`,
       PATCH_ASSET: `${baseAsset}/assets`,
       //map

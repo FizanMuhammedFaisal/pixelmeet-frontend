@@ -19,7 +19,9 @@ function TopBar({ className, setTheme }: props) {
 
    const { saveMap, isSaving } = useMapSave()
    return (
-      <div className={`dark:bg-muted bg-white flex z-10 w-full p-2 justify-between ${className}`}>
+      <div
+         className={`bg-card/95 dark:bg-zinc-900/95 backdrop-blur-sm border-b border-border dark:border-zinc-800/60 flex z-10 w-full p-2 justify-between ${className}`}
+      >
          <div>
             <SubmitButton
                onClick={() => saveMap()}
