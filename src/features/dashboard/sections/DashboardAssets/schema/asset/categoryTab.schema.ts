@@ -55,8 +55,8 @@ export type GetCategoryResponse = {
         id: string
         name: string
         description: string
-        updatedAt: Date
-        createdAt: Date
+        updatedAt: string
+        createdAt: string
     }
 }
 
