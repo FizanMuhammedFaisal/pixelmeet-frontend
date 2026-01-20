@@ -171,7 +171,7 @@ export default function UploadTab() {
    }, [files])
 
    return (
-      <div className="container mx-auto p-4 max-w-4xl">
+      <main className="flex-1 flex flex-col p-4 md:p-6 container mx-auto">
          <Card className="mb-6">
             <CardHeader>
                <CardTitle>Upload Game Assets</CardTitle>
@@ -219,6 +219,6 @@ export default function UploadTab() {
                </p>
             )}
          </div>
-      </div>
+      </main>
    )
 }

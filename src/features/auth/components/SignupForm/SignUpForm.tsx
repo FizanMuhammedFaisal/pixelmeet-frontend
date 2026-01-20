@@ -1,4 +1,3 @@
-import { GalleryVerticalEnd } from 'lucide-react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import { cn } from '@/shared/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -14,7 +13,7 @@ import { authService } from '@/features/auth'
 
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import SubmitButton from '@/components/ui/submit-button'
 import useGoogle from '../../hooks/useGoogle'
 
 type FormFields = SignUpCredentials
@@ -67,26 +66,19 @@ export function SignUpForm({ className, setShowOTP, setEmail, ...props }: SignUp
       <div className={cn('flex flex-col gap-6', className)} {...props}>
          <form onSubmit={handleSubmit(submit)}>
             <div className="flex flex-col gap-6">
-               <div className="flex flex-col items-center gap-2">
-                  <a href="#" className="flex flex-col items-center gap-2 font-medium">
-                     <div className="flex size-8 items-center justify-center rounded-md">
-                        <GalleryVerticalEnd className="size-6" />
-                     </div>
-                     <span className="sr-only  ">Pixel Meet</span>
-                  </a>
-                  <h1 className="text-xl font-bold">Welcome to Pixel Meet.</h1>
-                  <div className="text-center text-sm">
-                     already have an account?{' '}
-                     <Link to={'/login'} className="underline underline-offset-4">
-                        Login
-                     </Link>
-                  </div>
+               <div className="text-center">
+                  <p className="text-muted-foreground">Sign up for your PixelMeet account</p>
                </div>
-               <div className="flex flex-col gap-4">
-                  {errors.root && <div className="text-red-500 text-sm">{errors.root.message}</div>}
 
-                  <div className="grid gap-2">
-                     <Label htmlFor="name">Name</Label>
+               <div className="flex flex-col gap-4">
+                  {errors.root && (
+                     <div className="text-destructive text-sm text-center">
+                        {errors.root.message}
+                     </div>
+                  )}
+
+                  <div className="grid gap-1.5">
+                     <Label htmlFor="username">Name</Label>
                      <Input
                         {...register('username', {
                            required: 'Name is required',
@@ -94,13 +86,13 @@ export function SignUpForm({ className, setShowOTP, setEmail, ...props }: SignUp
                         })}
                         id="username"
                         type="text"
-                        placeholder="me"
+                        placeholder="John Doe"
                      />
                      {errors.username && (
-                        <div className="text-red-500 text-sm">{errors.username.message}</div>
+                        <div className="text-destructive text-sm">{errors.username.message}</div>
                      )}
                   </div>
-                  <div className="grid gap-2">
+                  <div className="grid gap-1.5">
                      <Label htmlFor="email">Email</Label>
                      <Input
                         {...register('email', {
@@ -109,52 +101,67 @@ export function SignUpForm({ className, setShowOTP, setEmail, ...props }: SignUp
                         })}
                         id="email"
                         type="text"
-                        placeholder="m@example.com"
+                        placeholder="john@example.com"
                      />
                      {errors.email && (
-                        <div className="text-red-500 text-sm">{errors.email.message}</div>
+                        <div className="text-destructive text-sm">{errors.email.message}</div>
                      )}
                   </div>
-                  <div className="grid gap-2">
-                     <Label htmlFor="email">Password</Label>
+                  <div className="grid gap-1.5">
+                     <Label htmlFor="password">Password</Label>
                      <Input
                         {...register('password')}
                         id="password"
                         type="password"
-                        placeholder="*******"
+                        placeholder="••••••••"
                      />
                      {errors.password && (
-                        <div className="text-red-500 text-sm">{errors.password.message}</div>
+                        <div className="text-destructive text-sm">{errors.password.message}</div>
                      )}
                   </div>
-                  <div className="grid gap-2">
-                     <Label htmlFor="email">Confirm Password</Label>
+                  <div className="grid gap-1.5">
+                     <Label htmlFor="confirmPassword">Confirm Password</Label>
                      <Input
                         {...register('confirmPassword')}
-                        id="confirm password"
+                        id="confirmPassword"
                         type="password"
-                        placeholder="*******"
+                        placeholder="••••••••"
                      />
                      {errors.confirmPassword && (
-                        <div className="text-red-500 text-sm">{errors.confirmPassword.message}</div>
+                        <div className="text-destructive text-sm">
+                           {errors.confirmPassword.message}
+                        </div>
                      )}
                   </div>
-                  <Button type="submit" disabled={isSubmitting} className="w-full cursor-pointer">
-                     Sign Up
-                  </Button>
+                  <SubmitButton
+                     type="submit"
+                     variant="special"
+                     isLoading={isSubmitting}
+                     processingName="Creating account..."
+                     className="w-full h-11 cursor-pointer"
+                  >
+                     Continue
+                  </SubmitButton>
+                  <p className="text-sm text-muted-foreground text-center">
+                     Already have an account?{' '}
+                     <Link
+                        to={'/login'}
+                        className="text-primary hover:underline underline-offset-4 font-medium"
+                     >
+                        Log in
+                     </Link>
+                  </p>
                </div>
                <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-                  <span className="bg-background text-muted-foreground relative z-10 px-2">Or</span>
+                  <span className="bg-background text-muted-foreground relative z-10 px-3">
+                     or continue with email
+                  </span>
                </div>
-               <div className="flex">
+               <div className="flex w-full">
                   <GoogleAuthButton onLoginSuccess={handleGoogleLogin} />
                </div>
             </div>
          </form>
-         <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-            By clicking continue, you agree to our <a href="#">Terms of Service</a> and{' '}
-            <a href="#">Privacy Policy</a>.
-         </div>
       </div>
    )
 }

@@ -1,4 +1,3 @@
-import { GalleryVerticalEnd } from 'lucide-react'
 import { useForm, type FieldErrors, type SubmitHandler } from 'react-hook-form'
 import { cn, GlobalMutationError } from '@/shared/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -16,7 +15,7 @@ import { authService } from '../../services'
 import useGoogle from '../../hooks/useGoogle'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import SubmitButton from '@/components/ui/submit-button'
 import type { ErrorResponse } from '../../../../shared/types'
 
 type FormFields = LoginCredentials
@@ -45,6 +44,7 @@ export function LoginForm({
       },
    })
    const [showUserVerificationForm, setShowUserVerificationForm] = useState(false)
+   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
    const submit: SubmitHandler<FormFields> = async (data) => {
       mutation.mutate(data)
@@ -75,6 +75,7 @@ export function LoginForm({
    })
    const { mutateAsync: googleLogin } = useGoogle()
    const handleGoogleLogin = async (data: CredentialResponse) => {
+      setIsGoogleLoading(true)
       try {
          await googleLogin({ isGoogle: true, code: data.credential })
          toast.success('Logged In')
@@ -92,6 +93,8 @@ export function LoginForm({
          ) {
             setShowUserVerificationForm(true)
          }
+      } finally {
+         setIsGoogleLoading(false)
       }
    }
    const loginErrors = errors as FieldErrors<{
@@ -106,26 +109,17 @@ export function LoginForm({
             <div className={cn('flex flex-col gap-6', className)} {...props}>
                <form onSubmit={handleSubmit(submit)}>
                   <div className="flex flex-col gap-6">
-                     <div className="flex flex-col items-center gap-2">
-                        <a href="#" className="flex flex-col items-center gap-2 font-medium">
-                           <div className="flex size-8 items-center justify-center rounded-md">
-                              <GalleryVerticalEnd className="size-6" />
-                           </div>
-                           <span className="sr-only  ">Pixel Meet</span>
-                        </a>
-                        <h1 className="text-xl font-bold">Welcome to Pixel Meet.</h1>
-                        <div className="text-center text-sm">
-                           Don&apos;t have an account?{' '}
-                           <Link to={'/signup'} className="underline underline-offset-4">
-                              Sign up
-                           </Link>
-                        </div>
+                     <div className="text-center">
+                        <p className="text-muted-foreground">Log in to your PixelMeet account</p>
                      </div>
+
                      <div className="flex flex-col gap-4">
                         {errors.root && (
-                           <div className="text-red-500 text-sm">{errors.root.message}</div>
+                           <div className="text-destructive text-sm text-center">
+                              {errors.root.message}
+                           </div>
                         )}
-                        <div className="grid gap-2">
+                        <div className="grid gap-1.5">
                            <Label htmlFor="email">Email</Label>
                            <Input
                               {...register('email', {
@@ -133,50 +127,60 @@ export function LoginForm({
                               })}
                               id="email"
                               type="text"
-                              placeholder="m@example.com"
+                              placeholder="john@example.com"
                            />
                            {loginErrors.email && (
-                              <div className="text-red-500 text-sm">
+                              <div className="text-destructive text-sm">
                                  {loginErrors.email.message}
                               </div>
                            )}
                         </div>
-                        <div className="grid gap-2">
+                        <div className="grid gap-1.5">
                            <div className="flex justify-between">
-                              <Label htmlFor="email">Password</Label>
-                              <span className="text-center text-sm text-zinc-500">
-                                 <Link
-                                    to={'/forgot-password'}
-                                    className="hover:underline underline-offset-4"
-                                 >
-                                    forgot password?
-                                 </Link>
-                              </span>
+                              <Label htmlFor="password">Password</Label>
+                              <Link
+                                 to={'/forgot-password'}
+                                 className="text-sm text-muted-foreground hover:text-primary"
+                              >
+                                 Forgot password?
+                              </Link>
                            </div>
                            <Input
                               {...register('password')}
                               id="password"
                               type="password"
-                              placeholder="*******"
+                              placeholder="••••••••"
                            />
                            {loginErrors.password && (
-                              <div className="text-red-500 text-sm">
+                              <div className="text-destructive text-sm">
                                  {loginErrors.password.message}
                               </div>
                            )}
                         </div>
-                        <Button
+                        <SubmitButton
                            type="submit"
-                           variant={'special'}
-                           disabled={isSubmitting}
-                           className="w-full cursor-pointer "
+                           variant="special"
+                           isLoading={isSubmitting || isGoogleLoading}
+                           processingName={
+                              isGoogleLoading ? 'Signing in with Google...' : 'Logging in...'
+                           }
+                           className="w-full h-11 cursor-pointer"
                         >
-                           Login
-                        </Button>
+                           Continue
+                        </SubmitButton>
+                        <p className="text-sm text-muted-foreground text-center">
+                           Don&apos;t have an account?{' '}
+                           <Link
+                              to={'/signup'}
+                              className="text-primary hover:underline underline-offset-4 font-medium"
+                           >
+                              Sign up
+                           </Link>
+                        </p>
                      </div>
                      <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-                        <span className="bg-background text-muted-foreground relative z-10 px-2">
-                           Or
+                        <span className="bg-background text-muted-foreground relative z-10 px-3">
+                           or continue with email
                         </span>
                      </div>
                      <div className="flex w-full">
@@ -184,10 +188,6 @@ export function LoginForm({
                      </div>
                   </div>
                </form>
-               <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-                  By clicking continue, you agree to our <a href="#">Terms of Service</a> and{' '}
-                  <a href="#">Privacy Policy</a>.
-               </div>
             </div>
          )}
       </div>

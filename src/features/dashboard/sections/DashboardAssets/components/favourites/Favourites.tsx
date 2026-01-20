@@ -42,7 +42,7 @@ export default function FavouritesTab() {
       console.log('toglg res')
    }
    return (
-      <div className="bg-background text-foreground min-h-screen p-4 sm:p-6 lg:p-8">
+      <main className="flex-1 flex flex-col p-4 md:p-6 overflow-auto container mx-auto">
          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {assets.length > 0 ? (
                assets.map((asset) => (
@@ -122,6 +122,6 @@ export default function FavouritesTab() {
                </PaginationContent>
             </Pagination>
          )}
-      </div>
+      </main>
    )
 }

@@ -118,7 +118,7 @@ export default function AllAssetsTab() {
    }
 
    return (
-      <div className="bg-background text-foreground min-h-screen p-4 sm:p-6 lg:p-8">
+      <main className="flex-1 flex flex-col p-4 md:p-6 overflow-auto container mx-auto">
          <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             {/* Search Input */}
             <div className="space-y-2">
@@ -136,7 +136,7 @@ export default function AllAssetsTab() {
                      setSearchQuery(e.target.value)
                      handleFilterChange()
                   }}
-                  className="bg-input border-input text-foreground placeholder:text-muted-foreground focus-visible:ring-ring focus-visible:ring-offset-background"
+                  className=""
                />
             </div>
 
@@ -156,43 +156,15 @@ export default function AllAssetsTab() {
                      handleSearching()
                   }}
                >
-                  <SelectTrigger
-                     id="type-select"
-                     className="bg-input border-input text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring focus-visible:ring-offset-background"
-                  >
+                  <SelectTrigger id="type-select" className="">
                      <SelectValue placeholder="All Types" />
                   </SelectTrigger>
-                  <SelectContent className="bg-popover border-border text-popover-foreground">
-                     <SelectItem
-                        value="all"
-                        className="hover:bg-accent hover:text-accent-foreground"
-                     >
-                        All Types
-                     </SelectItem>
-                     <SelectItem
-                        value="image"
-                        className="hover:bg-accent hover:text-accent-foreground"
-                     >
-                        Image
-                     </SelectItem>
-                     <SelectItem
-                        value="audio"
-                        className="hover:bg-accent hover:text-accent-foreground"
-                     >
-                        Audio
-                     </SelectItem>
-                     <SelectItem
-                        value="spritesheet"
-                        className="hover:bg-accent hover:text-accent-foreground"
-                     >
-                        Spritesheet
-                     </SelectItem>
-                     <SelectItem
-                        value="tilemapTiledJSON"
-                        className="hover:bg-accent hover:text-accent-foreground"
-                     >
-                        Tilemap
-                     </SelectItem>
+                  <SelectContent>
+                     <SelectItem value="all">All Types</SelectItem>
+                     <SelectItem value="image">Image</SelectItem>
+                     <SelectItem value="audio">Audio</SelectItem>
+                     <SelectItem value="spritesheet">Spritesheet</SelectItem>
+                     <SelectItem value="tilemapTiledJSON">Tilemap</SelectItem>
                   </SelectContent>
                </Select>
             </div>
@@ -258,6 +230,6 @@ export default function AllAssetsTab() {
                />
             </div>
          )}
-      </div>
+      </main>
    )
 }
